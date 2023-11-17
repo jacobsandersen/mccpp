@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(asio REQUIRED)
 find_package(jsoncpp REQUIRED)
+find_package(cryptopp REQUIRED)
+find_package(libuuid REQUIRED)
 
 add_executable(mccpp
         src/main.cpp
@@ -19,6 +21,10 @@ add_executable(mccpp
         src/net/status/StatusPacketHandler.cpp
         src/net/status/in/PacketStatusInStatusRequest.cpp
         src/net/status/in/PacketStatusInPingRequest.cpp
+        src/net/status/out/PacketStatusOutStatusResponse.cpp
+        src/net/status/out/PacketStatusOutPingResponse.cpp
+        src/net/login/LoginPacketHandler.cpp
+        src/net/login/in/PacketLoginInLoginStart.cpp
 )
 
-target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp)
+target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp libuuid::libuuid)

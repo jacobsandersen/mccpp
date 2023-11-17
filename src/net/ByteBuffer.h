@@ -35,12 +35,14 @@ public:
     uint32_t read_uint();
     void write_long(int64_t);
     int64_t read_long();
+    uint64_t read_ulong();
     void write_float(float);
     float read_float();
     void write_double(double);
     double read_double();
     void write_string(const std::string&);
     std::string read_string();
+    std::string read_string(uint16_t length);
     void write_varint(int32_t);
     int32_t read_varint();
     void write_varlong(int64_t);

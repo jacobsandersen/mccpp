@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <utility>
+#include <iostream>
 #include "ByteBuffer.h"
 #include "../VarInt.h"
 
@@ -139,6 +140,10 @@ int64_t ByteBuffer::read_long() {
     return read_buffer<int64_t>(m_data);
 }
 
+uint64_t ByteBuffer::read_ulong() {
+    return read_buffer<uint64_t>(m_data);
+}
+
 void ByteBuffer::write_float(float value) {
     write_buffer(m_data, value);
 }
@@ -168,6 +173,18 @@ std::string ByteBuffer::read_string() {
 
     for (int i = 0; i < length; i++) {
         s.push_back(read_byte());
+    }
+
+    return s;
+}
+
+std::string ByteBuffer::read_string(uint16_t length) {
+    std::string s = read_string();
+
+    if (s.length() < length) {
+        for (int i = 0; i < length - s.length(); i++) {
+            read_byte(); // padding byte
+        }
     }
 
     return s;

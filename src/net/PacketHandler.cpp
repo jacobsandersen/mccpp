@@ -6,6 +6,7 @@
 #include "PacketHandler.h"
 #include "handshaking/HandshakingPacketHandler.h"
 #include "status/StatusPacketHandler.h"
+#include "login/LoginPacketHandler.h"
 
 static void process_buffer(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
     std::cout << "process_buffer: " << *bytes_available << " bytes available" << std::endl;
@@ -25,6 +26,7 @@ static void process_buffer(const std::shared_ptr<Connection> &conn, const std::u
 
         case ConnectionState::Login: {
             std::cout << "Handling \"Login\" packet" << std::endl;
+            LoginPacketHandler::handle_login_packet(conn, buffer, bytes_available);
             break;
         }
 
