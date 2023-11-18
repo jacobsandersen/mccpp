@@ -4,59 +4,58 @@
 #include "VarInt.h"
 #include "net/PacketHandler.h"
 
+MinecraftServer *instance = nullptr;
+
+MinecraftServer *MinecraftServer::get_server() {
+    if (!instance) {
+        instance = new MinecraftServer();
+    }
+
+    return instance;
+}
+
 void MinecraftServer::start() {
-    std::cout << "Generating RSA keypair. Please wait...";
-    CryptoPP::AutoSeededRandomPool rng;
-    CryptoPP::InvertibleRSAFunction params;
-    params.GenerateRandomWithKeySize(rng, 1024);
-    auto privateKey = new CryptoPP::RSA::PrivateKey(params);
-    auto publicKey = new CryptoPP::RSA::PublicKey(*privateKey);
-    std::cout << "Keypair generated." << std::endl;
-
-    m_rsa_pub_key = publicKey;
-    m_rsa_priv_key = privateKey;
-
-    MinecraftServer::start_accept();
-    m_context.run();
+    m_network_manager.start();
 }
 
-void MinecraftServer::start_accept() {
-    auto conn = std::make_shared<Connection>(m_context, this);
-    m_acceptor.async_accept(conn->socket, [this, conn](const asio::error_code &err) {
-        if (!err) {
-            std::cout << "start_accept: connection established from remote endpoint "
-                      << conn->socket.remote_endpoint().address().to_string() << std::endl;
+std::vector<std::shared_ptr<Player>> MinecraftServer::get_players() {
+    return m_players;
+}
 
-            std::thread([this, conn]() {
-                MinecraftServer::start_read(conn);
-            }).detach();
-
-            MinecraftServer::start_accept();
-        } else {
-            std::cerr << "start_accept: failed to accept new connection: " << err.message() << std::endl;
+std::shared_ptr<Player> MinecraftServer::get_player(const std::string& username) {
+    for (std::shared_ptr<Player> player : get_players()) {
+        if (player->getUsername() == username) {
+            return player;
         }
-    });
+    }
+
+    return nullptr;
 }
 
-void MinecraftServer::start_read(const std::shared_ptr<Connection> &conn) {
-    asio::async_read(
-            conn->socket,
-            conn->buffer,
-            asio::transfer_at_least(1),
-            [this, conn](const asio::error_code &err, size_t bytes_transferred) {
-                if (!err) {
-                    PacketHandler::handle_packet(conn, &bytes_transferred);
-                    MinecraftServer::start_read(conn);
-                }
-            });
+std::shared_ptr<Player> MinecraftServer::get_player(uuids::uuid unique_id) {
+    for (std::shared_ptr<Player> player : get_players()) {
+        if (*player->getUniqueId() == unique_id) {
+            return player;
+        }
+    }
+
+    return nullptr;
 }
 
-CryptoPP::RSA::PublicKey *MinecraftServer::getRSAPublicKey() const {
-    return m_rsa_pub_key;
+const NetworkManager &MinecraftServer::get_network_manager() const {
+    return m_network_manager;
 }
 
-CryptoPP::RSA::PrivateKey *MinecraftServer::getRSAPrivateKey() const {
-    return m_rsa_priv_key;
+const RSAKeypair &MinecraftServer::get_rsa_keypair() const {
+    return m_rsa_keypair;
 }
+
+void MinecraftServer::add_player(const std::shared_ptr<Player>& player) {
+    m_players.push_back(player);
+}
+
+
+
+
 
 

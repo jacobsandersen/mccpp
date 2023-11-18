@@ -3,8 +3,6 @@
 
 #include <asio.hpp>
 
-class MinecraftServer;
-
 enum class ConnectionState {
     Handshaking,
     Status,
@@ -13,15 +11,23 @@ enum class ConnectionState {
     Play
 };
 
-struct Connection {
-    asio::ip::tcp::socket socket;
-    asio::streambuf buffer{};
-    ConnectionState state;
-    MinecraftServer *server;
+class Connection {
+public:
+    explicit Connection(asio::io_context& context) :
+            m_socket(context),
+            m_state(ConnectionState::Handshaking) {}
 
-    Connection(asio::io_context& context, MinecraftServer *server) : socket(context), state(ConnectionState::Handshaking), server(server) {}
+    [[nodiscard]] asio::ip::tcp::socket *get_socket();
 
-    [[nodiscard]] MinecraftServer *get_minecraft_server() const;
+    [[nodiscard]] asio::streambuf *get_buffer();
+
+    [[nodiscard]] ConnectionState get_state() const;
+
+    void set_state(ConnectionState state);
+private:
+    asio::ip::tcp::socket m_socket;
+    asio::streambuf m_buffer{};
+    ConnectionState m_state;
 };
 
 #endif

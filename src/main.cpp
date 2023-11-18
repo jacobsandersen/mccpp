@@ -5,8 +5,8 @@ int main() {
     try {
         std::cout << "Starting Minecraft server..." << std::endl;
         std::thread([](){
-            MinecraftServer server;
-            server.start();
+            MinecraftServer *server = MinecraftServer::get_server();
+            server->start();
         }).detach();
         std::cout << "Initialization finished." << std::endl;
 

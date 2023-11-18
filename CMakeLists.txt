@@ -6,17 +6,22 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(asio REQUIRED)
 find_package(jsoncpp REQUIRED)
 find_package(cryptopp REQUIRED)
-find_package(libuuid REQUIRED)
+find_package(stduuid REQUIRED)
+find_package(CURL REQUIRED)
+find_package(panzi-portable-endian REQUIRED)
 
 add_executable(mccpp
         src/main.cpp
         src/MinecraftServer.cpp
         src/VarInt.cpp
+        src/RSAKeypair.cpp
         src/util/Endian.h
+        src/player/Player.cpp
         src/net/ByteBuffer.cpp
         src/net/Packet.cpp
         src/net/PacketHandler.cpp
         src/net/Connection.cpp
+        src/net/NetworkManager.cpp
         src/net/handshaking/HandshakingPacketHandler.cpp
         src/net/handshaking/in/PacketHandshakingInHandshake.cpp
         src/net/status/StatusPacketHandler.cpp
@@ -30,4 +35,4 @@ add_executable(mccpp
         src/net/login/out/PacketLoginOutEncryptionRequest.cpp
 )
 
-target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp libuuid::libuuid)
+target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl panzi-portable-endian::panzi-portable-endian)

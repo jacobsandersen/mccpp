@@ -15,10 +15,10 @@ void PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &con
     std::cout << "Got server port: " << server_port << std::endl;
 
     int32_t next_state = buffer->read_varint();
-    std::cout << "Got next state: " << next_state << std::endl;
+    std::cout << "Got next m_state: " << next_state << std::endl;
 
-    std::cout << "Setting connection state..." << std::endl;
-    conn->state = static_cast<ConnectionState>(next_state);
+    std::cout << "Setting connection m_state..." << std::endl;
+    conn->set_state(static_cast<ConnectionState>(next_state));
 
     *bytes_available = buffer->get_data_length();
 }

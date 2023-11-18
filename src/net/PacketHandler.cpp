@@ -11,7 +11,7 @@
 static void process_buffer(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
     std::cout << "process_buffer: " << *bytes_available << " bytes available" << std::endl;
 
-    switch (conn->state) {
+    switch (conn->get_state()) {
         case ConnectionState::Handshaking: {
             std::cout << "Handling \"Handshaking\" packet" << std::endl;
             HandshakingPacketHandler::handle_handshaking_packet(conn, buffer, bytes_available);
@@ -42,7 +42,7 @@ static void process_buffer(const std::shared_ptr<Connection> &conn, const std::u
     }
 
     if (*bytes_available > 0) {
-        //std::cout << *bytes_available << " bytes left available, reprocessing buffer" << std::endl;
+        //std::cout << *bytes_available << " bytes left available, reprocessing m_buffer" << std::endl;
         process_buffer(conn, buffer, bytes_available);
     } else {
         std::cout << "no more bytes available, returning" << std::endl;
@@ -50,7 +50,7 @@ static void process_buffer(const std::shared_ptr<Connection> &conn, const std::u
 }
 
 void PacketHandler::handle_packet(const std::shared_ptr<Connection> &conn, size_t *bytes_available) {
-    std::istream is(&conn->buffer);
+    std::istream is(conn->get_buffer());
 
     std::unique_ptr<ByteBuffer> buffer = std::make_unique<ByteBuffer>();
     for (int i = 0; i < *bytes_available; i++) {
@@ -65,7 +65,7 @@ void PacketHandler::handle_packet(const std::shared_ptr<Connection> &conn, size_
 void PacketHandler::send_packet(const std::shared_ptr<Connection> &conn, std::unique_ptr<Packet> packet) {
     std::deque<uint8_t> data = packet->pack()->get_data();
     asio::async_write(
-            conn->socket,
+            *conn->get_socket(),
             asio::buffer(std::vector(data.begin(), data.end())),
             asio::transfer_all());
 }

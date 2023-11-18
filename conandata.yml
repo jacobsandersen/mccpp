@@ -2,7 +2,9 @@
 # To keep your changes, remove these comment lines, but the plugin won't be able to modify your requirements
 
 requirements:
-  - "libuuid/1.0.3"
+  - "stduuid/1.2.3"
+  - "panzi-portable-endian/cci.20220509"
+  - "libcurl/8.2.1"
   - "cryptopp/8.8.0"
   - "jsoncpp/1.9.5"
   - "asio/1.28.2"
