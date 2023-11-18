@@ -56,7 +56,7 @@ void ByteBuffer::write_bytes(const std::vector<int8_t>& bytes) {
 
 void ByteBuffer::write_bytes(const int8_t *bytes, size_t num_bytes) {
     for (int i = 0; i < num_bytes; i++) {
-        write_byte(*(bytes + 1));
+        write_byte(bytes[i]);
     }
 }
 
@@ -86,7 +86,7 @@ void ByteBuffer::write_ubytes(const std::vector<uint8_t>& ubytes) {
 
 void ByteBuffer::write_ubytes(const uint8_t *bytes, size_t num_bytes) {
     for (int i = 0; i < num_bytes; i++) {
-        write_ubyte(*(bytes + 1));
+        write_ubyte(bytes[i]);
     }
 }
 
@@ -164,6 +164,27 @@ void ByteBuffer::write_string(const std::string& str) {
     write_varint(static_cast<int32_t>(str.length()));
     for (int8_t byte : str) {
         write_byte(byte);
+    }
+}
+
+void ByteBuffer::write_string(const std::string& str, uint16_t length) {
+    if (str.length() > length) {
+        throw std::invalid_argument("write_string string length greater than enforced length");
+    }
+
+    write_varint(static_cast<int32_t>(length));
+
+    uint16_t bytes_written = 0;
+    for (int8_t byte : str) {
+        write_byte(byte);
+        bytes_written++;
+    }
+
+    if (str.length() < length) {
+        uint16_t remainingLength = length - str.length();
+        for (int i = 0; i < remainingLength; i++) {
+            write_byte(0); // padding byte
+        }
     }
 }
 

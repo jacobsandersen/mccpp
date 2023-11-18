@@ -42,6 +42,7 @@ static void process_buffer(const std::shared_ptr<Connection> &conn, const std::u
     }
 
     if (*bytes_available > 0) {
+        //std::cout << *bytes_available << " bytes left available, reprocessing buffer" << std::endl;
         process_buffer(conn, buffer, bytes_available);
     } else {
         std::cout << "no more bytes available, returning" << std::endl;

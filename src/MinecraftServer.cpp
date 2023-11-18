@@ -1,27 +1,27 @@
 #include <iostream>
+#include <cryptopp/osrng.h>
 #include "MinecraftServer.h"
 #include "VarInt.h"
 #include "net/PacketHandler.h"
 
-int MinecraftServer::get_players() {
-    return m_players;
-}
-
-void MinecraftServer::set_players(int players) {
-    m_players = players;
-}
-
-int MinecraftServer::get_max_players() {
-    return m_max_players;
-}
-
 void MinecraftServer::start() {
+    std::cout << "Generating RSA keypair. Please wait...";
+    CryptoPP::AutoSeededRandomPool rng;
+    CryptoPP::InvertibleRSAFunction params;
+    params.GenerateRandomWithKeySize(rng, 1024);
+    auto privateKey = new CryptoPP::RSA::PrivateKey(params);
+    auto publicKey = new CryptoPP::RSA::PublicKey(*privateKey);
+    std::cout << "Keypair generated." << std::endl;
+
+    m_rsa_pub_key = publicKey;
+    m_rsa_priv_key = privateKey;
+
     MinecraftServer::start_accept();
     m_context.run();
 }
 
 void MinecraftServer::start_accept() {
-    auto conn = std::make_shared<Connection>(m_context);
+    auto conn = std::make_shared<Connection>(m_context, this);
     m_acceptor.async_accept(conn->socket, [this, conn](const asio::error_code &err) {
         if (!err) {
             std::cout << "start_accept: connection established from remote endpoint "
@@ -31,7 +31,7 @@ void MinecraftServer::start_accept() {
                 MinecraftServer::start_read(conn);
             }).detach();
 
-            MinecraftServer::start();
+            MinecraftServer::start_accept();
         } else {
             std::cerr << "start_accept: failed to accept new connection: " << err.message() << std::endl;
         }
@@ -49,6 +49,14 @@ void MinecraftServer::start_read(const std::shared_ptr<Connection> &conn) {
                     MinecraftServer::start_read(conn);
                 }
             });
+}
+
+CryptoPP::RSA::PublicKey *MinecraftServer::getRSAPublicKey() const {
+    return m_rsa_pub_key;
+}
+
+CryptoPP::RSA::PrivateKey *MinecraftServer::getRSAPrivateKey() const {
+    return m_rsa_priv_key;
 }
 
 
