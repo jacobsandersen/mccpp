@@ -24,7 +24,7 @@ std::vector<std::shared_ptr<Player>> MinecraftServer::get_players() {
 
 std::shared_ptr<Player> MinecraftServer::get_player(const std::string& username) {
     for (std::shared_ptr<Player> player : get_players()) {
-        if (player->getUsername() == username) {
+        if (player->get_username() == username) {
             return player;
         }
     }
@@ -32,9 +32,9 @@ std::shared_ptr<Player> MinecraftServer::get_player(const std::string& username)
     return nullptr;
 }
 
-std::shared_ptr<Player> MinecraftServer::get_player(uuids::uuid unique_id) {
+std::shared_ptr<Player> MinecraftServer::get_player(const std::shared_ptr<uuids::uuid>& unique_id) {
     for (std::shared_ptr<Player> player : get_players()) {
-        if (*player->getUniqueId() == unique_id) {
+        if (player->get_unique_id() == unique_id) {
             return player;
         }
     }
@@ -53,6 +53,8 @@ const RSAKeypair &MinecraftServer::get_rsa_keypair() const {
 void MinecraftServer::add_player(const std::shared_ptr<Player>& player) {
     m_players.push_back(player);
 }
+
+
 
 
 

@@ -19,7 +19,10 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const s
     uuids::uuid unique_id(uuid_bytes);
     std::cout << "Got unique id of user logging in: " << uuids::to_string(unique_id) << std::endl;
 
-    Player player(conn, username, std::make_shared<uuids::uuid>(unique_id));
+    auto unique_id_ptr = std::make_shared<uuids::uuid>(unique_id);
+    conn->set_unique_id(unique_id_ptr);
+
+    Player player(conn, username, unique_id_ptr);
     MinecraftServer::get_server()->add_player(std::make_shared<Player>(player));
 
     *bytes_available = buffer->get_data_length();
@@ -33,17 +36,19 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const s
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int8_t> dist(std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max());
 
-    int8_t randomBytes[4];
-    for (int8_t &randomByte : randomBytes) {
-        randomByte = dist(gen);
+    std::vector<uint8_t> verify_token;
+    for (int i = 0; i < VERIFY_TOKEN_SIZE; i++) {
+        verify_token.push_back(dist(gen));
     }
+
+    conn->set_verify_token(verify_token);
 
     PacketLoginOutEncryptionRequest resp(
             "",
             static_cast<int32_t>(encoded_public_key.size()),
             reinterpret_cast<int8_t*>(encoded_public_key.data()),
-            4,
-            randomBytes);
+            VERIFY_TOKEN_SIZE,
+            reinterpret_cast<int8_t*>(verify_token.data()));
 
     resp.send(conn);
 }

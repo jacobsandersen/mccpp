@@ -10,9 +10,9 @@
 class RSAKeypair {
 public:
     RSAKeypair() {
-        CryptoPP::AutoSeededRandomPool rng;
+        CryptoPP::AutoSeededRandomPool pool;
         CryptoPP::InvertibleRSAFunction params;
-        params.GenerateRandomWithKeySize(rng, KEY_SIZE);
+        params.GenerateRandomWithKeySize(pool, KEY_SIZE);
         m_private_key = new CryptoPP::RSA::PrivateKey(params);
         m_public_key = new CryptoPP::RSA::PublicKey(*m_private_key);
     }
@@ -22,6 +22,8 @@ public:
     [[nodiscard]] CryptoPP::RSA::PublicKey *get_public_key() const;
 
     [[nodiscard]] std::vector<uint8_t> get_der_encoded_public_key() const;
+
+    [[nodiscard]] std::vector<uint8_t> decrypt(const std::vector<uint8_t>& encrypted) const;
 private:
     CryptoPP::RSA::PrivateKey *m_private_key;
     CryptoPP::RSA::PublicKey *m_public_key;

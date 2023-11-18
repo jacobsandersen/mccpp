@@ -15,9 +15,9 @@ public:
 
     [[nodiscard]] const std::shared_ptr<Connection> &get_connection() const;
 
-    [[nodiscard]] const std::string &getUsername() const;
+    [[nodiscard]] const std::string &get_username() const;
 
-    [[nodiscard]] std::shared_ptr<uuids::uuid> getUniqueId() const;
+    [[nodiscard]] std::shared_ptr<uuids::uuid> get_unique_id() const;
 private:
     std::shared_ptr<Connection> m_connection;
     std::string m_username{};

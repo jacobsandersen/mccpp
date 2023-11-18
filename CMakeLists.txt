@@ -33,6 +33,7 @@ add_executable(mccpp
         src/net/login/in/PacketLoginInLoginStart.cpp
         src/net/login/in/PacketLoginInEncryptionResponse.cpp
         src/net/login/out/PacketLoginOutEncryptionRequest.cpp
+        src/net/login/out/PacketLoginOutDisconnect.cpp
 )
 
 target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl panzi-portable-endian::panzi-portable-endian)
