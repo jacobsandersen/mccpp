@@ -22,6 +22,7 @@ add_executable(mccpp
         src/net/PacketHandler.cpp
         src/net/Connection.cpp
         src/net/NetworkManager.cpp
+        src/net/HttpClient.cpp
         src/net/handshaking/HandshakingPacketHandler.cpp
         src/net/handshaking/in/PacketHandshakingInHandshake.cpp
         src/net/status/StatusPacketHandler.cpp
