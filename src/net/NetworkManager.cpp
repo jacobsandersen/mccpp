@@ -2,7 +2,7 @@
 // Created by simple on 11/17/23.
 //
 
-#include <iostream>
+#include <glog/logging.h>
 #include "NetworkManager.h"
 #include "PacketHandler.h"
 
@@ -15,16 +15,14 @@ void NetworkManager::start_accept() {
     auto conn = std::make_shared<Connection>(m_context);
     m_acceptor.async_accept(*conn->get_socket(), [this, conn](const asio::error_code &err) {
         if (!err) {
-            std::cout << "start_accept: connection established from remote endpoint "
-                      << conn->get_socket()->remote_endpoint().address().to_string() << std::endl;
-
+            LOG(INFO) << "Connection established from " << conn->get_socket()->remote_endpoint().address().to_string();
             std::thread([this, conn]() {
                 start_read(conn);
             }).detach();
 
             start_accept();
         } else {
-            std::cerr << "start_accept: failed to accept new connection: " << err.message() << std::endl;
+            LOG(WARNING) << "Failed to accept connection: " << err.message();
         }
     });
 }

@@ -12,7 +12,7 @@
 
 class LoginPacketHandler {
 public:
-    static void handle_login_packet(const std::shared_ptr<Connection>&, const std::unique_ptr<ByteBuffer>&, size_t*);
+    static void handle_login_packet(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &, size_t *);
 };
 
 

@@ -11,7 +11,8 @@
 class UUIDUtil {
 public:
     static bool valid_undashed_uuid(std::string uuid);
-    static std::string canonicalize_uuid(const std::string& uuid_no_dashes);
+
+    static std::string canonicalize_uuid(const std::string &uuid_no_dashes);
 };
 
 #endif

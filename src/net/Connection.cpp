@@ -60,7 +60,7 @@ std::deque<uint8_t> Connection::encrypt_bytes(std::deque<uint8_t> bytes) {
                                        new CryptoPP::VectorSink(enc_bytes_tmp)));
 
     auto enc_bytes = std::deque<uint8_t>();
-    for (uint8_t byte : enc_bytes_tmp) {
+    for (uint8_t byte: enc_bytes_tmp) {
         enc_bytes.push_back(byte);
     }
 
@@ -80,7 +80,7 @@ std::deque<uint8_t> Connection::decrypt_bytes(std::deque<uint8_t> enc_bytes) {
                                        new CryptoPP::VectorSink(bytes_tmp)));
 
     auto bytes = std::deque<uint8_t>();
-    for (uint8_t byte : bytes_tmp) {
+    for (uint8_t byte: bytes_tmp) {
         bytes.push_back(byte);
     }
 

@@ -5,18 +5,18 @@
 #include "ByteBuffer.h"
 #include "../VarInt.h"
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type
-ByteBuffer::write_buffer(std::deque<uint8_t>& buffer, T value) {
+ByteBuffer::write_buffer(std::deque<uint8_t> &buffer, T value) {
     buffer.insert(
             buffer.end(),
-            reinterpret_cast<uint8_t*>(&value),
-            reinterpret_cast<uint8_t*>(&value) + sizeof(T));
+            reinterpret_cast<uint8_t *>(&value),
+            reinterpret_cast<uint8_t *>(&value) + sizeof(T));
 }
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type
-ByteBuffer::write_buffer(std::deque<uint8_t>& buffer, T value, uint32_t offset) {
+ByteBuffer::write_buffer(std::deque<uint8_t> &buffer, T value, uint32_t offset) {
     size_t size = sizeof(T);
     offset = offset * size;
 
@@ -24,13 +24,13 @@ ByteBuffer::write_buffer(std::deque<uint8_t>& buffer, T value, uint32_t offset) 
         buffer.resize(offset + size);
     }
 
-    std::memcpy(&buffer[offset], reinterpret_cast<uint8_t*>(&value), size);
+    std::memcpy(&buffer[offset], reinterpret_cast<uint8_t *>(&value), size);
 
 }
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
-static read_or_peek_buffer(std::deque<uint8_t>& buffer, uint32_t offset, bool erase) {
+static read_or_peek_buffer(std::deque<uint8_t> &buffer, uint32_t offset, bool erase) {
     size_t size = sizeof(T);
     offset = offset * size;
 
@@ -46,27 +46,27 @@ static read_or_peek_buffer(std::deque<uint8_t>& buffer, uint32_t offset, bool er
     return value;
 }
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
-ByteBuffer::read_buffer(std::deque<uint8_t>& buffer, uint32_t offset) {
+ByteBuffer::read_buffer(std::deque<uint8_t> &buffer, uint32_t offset) {
     return read_or_peek_buffer<T>(buffer, offset, true);
 }
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
-ByteBuffer::read_buffer(std::deque<uint8_t>& buffer) {
+ByteBuffer::read_buffer(std::deque<uint8_t> &buffer) {
     return read_buffer<T>(buffer, 0);
 }
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
-ByteBuffer::peek_buffer(std::deque<uint8_t>& buffer, uint32_t offset) {
+ByteBuffer::peek_buffer(std::deque<uint8_t> &buffer, uint32_t offset) {
     return read_or_peek_buffer<T>(buffer, offset, false);
 }
 
-template <typename T>
+template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
-ByteBuffer::peek_buffer(std::deque<uint8_t>& buffer) {
+ByteBuffer::peek_buffer(std::deque<uint8_t> &buffer) {
     return peek_buffer<T>(buffer, 0);
 }
 
@@ -94,8 +94,8 @@ int8_t ByteBuffer::peek_byte(uint32_t offset) {
     return peek_buffer<int8_t>(m_data, offset);
 }
 
-void ByteBuffer::write_bytes(const std::vector<int8_t>& bytes) {
-    for (int8_t byte : bytes) {
+void ByteBuffer::write_bytes(const std::vector<int8_t> &bytes) {
+    for (int8_t byte: bytes) {
         write_byte(byte);
     }
 }
@@ -136,8 +136,8 @@ uint8_t ByteBuffer::peek_ubyte(uint32_t offset) {
     return peek_buffer<uint8_t>(m_data, offset);
 }
 
-void ByteBuffer::write_ubytes(const std::vector<uint8_t>& ubytes) {
-    for (uint8_t ubyte : ubytes) {
+void ByteBuffer::write_ubytes(const std::vector<uint8_t> &ubytes) {
+    for (uint8_t ubyte: ubytes) {
         write_ubyte(ubyte);
     }
 }
@@ -222,14 +222,14 @@ double ByteBuffer::read_double() {
     return read_buffer<double>(m_data);
 }
 
-void ByteBuffer::write_string(const std::string& str) {
+void ByteBuffer::write_string(const std::string &str) {
     write_varint(static_cast<int32_t>(str.length()));
-    for (int8_t byte : str) {
+    for (int8_t byte: str) {
         write_byte(byte);
     }
 }
 
-void ByteBuffer::write_string(const std::string& str, uint16_t length) {
+void ByteBuffer::write_string(const std::string &str, uint16_t length) {
     if (str.length() > length) {
         throw std::invalid_argument("write_string string length greater than enforced length");
     }
@@ -237,7 +237,7 @@ void ByteBuffer::write_string(const std::string& str, uint16_t length) {
     write_varint(static_cast<int32_t>(length));
 
     uint16_t bytes_written = 0;
-    for (int8_t byte : str) {
+    for (int8_t byte: str) {
         write_byte(byte);
         bytes_written++;
     }
@@ -309,7 +309,7 @@ uuids::uuid ByteBuffer::read_uuid() {
     std::array<uuids::uuid::value_type, 16> uuid_bytes{};
     std::memcpy(uuid_bytes.data(), &most_significant, sizeof(uint64_t));
     std::memcpy(uuid_bytes.data() + 8, &least_significant, sizeof(uint64_t));
-    return { uuid_bytes };
+    return {uuid_bytes};
 }
 
 void ByteBuffer::write_uuid(uuids::uuid unique_id) {

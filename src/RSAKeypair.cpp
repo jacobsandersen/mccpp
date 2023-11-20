@@ -19,7 +19,7 @@ std::vector<uint8_t> RSAKeypair::get_der_encoded_public_key() const {
     return encodedPublicKey;
 }
 
-std::vector<uint8_t> RSAKeypair::decrypt(const std::vector<uint8_t>& encrypted) const {
+std::vector<uint8_t> RSAKeypair::decrypt(const std::vector<uint8_t> &encrypted) const {
     std::vector<uint8_t> decrypted;
 
     CryptoPP::RSAES_PKCS1v15_Decryptor decryptor(*get_private_key());

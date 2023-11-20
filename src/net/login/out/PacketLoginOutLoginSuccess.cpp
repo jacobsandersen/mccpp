@@ -13,7 +13,7 @@ void PacketLoginOutLoginSuccess::send(const std::shared_ptr<Connection> &conn) c
     buf.write_uuid(m_unique_id);
     buf.write_string(m_username, m_username.length());
     buf.write_varint(static_cast<int32_t>(m_properties.size()));
-    for (const auto& prop : m_properties) {
+    for (const auto &prop: m_properties) {
         buf.write_string(prop.name);
         buf.write_string(prop.value);
         buf.write_boolean(prop.is_signed());

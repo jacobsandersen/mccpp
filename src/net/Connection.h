@@ -19,7 +19,7 @@ enum class ConnectionState {
 
 class Connection {
 public:
-    explicit Connection(asio::io_context& context) : m_socket(context) {}
+    explicit Connection(asio::io_context &context) : m_socket(context) {}
 
     [[nodiscard]] asio::ip::tcp::socket *get_socket();
 
@@ -48,6 +48,7 @@ public:
     std::deque<uint8_t> encrypt_bytes(std::deque<uint8_t>);
 
     std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
+
 private:
     asio::ip::tcp::socket m_socket;
     asio::streambuf m_buffer{};

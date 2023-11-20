@@ -13,11 +13,11 @@ public:
     explicit Packet(int32_t packet_id) : Packet(VarInt::encoding_length(packet_id), 0, packet_id, nullptr, false) {}
 
     Packet(uint32_t packet_length, uint32_t packet_id, ByteBuffer *data) :
-        Packet(packet_length, 0, packet_id, data, false) {}
+            Packet(packet_length, 0, packet_id, data, false) {}
 
     Packet(uint32_t packet_length, uint32_t data_length, uint32_t packet_id, ByteBuffer *data, bool is_compressed) :
-        m_packet_length(packet_length), m_data_length(data_length), m_packet_id(packet_id),
-        m_data(data), m_is_compressed(is_compressed) {}
+            m_packet_length(packet_length), m_data_length(data_length), m_packet_id(packet_id),
+            m_data(data), m_is_compressed(is_compressed) {}
 
     [[nodiscard]] uint32_t getPacketLength() const;
 
@@ -37,7 +37,7 @@ public:
 
     void setCompressed(bool mIsCompressed);
 
-    [[nodiscard]] std::unique_ptr<ByteBuffer> pack(const std::shared_ptr<Connection>&) const;
+    [[nodiscard]] std::unique_ptr<ByteBuffer> pack(const std::shared_ptr<Connection> &) const;
 
 private:
     uint32_t m_packet_length;

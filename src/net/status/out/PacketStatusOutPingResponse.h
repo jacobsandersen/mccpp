@@ -14,7 +14,8 @@ class PacketStatusOutPingResponse {
 public:
     explicit PacketStatusOutPingResponse(int64_t ping_payload) : m_ping_payload(ping_payload) {}
 
-    void send(const std::shared_ptr<Connection>&) const;
+    void send(const std::shared_ptr<Connection> &) const;
+
 private:
     int64_t m_ping_payload;
 };

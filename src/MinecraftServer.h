@@ -30,13 +30,16 @@ public:
 
     std::vector<std::shared_ptr<Player>> get_players();
 
-    std::shared_ptr<Player> get_player(const std::string& username);
+    std::shared_ptr<Player> get_player(const std::string &username);
 
-    std::shared_ptr<Player> get_player(const std::shared_ptr<uuids::uuid>& unique_id);
+    std::shared_ptr<Player> get_player(const std::shared_ptr<uuids::uuid> &unique_id);
 
-    void add_player(const std::shared_ptr<Player>&);
+    void add_player(const std::shared_ptr<Player> &);
+
 private:
-    MinecraftServer() : m_network_manager(), m_config_manager(), m_rsa_keypair(), m_version_name("1.20.2"), m_protocol_version(764) {}
+    MinecraftServer()
+            : m_network_manager(), m_config_manager(), m_rsa_keypair(), m_version_name("1.20.2"),
+              m_protocol_version(764) {}
 
     NetworkManager m_network_manager;
     ConfigManager m_config_manager;

@@ -11,8 +11,9 @@
 
 class PacketHandler {
 public:
-    static void handle_packet(const std::shared_ptr<Connection>&, size_t*);
-    static void send_packet(const std::shared_ptr<Connection>&, std::unique_ptr<Packet> packet);
+    static void handle_packet(const std::shared_ptr<Connection> &, size_t *);
+
+    static void send_packet(const std::shared_ptr<Connection> &, std::unique_ptr<Packet> packet);
 };
 
 

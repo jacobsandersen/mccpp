@@ -1,5 +1,4 @@
 #include <cryptopp/hex.h>
-#include <iostream>
 #include <json/value.h>
 #include <json/reader.h>
 #include "PacketLoginInEncryptionResponse.h"
@@ -11,7 +10,7 @@
 
 #define SESSION_URL "https://sessionserver.mojang.com/session/minecraft/hasJoined"
 
-void performTwosCompliment(ByteBuffer& buffer) {
+void performTwosCompliment(ByteBuffer &buffer) {
     bool carry = true;
     for (int32_t i = static_cast<int32_t>(buffer.get_data_length()) - 1; i >= 0; --i) {
         uint8_t value = buffer.peek_ubyte(i);
@@ -25,9 +24,9 @@ void performTwosCompliment(ByteBuffer& buffer) {
     }
 }
 
-std::string mcHexDigest(const std::string& hashIn) {
+std::string mcHexDigest(const std::string &hashIn) {
     ByteBuffer buffer;
-    for (char byte : hashIn) {
+    for (char byte: hashIn) {
         buffer.write_ubyte(static_cast<uint8_t>(byte));
     }
 
@@ -53,7 +52,8 @@ std::string mcHexDigest(const std::string& hashIn) {
     return result;
 }
 
-void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
+void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &conn,
+                                             const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
     int32_t shared_secret_length = buffer->read_varint();
     std::vector<uint8_t> shared_secret = buffer->read_ubytes(shared_secret_length);
 
@@ -87,7 +87,7 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
     std::vector<uint8_t> public_key = keypair.get_der_encoded_public_key();
     sha1.Update(public_key.data(), public_key.size());
     hash.resize(sha1.DigestSize());
-    sha1.Final((CryptoPP::byte*)&hash[0]);
+    sha1.Final((CryptoPP::byte *) &hash[0]);
 
     std::string finalDigest = mcHexDigest(hash);
 
@@ -113,7 +113,7 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
     }
 
     std::vector<MojangProfileProperty> properties;
-    for (auto property : resp_json["properties"]) {
+    for (auto property: resp_json["properties"]) {
         std::string signature;
         if (property.isMember("signature")) {
             signature = property["signature"].asString();
@@ -136,8 +136,6 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
     MojangProfile profile(unique_id, resp_json["name"].asString(), properties);
 
     player->set_mojang_profile(std::make_shared<MojangProfile>(profile));
-
-    std::cout << "Sending login success" << std::endl;
 
     PacketLoginOutLoginSuccess resp(unique_id, player->get_username(), properties);
     resp.send(conn);

@@ -37,7 +37,7 @@ uint32_t Packet::getPacketId() const {
     return m_packet_id;
 }
 
-std::unique_ptr<ByteBuffer> Packet::pack(const std::shared_ptr<Connection>& conn) const {
+std::unique_ptr<ByteBuffer> Packet::pack(const std::shared_ptr<Connection> &conn) const {
     auto buf = std::make_unique<ByteBuffer>();
     buf->write_varint(static_cast<int32_t>(getPacketLength()));
     buf->write_varint(static_cast<int32_t>(getPacketId()));

@@ -1,4 +1,4 @@
-#include <iostream>
+#include <glog/logging.h>
 #include <random>
 #include <uuid.h>
 #include <cryptopp/filters.h>
@@ -8,12 +8,13 @@
 #include "../out/PacketLoginOutDisconnect.h"
 
 void
-PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
+PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer,
+                                size_t *bytes_available) {
     std::string username = buffer->read_string();
-    std::cout << "Got username logging in: " << username << std::endl;
+    LOG(INFO) << "Username: " << username;
 
     uuids::uuid unique_id = buffer->read_uuid();
-    std::cout << "Got unique id of user logging in: " << uuids::to_string(unique_id) << std::endl;
+    LOG(INFO) << "Unique ID: " << uuids::to_string(unique_id);
 
     auto unique_id_ptr = std::make_shared<uuids::uuid>(unique_id);
     conn->set_unique_id(unique_id_ptr);
