@@ -12,7 +12,7 @@ void PacketLoginOutEncryptionRequest::send(const std::shared_ptr<Connection> &co
     } else {
         buf.write_string(server_id, server_id.length());
     }
-    
+
     buf.write_varint(public_key_length);
     buf.write_ubytes(public_key_bytes, public_key_length);
     buf.write_varint(verify_token_length);

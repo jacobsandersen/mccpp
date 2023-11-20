@@ -8,6 +8,8 @@
 #include <cstdint>
 #include <deque>
 #include <vector>
+#include <uuid.h>
+#include "Connection.h"
 
 class ByteBuffer {
 public:
@@ -28,7 +30,7 @@ public:
     int8_t peek_byte(uint32_t index);
     void write_bytes(const std::vector<int8_t>&);
     void write_bytes(const int8_t*, size_t);
-    std::vector<int8_t> read_bytes(uint8_t);
+    std::vector<int8_t> read_bytes(size_t);
     void write_ubyte(uint8_t);
     void write_ubyte(uint8_t, uint32_t);
     uint8_t read_ubyte();
@@ -36,7 +38,7 @@ public:
     uint8_t peek_ubyte(uint32_t index);
     void write_ubytes(const std::vector<uint8_t>&);
     void write_ubytes(const uint8_t*, size_t);
-    std::vector<uint8_t> read_ubytes(uint8_t);
+    std::vector<uint8_t> read_ubytes(size_t);
     void write_short(int16_t);
     int16_t read_short();
     void write_ushort(uint16_t);
@@ -48,6 +50,7 @@ public:
     void write_long(int64_t);
     int64_t read_long();
     uint64_t read_ulong();
+    void write_ulong(uint64_t);
     void write_float(float);
     float read_float();
     void write_double(double);
@@ -60,8 +63,13 @@ public:
     int32_t read_varint();
     void write_varlong(int64_t);
     int64_t read_varlong();
+    uuids::uuid read_uuid();
+    void write_uuid(uuids::uuid unique_id);
+
     [[nodiscard]] std::deque<uint8_t> get_data() const;
     [[nodiscard]] uint32_t get_data_length() const;
+    void encrypt_buffer(const std::shared_ptr<Connection>&);
+    void decrypt_buffer(const std::shared_ptr<Connection>&);
 private:
     std::deque<uint8_t> m_data;
 };

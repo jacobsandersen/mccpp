@@ -28,8 +28,6 @@ bool HttpClient::get_url(const string& url, const map<string, string>& query_par
         }
     }
 
-    std::cout << os.str() << std::endl;
-
     CURLcode res;
     curl_easy_setopt(curl, CURLOPT_URL, os.str().data());
 

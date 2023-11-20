@@ -37,7 +37,7 @@ public:
 
     void setCompressed(bool mIsCompressed);
 
-    [[nodiscard]] std::unique_ptr<ByteBuffer> pack() const;
+    [[nodiscard]] std::unique_ptr<ByteBuffer> pack(const std::shared_ptr<Connection>&) const;
 
 private:
     uint32_t m_packet_length;

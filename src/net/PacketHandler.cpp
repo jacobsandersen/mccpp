@@ -7,9 +7,13 @@
 #include "handshaking/HandshakingPacketHandler.h"
 #include "status/StatusPacketHandler.h"
 #include "login/LoginPacketHandler.h"
+#include "configuration/ConfigurationPacketHandler.h"
 
 static void process_buffer(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
     std::cout << "process_buffer: " << *bytes_available << " bytes available" << std::endl;
+
+    std::cout << "process_buffer: decrypting buffer if necessary" << std::endl;
+    buffer->decrypt_buffer(conn);
 
     switch (conn->get_state()) {
         case ConnectionState::Handshaking: {
@@ -32,6 +36,7 @@ static void process_buffer(const std::shared_ptr<Connection> &conn, const std::u
 
         case ConnectionState::Configuration: {
             std::cout << "Handling \"Configuration\" packet" << std::endl;
+            ConfigurationPacketHandler::handle_configuration_packet(conn, buffer, bytes_available);
             break;
         }
 
@@ -63,12 +68,7 @@ void PacketHandler::handle_packet(const std::shared_ptr<Connection> &conn, size_
 }
 
 void PacketHandler::send_packet(const std::shared_ptr<Connection> &conn, std::unique_ptr<Packet> packet) {
-    std::deque<uint8_t> data = packet->pack()->get_data();
-
-    if (conn->get_encrypt_packets()) {
-        std::cout << "send_packet: encrypting packet" << std::endl;
-        data = conn->encrypt_bytes(data);
-    }
+    std::deque<uint8_t> data = packet->pack(conn)->get_data();
 
     std::cout << "writing packet to network" << std::endl;
 

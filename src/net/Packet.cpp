@@ -37,7 +37,7 @@ uint32_t Packet::getPacketId() const {
     return m_packet_id;
 }
 
-std::unique_ptr<ByteBuffer> Packet::pack() const {
+std::unique_ptr<ByteBuffer> Packet::pack(const std::shared_ptr<Connection>& conn) const {
     auto buf = std::make_unique<ByteBuffer>();
     buf->write_varint(static_cast<int32_t>(getPacketLength()));
     buf->write_varint(static_cast<int32_t>(getPacketId()));
@@ -45,5 +45,6 @@ std::unique_ptr<ByteBuffer> Packet::pack() const {
     std::deque<uint8_t> data = getData()->get_data();
     buf->write_ubytes(std::vector(data.begin(), data.end()));
 
+    buf->encrypt_buffer(conn);
     return buf;
 }

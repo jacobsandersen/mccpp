@@ -12,12 +12,7 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const s
     std::string username = buffer->read_string();
     std::cout << "Got username logging in: " << username << std::endl;
 
-    uint64_t uuid_most_significant = buffer->read_ulong();
-    uint64_t uuid_least_significant = buffer->read_ulong();
-    std::array<uuids::uuid::value_type, 16> uuid_bytes{};
-    std::memcpy(uuid_bytes.data(), &uuid_most_significant, sizeof(uint64_t));
-    std::memcpy(uuid_bytes.data() + 8, &uuid_least_significant, sizeof(uint64_t));
-    uuids::uuid unique_id(uuid_bytes);
+    uuids::uuid unique_id = buffer->read_uuid();
     std::cout << "Got unique id of user logging in: " << uuids::to_string(unique_id) << std::endl;
 
     auto unique_id_ptr = std::make_shared<uuids::uuid>(unique_id);

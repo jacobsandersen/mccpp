@@ -2,6 +2,7 @@
 # To keep your changes, remove these comment lines, but the plugin won't be able to modify your requirements
 
 requirements:
+  - "toml11/3.7.1"
   - "stduuid/1.2.3"
   - "panzi-portable-endian/cci.20220509"
   - "libcurl/8.2.1"

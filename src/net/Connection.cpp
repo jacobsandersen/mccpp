@@ -56,7 +56,7 @@ std::deque<uint8_t> Connection::encrypt_bytes(std::deque<uint8_t> bytes) {
 
     CryptoPP::VectorSource src(std::vector(bytes.begin(), bytes.end()), true,
                                new CryptoPP::StreamTransformationFilter(
-                                       m_cfb_stream_cipher,
+                                       m_cfb_stream_cipher_encryption,
                                        new CryptoPP::VectorSink(enc_bytes_tmp)));
 
     auto enc_bytes = std::deque<uint8_t>();
@@ -65,6 +65,26 @@ std::deque<uint8_t> Connection::encrypt_bytes(std::deque<uint8_t> bytes) {
     }
 
     return enc_bytes;
+}
+
+std::deque<uint8_t> Connection::decrypt_bytes(std::deque<uint8_t> enc_bytes) {
+    if (!get_encrypt_packets()) {
+        return enc_bytes;
+    }
+
+    auto bytes_tmp = std::vector<uint8_t>{};
+
+    CryptoPP::VectorSource src(std::vector(enc_bytes.begin(), enc_bytes.end()), true,
+                               new CryptoPP::StreamTransformationFilter(
+                                       m_cfb_stream_cipher_decryption,
+                                       new CryptoPP::VectorSink(bytes_tmp)));
+
+    auto bytes = std::deque<uint8_t>();
+    for (uint8_t byte : bytes_tmp) {
+        bytes.push_back(byte);
+    }
+
+    return bytes;
 }
 
 void Connection::enable_encryption() {
@@ -78,5 +98,6 @@ void Connection::enable_encryption() {
     CryptoPP::SecByteBlock shared_secret(shared_secret_vec.data(), shared_secret_vec.size());
 
     auto aes = new CryptoPP::AES::Encryption(shared_secret, SHARED_SECRET_SIZE);
-    m_cfb_stream_cipher = CryptoPP::CFB_Mode_ExternalCipher::Encryption(*aes, shared_secret, 1);
+    m_cfb_stream_cipher_encryption = CryptoPP::CFB_Mode_ExternalCipher::Encryption(*aes, shared_secret, 1);
+    m_cfb_stream_cipher_decryption = CryptoPP::CFB_Mode_ExternalCipher::Decryption(*aes, shared_secret, 1);
 }

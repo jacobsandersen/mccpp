@@ -1,16 +1,13 @@
 #include <iostream>
+#include <toml.hpp>
 #include "MinecraftServer.h"
 
 int main() {
     try {
-        std::cout << "Starting Minecraft server..." << std::endl;
         std::thread([](){
             MinecraftServer *server = MinecraftServer::get_server();
             server->start();
-        }).detach();
-        std::cout << "Initialization finished." << std::endl;
-
-        while(true) {}
+        }).join();
     } catch (const std::exception& err) {
         std::cerr << err.what() << std::endl;
     }

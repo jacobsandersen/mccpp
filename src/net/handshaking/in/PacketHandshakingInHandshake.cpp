@@ -1,5 +1,4 @@
 #include "PacketHandshakingInHandshake.h"
-#include "../../../util/Endian.h"
 #include <iostream>
 
 void PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
@@ -11,7 +10,7 @@ void PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &con
     std::cout << "Got server address: \"" << server_address << "\"" << std::endl;
 
     uint16_t server_port = buffer->read_short();
-    server_port = Endian::convertBigEndianToHost(server_port);
+    server_port = be16toh(server_port);
     std::cout << "Got server port: " << server_port << std::endl;
 
     int32_t next_state = buffer->read_varint();

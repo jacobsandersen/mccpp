@@ -1,9 +1,13 @@
 #include <cryptopp/hex.h>
 #include <iostream>
+#include <json/value.h>
+#include <json/reader.h>
 #include "PacketLoginInEncryptionResponse.h"
 #include "../../../MinecraftServer.h"
 #include "../out/PacketLoginOutDisconnect.h"
 #include "../../HttpClient.h"
+#include "../../../util/UUIDUtil.h"
+#include "../out/PacketLoginOutLoginSuccess.h"
 
 #define SESSION_URL "https://sessionserver.mojang.com/session/minecraft/hasJoined"
 
@@ -100,7 +104,41 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
         return;
     }
 
-    std::cout << resp_body << std::endl;
+    Json::Value resp_json;
+    Json::Reader reader;
+    if (!reader.parse(resp_body, resp_json)) {
+        PacketLoginOutDisconnect pkt("Failed to parse Mojang's response. Mojang issue? Try again later.");
+        pkt.send(conn);
+        return;
+    }
 
-    std::cout << "Login success. Now to encrypt a packet and send login success, and switch to configuration state." << std::endl;
+    std::vector<MojangProfileProperty> properties;
+    for (auto property : resp_json["properties"]) {
+        std::string signature;
+        if (property.isMember("signature")) {
+            signature = property["signature"].asString();
+        }
+
+        properties.emplace_back(property["name"].asString(), property["value"].asString(), signature);
+    }
+
+    std::string canonicalized_unique_id = UUIDUtil::canonicalize_uuid(resp_json["id"].asString());
+
+    auto maybe_unique_id = uuids::uuid::from_string(canonicalized_unique_id);
+    if (!maybe_unique_id.has_value()) {
+        PacketLoginOutDisconnect pkt("Failed to parse your UUID. Try again later.");
+        pkt.send(conn);
+        return;
+    }
+
+    auto unique_id = maybe_unique_id.value();
+
+    MojangProfile profile(unique_id, resp_json["name"].asString(), properties);
+
+    player->set_mojang_profile(std::make_shared<MojangProfile>(profile));
+
+    std::cout << "Sending login success" << std::endl;
+
+    PacketLoginOutLoginSuccess resp(unique_id, player->get_username(), properties);
+    resp.send(conn);
 }

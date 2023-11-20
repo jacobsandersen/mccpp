@@ -45,7 +45,9 @@ public:
 
     void set_unique_id(const std::shared_ptr<uuids::uuid> &unique_id);
 
-    std::deque<uint8_t> encrypt_bytes(std::deque<uint8_t> bytes);
+    std::deque<uint8_t> encrypt_bytes(std::deque<uint8_t>);
+
+    std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
 private:
     asio::ip::tcp::socket m_socket;
     asio::streambuf m_buffer{};
@@ -54,7 +56,8 @@ private:
     std::vector<uint8_t> m_shared_secret{};
     bool m_encrypt_packets{};
     std::shared_ptr<uuids::uuid> m_unique_id{};
-    CryptoPP::CFB_Mode_ExternalCipher::Encryption m_cfb_stream_cipher{};
+    CryptoPP::CFB_Mode_ExternalCipher::Encryption m_cfb_stream_cipher_encryption{};
+    CryptoPP::CFB_Mode_ExternalCipher::Decryption m_cfb_stream_cipher_decryption{};
 };
 
 #endif

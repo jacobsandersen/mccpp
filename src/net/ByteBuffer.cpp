@@ -71,11 +71,11 @@ ByteBuffer::peek_buffer(std::deque<uint8_t>& buffer) {
 }
 
 void ByteBuffer::write_boolean(bool value) {
-    write_buffer(m_data, value ? 0x01 : 0x00);
+    write_byte(value ? 0x1 : 0x0);
 }
 
 bool ByteBuffer::read_boolean() {
-    return read_byte() == 0x01;
+    return read_byte() == 0x1;
 }
 
 void ByteBuffer::write_byte(int8_t value) {
@@ -106,7 +106,7 @@ void ByteBuffer::write_bytes(const int8_t *bytes, size_t num_bytes) {
     }
 }
 
-std::vector<int8_t> ByteBuffer::read_bytes(uint8_t num_bytes) {
+std::vector<int8_t> ByteBuffer::read_bytes(size_t num_bytes) {
     std::vector<int8_t> vec;
 
     for (int i = 0; i < num_bytes; i++) {
@@ -148,7 +148,7 @@ void ByteBuffer::write_ubytes(const uint8_t *bytes, size_t num_bytes) {
     }
 }
 
-std::vector<uint8_t> ByteBuffer::read_ubytes(uint8_t num_ubytes) {
+std::vector<uint8_t> ByteBuffer::read_ubytes(size_t num_ubytes) {
     std::vector<uint8_t> vec;
 
     for (int i = 0; i < num_ubytes; i++) {
@@ -200,6 +200,10 @@ int64_t ByteBuffer::read_long() {
 
 uint64_t ByteBuffer::read_ulong() {
     return read_buffer<uint64_t>(m_data);
+}
+
+void ByteBuffer::write_ulong(uint64_t value) {
+    write_buffer(m_data, value);
 }
 
 void ByteBuffer::write_float(float value) {
@@ -299,6 +303,24 @@ int64_t ByteBuffer::read_varlong() {
     return VarInt::decode_varlong(this, nullptr);
 }
 
+uuids::uuid ByteBuffer::read_uuid() {
+    uint64_t most_significant = read_ulong();
+    uint64_t least_significant = read_ulong();
+    std::array<uuids::uuid::value_type, 16> uuid_bytes{};
+    std::memcpy(uuid_bytes.data(), &most_significant, sizeof(uint64_t));
+    std::memcpy(uuid_bytes.data() + 8, &least_significant, sizeof(uint64_t));
+    return { uuid_bytes };
+}
+
+void ByteBuffer::write_uuid(uuids::uuid unique_id) {
+    auto bytes = unique_id.as_bytes();
+    uint64_t most_significant, least_significant;
+    std::memcpy(&most_significant, bytes.data(), sizeof(uint64_t));
+    std::memcpy(&least_significant, bytes.data() + 8, sizeof(uint64_t));
+    write_ulong(most_significant);
+    write_ulong(least_significant);
+}
+
 std::deque<uint8_t> ByteBuffer::get_data() const {
     return m_data;
 }
@@ -306,3 +328,13 @@ std::deque<uint8_t> ByteBuffer::get_data() const {
 uint32_t ByteBuffer::get_data_length() const {
     return m_data.size();
 }
+
+void ByteBuffer::encrypt_buffer(const std::shared_ptr<Connection> &conn) {
+    m_data = conn->encrypt_bytes(m_data);
+}
+
+void ByteBuffer::decrypt_buffer(const std::shared_ptr<Connection> &conn) {
+    m_data = conn->decrypt_bytes(m_data);
+}
+
+

@@ -15,7 +15,12 @@ MinecraftServer *MinecraftServer::get_server() {
 }
 
 void MinecraftServer::start() {
-    m_network_manager.start();
+    std::cout << "Starting minecraft server" << std::endl;
+    std::thread([this](){
+        m_network_manager.start();
+    }).detach();
+    std::cout << "Server started" << std::endl;
+    while (true) {}
 }
 
 std::vector<std::shared_ptr<Player>> MinecraftServer::get_players() {
@@ -54,6 +59,17 @@ void MinecraftServer::add_player(const std::shared_ptr<Player>& player) {
     m_players.push_back(player);
 }
 
+const ConfigManager &MinecraftServer::get_config_manager() const {
+    return m_config_manager;
+}
+
+uint32_t MinecraftServer::get_protocol_version() const {
+    return m_protocol_version;
+}
+
+const std::string &MinecraftServer::get_version_name() const {
+    return m_version_name;
+}
 
 
 

@@ -1,10 +1,9 @@
 # MCCPP
 Minecraft server in C++
 
-Only handshaking, status request, ping request, status response, ping response, login start, disconnect (login), 
-encryption request, and encryption response are implemented.
+Full handshaking, login, (online-mode) auth, and encryption is implemented.
 
-Status response is hard coded for simplicity.
+Working on Configuration state, then will look at the Play state.
 
 ## Update: 11/17/23 0358 PDT
 Now creates an rsa m_rsa_keypair on startup, shoves networking in own thread, and 
@@ -21,3 +20,7 @@ login success to move onto the configuration stage.
 Handles the encryption response, successfully verifies the verify token and accepts the shared secret as valid if
 verify token validates. Creates server id hash and sends request to mojang auth server. Auth server is replying with
 204 No Content, but I expect content per wiki.vg so need to investigate. But stopping for now.
+
+## Update 11/20/23 0253 PDT
+Handles the full login state now, including auth with Yggdrasil and protocol encryption. Still doesn't do packet
+compression, but that shouldn't be hard. Investigating configuration state now.

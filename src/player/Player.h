@@ -5,6 +5,7 @@
 
 #include <utility>
 #include "../net/Connection.h"
+#include "MojangProfile.h"
 
 class Player {
 public:
@@ -18,10 +19,16 @@ public:
     [[nodiscard]] const std::string &get_username() const;
 
     [[nodiscard]] std::shared_ptr<uuids::uuid> get_unique_id() const;
+
+    [[nodiscard]] const std::shared_ptr<MojangProfile> &get_mojang_profile() const;
+
+    void set_mojang_profile(const std::shared_ptr<MojangProfile> &mojang_profile);
+
 private:
     std::shared_ptr<Connection> m_connection;
     std::string m_username{};
     std::shared_ptr<uuids::uuid> m_unique_id{};
+    std::shared_ptr<MojangProfile> m_mojang_profile{};
 };
 
 #endif

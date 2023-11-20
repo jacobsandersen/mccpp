@@ -9,14 +9,17 @@ find_package(cryptopp REQUIRED)
 find_package(stduuid REQUIRED)
 find_package(CURL REQUIRED)
 find_package(panzi-portable-endian REQUIRED)
+find_package(toml11 REQUIRED)
 
 add_executable(mccpp
         src/main.cpp
         src/MinecraftServer.cpp
+        src/ConfigManager.cpp
         src/VarInt.cpp
         src/RSAKeypair.cpp
-        src/util/Endian.h
+        src/util/UUIDUtil.cpp
         src/player/Player.cpp
+        src/player/MojangProfile.cpp
         src/net/ByteBuffer.cpp
         src/net/Packet.cpp
         src/net/PacketHandler.cpp
@@ -33,8 +36,13 @@ add_executable(mccpp
         src/net/login/LoginPacketHandler.cpp
         src/net/login/in/PacketLoginInLoginStart.cpp
         src/net/login/in/PacketLoginInEncryptionResponse.cpp
+        src/net/login/in/PacketLoginInLoginAcknowledged.cpp
+        src/net/login/in/PacketLoginInLoginPluginRequest.cpp
         src/net/login/out/PacketLoginOutEncryptionRequest.cpp
         src/net/login/out/PacketLoginOutDisconnect.cpp
+        src/net/login/out/PacketLoginOutLoginSuccess.cpp
+        src/net/login/out/PacketLoginOutLoginPluginResponse.cpp
+        src/net/configuration/ConfigurationPacketHandler.cpp
 )
 
-target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl panzi-portable-endian::panzi-portable-endian)
+target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl panzi-portable-endian::panzi-portable-endian toml11::toml11)
