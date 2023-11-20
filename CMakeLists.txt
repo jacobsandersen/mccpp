@@ -10,6 +10,8 @@ find_package(stduuid REQUIRED)
 find_package(CURL REQUIRED)
 find_package(panzi-portable-endian REQUIRED)
 find_package(toml11 REQUIRED)
+find_package(glog REQUIRED)
+find_package(ZLIB REQUIRED)
 
 add_executable(mccpp
         src/main.cpp
@@ -45,4 +47,4 @@ add_executable(mccpp
         src/net/configuration/ConfigurationPacketHandler.cpp
 )
 
-target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl panzi-portable-endian::panzi-portable-endian toml11::toml11)
+target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl panzi-portable-endian::panzi-portable-endian toml11::toml11 glog::glog ZLIB::ZLIB)
