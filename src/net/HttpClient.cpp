@@ -4,16 +4,11 @@
 #include "HttpClient.h"
 
 static size_t write_body(void *contents, size_t size, size_t nmemb, std::string *s) {
-    std::cout << "size: " << size << "; nmemb: " << nmemb << std::endl;
-    for (int i = 0; i < size*nmemb; i++) {
-        std::cout << static_cast<char*>(contents)[i] << std::endl;
-    }
-
     s->append(static_cast<char *>(contents), size*nmemb);
     return size*nmemb;
 }
 
-bool HttpClient::get_url(const string& url, const map<string, string>& query_params, std::string *resp_body) {
+bool HttpClient::get_url(const string& url, const map<string, string>& query_params, std::string *resp_body, int64_t *resp_code) {
     CURL *curl = curl_easy_init();
     if (!curl) {
         return false;
@@ -33,12 +28,22 @@ bool HttpClient::get_url(const string& url, const map<string, string>& query_par
         }
     }
 
+    std::cout << os.str() << std::endl;
+
     CURLcode res;
     curl_easy_setopt(curl, CURLOPT_URL, os.str().data());
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_body);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp_body);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+
+    if (resp_body != nullptr) {
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_body);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, resp_body);
+    }
+
     res = curl_easy_perform(curl);
+
+    if (resp_code != nullptr) {
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, resp_code);
+    }
+
     curl_easy_cleanup(curl);
 
     return res == CURLE_OK;

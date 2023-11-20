@@ -5,6 +5,7 @@
 #include "PacketLoginInLoginStart.h"
 #include "../out/PacketLoginOutEncryptionRequest.h"
 #include "../../../MinecraftServer.h"
+#include "../out/PacketLoginOutDisconnect.h"
 
 void
 PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
@@ -34,7 +35,7 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const s
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<int8_t> dist(std::numeric_limits<int8_t>::min(), std::numeric_limits<int8_t>::max());
+    std::uniform_int_distribution<uint8_t> dist(0, std::numeric_limits<uint8_t>::max());
 
     std::vector<uint8_t> verify_token;
     for (int i = 0; i < VERIFY_TOKEN_SIZE; i++) {
@@ -46,9 +47,9 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const s
     PacketLoginOutEncryptionRequest resp(
             "",
             static_cast<int32_t>(encoded_public_key.size()),
-            reinterpret_cast<int8_t*>(encoded_public_key.data()),
+            encoded_public_key.data(),
             VERIFY_TOKEN_SIZE,
-            reinterpret_cast<int8_t*>(verify_token.data()));
+            verify_token.data());
 
     resp.send(conn);
 }

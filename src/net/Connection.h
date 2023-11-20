@@ -3,8 +3,10 @@
 
 #include <asio.hpp>
 #include <uuid.h>
+#include <deque>
+#include <cryptopp/modes.h>
 
-#define VERIFY_TOKEN_SIZE 12
+#define VERIFY_TOKEN_SIZE 4
 #define SHARED_SECRET_SIZE 16
 
 enum class ConnectionState {
@@ -35,16 +37,24 @@ public:
 
     void set_shared_secret(const std::vector<uint8_t> &sharedSecret);
 
+    [[nodiscard]] bool get_encrypt_packets() const;
+
+    void enable_encryption();
+
     [[nodiscard]] const std::shared_ptr<uuids::uuid> &get_unique_id() const;
 
     void set_unique_id(const std::shared_ptr<uuids::uuid> &unique_id);
+
+    std::deque<uint8_t> encrypt_bytes(std::deque<uint8_t> bytes);
 private:
     asio::ip::tcp::socket m_socket;
     asio::streambuf m_buffer{};
     ConnectionState m_state = ConnectionState::Handshaking;
     std::vector<uint8_t> m_verify_token{};
     std::vector<uint8_t> m_shared_secret{};
+    bool m_encrypt_packets{};
     std::shared_ptr<uuids::uuid> m_unique_id{};
+    CryptoPP::CFB_Mode_ExternalCipher::Encryption m_cfb_stream_cipher{};
 };
 
 #endif

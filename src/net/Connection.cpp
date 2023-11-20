@@ -1,5 +1,7 @@
 #include "Connection.h"
-#include "../MinecraftServer.h"
+#include <cryptopp/aes.h>
+#include <cryptopp/filters.h>
+#include <iostream>
 
 asio::ip::tcp::socket *Connection::get_socket() {
     return &m_socket;
@@ -39,4 +41,42 @@ const std::shared_ptr<uuids::uuid> &Connection::get_unique_id() const {
 
 void Connection::set_unique_id(const std::shared_ptr<uuids::uuid> &unique_id) {
     m_unique_id = unique_id;
+}
+
+bool Connection::get_encrypt_packets() const {
+    return m_encrypt_packets;
+}
+
+std::deque<uint8_t> Connection::encrypt_bytes(std::deque<uint8_t> bytes) {
+    if (!get_encrypt_packets()) {
+        return bytes;
+    }
+
+    auto enc_bytes_tmp = std::vector<uint8_t>{};
+
+    CryptoPP::VectorSource src(std::vector(bytes.begin(), bytes.end()), true,
+                               new CryptoPP::StreamTransformationFilter(
+                                       m_cfb_stream_cipher,
+                                       new CryptoPP::VectorSink(enc_bytes_tmp)));
+
+    auto enc_bytes = std::deque<uint8_t>();
+    for (uint8_t byte : enc_bytes_tmp) {
+        enc_bytes.push_back(byte);
+    }
+
+    return enc_bytes;
+}
+
+void Connection::enable_encryption() {
+    if (m_encrypt_packets) {
+        return;
+    }
+
+    m_encrypt_packets = true;
+
+    std::vector<uint8_t> shared_secret_vec = get_shared_secret();
+    CryptoPP::SecByteBlock shared_secret(shared_secret_vec.data(), shared_secret_vec.size());
+
+    auto aes = new CryptoPP::AES::Encryption(shared_secret, SHARED_SECRET_SIZE);
+    m_cfb_stream_cipher = CryptoPP::CFB_Mode_ExternalCipher::Encryption(*aes, shared_secret, 1);
 }

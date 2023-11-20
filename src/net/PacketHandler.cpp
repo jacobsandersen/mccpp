@@ -64,6 +64,14 @@ void PacketHandler::handle_packet(const std::shared_ptr<Connection> &conn, size_
 
 void PacketHandler::send_packet(const std::shared_ptr<Connection> &conn, std::unique_ptr<Packet> packet) {
     std::deque<uint8_t> data = packet->pack()->get_data();
+
+    if (conn->get_encrypt_packets()) {
+        std::cout << "send_packet: encrypting packet" << std::endl;
+        data = conn->encrypt_bytes(data);
+    }
+
+    std::cout << "writing packet to network" << std::endl;
+
     asio::async_write(
             *conn->get_socket(),
             asio::buffer(std::vector(data.begin(), data.end())),

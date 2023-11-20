@@ -7,7 +7,7 @@
 
 template <typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type
-static write_buffer(std::deque<uint8_t>& buffer, T value) {
+ByteBuffer::write_buffer(std::deque<uint8_t>& buffer, T value) {
     buffer.insert(
             buffer.end(),
             reinterpret_cast<uint8_t*>(&value),
@@ -15,22 +15,60 @@ static write_buffer(std::deque<uint8_t>& buffer, T value) {
 }
 
 template <typename T>
-typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
-static read_buffer(std::deque<uint8_t>& buffer) {
+typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type
+ByteBuffer::write_buffer(std::deque<uint8_t>& buffer, T value, uint32_t offset) {
     size_t size = sizeof(T);
+    offset = offset * size;
 
-    if (buffer.empty() || buffer.size() < size) {
+    if (buffer.size() < offset + size) {
+        buffer.resize(offset + size);
+    }
+
+    std::memcpy(&buffer[offset], reinterpret_cast<uint8_t*>(&value), size);
+
+}
+
+template <typename T>
+typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
+static read_or_peek_buffer(std::deque<uint8_t>& buffer, uint32_t offset, bool erase) {
+    size_t size = sizeof(T);
+    offset = offset * size;
+
+    if (buffer.empty() || buffer.size() < offset + size) {
         throw std::runtime_error("Buffer too small");
     }
 
     T value;
-    std::memcpy(&value, &buffer[0], size);
+    std::memcpy(&value, &buffer[offset], size);
 
-    buffer.erase(buffer.begin(), buffer.begin() + static_cast<std::ptrdiff_t>(size));
+    if (erase) buffer.erase(buffer.begin() + offset, buffer.begin() + offset + static_cast<std::ptrdiff_t>(size));
 
     return value;
 }
 
+template <typename T>
+typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
+ByteBuffer::read_buffer(std::deque<uint8_t>& buffer, uint32_t offset) {
+    return read_or_peek_buffer<T>(buffer, offset, true);
+}
+
+template <typename T>
+typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
+ByteBuffer::read_buffer(std::deque<uint8_t>& buffer) {
+    return read_buffer<T>(buffer, 0);
+}
+
+template <typename T>
+typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
+ByteBuffer::peek_buffer(std::deque<uint8_t>& buffer, uint32_t offset) {
+    return read_or_peek_buffer<T>(buffer, offset, false);
+}
+
+template <typename T>
+typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type
+ByteBuffer::peek_buffer(std::deque<uint8_t>& buffer) {
+    return peek_buffer<T>(buffer, 0);
+}
 
 void ByteBuffer::write_boolean(bool value) {
     write_buffer(m_data, value ? 0x01 : 0x00);
@@ -46,6 +84,14 @@ void ByteBuffer::write_byte(int8_t value) {
 
 int8_t ByteBuffer::read_byte() {
     return read_buffer<int8_t>(m_data);
+}
+
+int8_t ByteBuffer::peek_byte() {
+    return peek_byte(0);
+}
+
+int8_t ByteBuffer::peek_byte(uint32_t offset) {
+    return peek_buffer<int8_t>(m_data, offset);
 }
 
 void ByteBuffer::write_bytes(const std::vector<int8_t>& bytes) {
@@ -74,8 +120,20 @@ void ByteBuffer::write_ubyte(uint8_t value) {
     write_buffer(m_data, value);
 }
 
+void ByteBuffer::write_ubyte(uint8_t value, uint32_t offset) {
+    write_buffer(m_data, value, offset);
+}
+
 uint8_t ByteBuffer::read_ubyte() {
     return read_buffer<uint8_t>(m_data);
+}
+
+uint8_t ByteBuffer::peek_ubyte() {
+    return peek_ubyte(0);
+}
+
+uint8_t ByteBuffer::peek_ubyte(uint32_t offset) {
+    return peek_buffer<uint8_t>(m_data, offset);
 }
 
 void ByteBuffer::write_ubytes(const std::vector<uint8_t>& ubytes) {

@@ -13,15 +13,27 @@ class ByteBuffer {
 public:
     ByteBuffer() : m_data(std::deque<uint8_t>()) {}
 
+    template <typename T> typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type write_buffer(std::deque<uint8_t>& buffer, T value);
+    template <typename T> typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type write_buffer(std::deque<uint8_t>& buffer, T value, uint32_t offset);
+    template <typename T> typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type read_buffer(std::deque<uint8_t>& buffer, uint32_t offset);
+    template <typename T> typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type read_buffer(std::deque<uint8_t>& buffer);
+    template <typename T> typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type peek_buffer(std::deque<uint8_t>& buffer, uint32_t offset);
+    template <typename T> typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, T>::type peek_buffer(std::deque<uint8_t>& buffer);
+
     void write_boolean(bool);
     bool read_boolean();
     void write_byte(int8_t);
     int8_t read_byte();
+    int8_t peek_byte();
+    int8_t peek_byte(uint32_t index);
     void write_bytes(const std::vector<int8_t>&);
     void write_bytes(const int8_t*, size_t);
     std::vector<int8_t> read_bytes(uint8_t);
     void write_ubyte(uint8_t);
+    void write_ubyte(uint8_t, uint32_t);
     uint8_t read_ubyte();
+    uint8_t peek_ubyte();
+    uint8_t peek_ubyte(uint32_t index);
     void write_ubytes(const std::vector<uint8_t>&);
     void write_ubytes(const uint8_t*, size_t);
     std::vector<uint8_t> read_ubytes(uint8_t);

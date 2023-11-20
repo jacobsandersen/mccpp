@@ -8,7 +8,7 @@ using std::string, std::map;
 
 class HttpClient {
 public:
-    static bool get_url(const string& url, const map<string, string>& query_params, std::string *resp_body);
+    static bool get_url(const string&, const map<string, string>&, std::string*, int64_t*);
 };
 
 

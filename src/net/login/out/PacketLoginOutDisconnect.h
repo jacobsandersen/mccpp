@@ -1,7 +1,6 @@
 #ifndef MCCPP_PACKETLOGINOUTDISCONNECT_H
 #define MCCPP_PACKETLOGINOUTDISCONNECT_H
 
-
 #include <string>
 #include <memory>
 #include <utility>
