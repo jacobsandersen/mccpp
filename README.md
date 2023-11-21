@@ -33,3 +33,7 @@ compression, but that shouldn't be hard. Investigating configuration state now.
 ## Update 11/21/23 0224 PDT
 
 Full network rewrite. Handles packet compression/decompression.
+
+## Update 11/21/23 0254 PDT
+
+Handle the two sent configuration packets. I need to write NBT processing tools to send registry data to proceed.
