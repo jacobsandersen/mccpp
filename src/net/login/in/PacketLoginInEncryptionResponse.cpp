@@ -53,14 +53,12 @@ std::string mcHexDigest(const std::string &hashIn) {
 }
 
 void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &conn,
-                                             const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
+                                             const std::unique_ptr<ByteBuffer> &buffer) {
     int32_t shared_secret_length = buffer->read_varint();
     std::vector<uint8_t> shared_secret = buffer->read_ubytes(shared_secret_length);
 
     int32_t verify_token_length = buffer->read_varint();
     std::vector<uint8_t> verify_token = buffer->read_ubytes(verify_token_length);
-
-    *bytes_available = buffer->get_data_length();
 
     RSAKeypair keypair = MinecraftServer::get_server()->get_rsa_keypair();
 

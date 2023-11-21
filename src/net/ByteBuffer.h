@@ -9,7 +9,6 @@
 #include <deque>
 #include <vector>
 #include <uuid.h>
-#include "Connection.h"
 
 class ByteBuffer {
 public:
@@ -125,13 +124,17 @@ public:
 
     void write_uuid(uuids::uuid unique_id);
 
+    void append(const ByteBuffer& buffer);
+
     [[nodiscard]] std::deque<uint8_t> get_data() const;
+
+    void set_data(std::deque<uint8_t> data);
 
     [[nodiscard]] uint32_t get_data_length() const;
 
-    void encrypt_buffer(const std::shared_ptr<Connection> &);
+    int compress_buffer();
 
-    void decrypt_buffer(const std::shared_ptr<Connection> &);
+    int decompress_buffer();
 
 private:
     std::deque<uint8_t> m_data;

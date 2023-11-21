@@ -4,8 +4,9 @@
 #include "../../../MinecraftServer.h"
 
 void
-PacketStatusInStatusRequest::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer,
-                                    size_t *bytes_available) {
+PacketStatusInStatusRequest::handle(const std::shared_ptr<Connection> &conn,
+                                    const std::unique_ptr<ByteBuffer> &buffer) {
+
     MinecraftServer *server = MinecraftServer::get_server();
     toml::value server_config = server->get_config_manager().get_server_config();
 

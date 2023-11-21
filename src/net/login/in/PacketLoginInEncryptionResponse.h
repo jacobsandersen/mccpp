@@ -9,10 +9,11 @@
 #include <memory>
 #include "../../Connection.h"
 #include "../../ByteBuffer.h"
+#include "../../InboundPacket.h"
 
-class PacketLoginInEncryptionResponse {
+class PacketLoginInEncryptionResponse : public InboundPacket {
 public:
-    static void handle(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &, size_t *);
+    void handle(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &) override;
 };
 
 

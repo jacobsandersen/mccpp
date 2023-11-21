@@ -5,11 +5,11 @@
 #ifndef MCCPP_PACKETSTATUSINSTATUSREQUEST_H
 #define MCCPP_PACKETSTATUSINSTATUSREQUEST_H
 
-#include "../../Packet.h"
+#include "../../InboundPacket.h"
 
-class PacketStatusInStatusRequest {
+class PacketStatusInStatusRequest : public InboundPacket {
 public:
-    static void handle(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &, size_t *);
+    void handle(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &) override;
 };
 
 

@@ -5,13 +5,13 @@
 #include <memory>
 #include <utility>
 #include "../../Connection.h"
+#include "../../OutboundPacket.h"
 
-class PacketLoginOutDisconnect {
+class PacketLoginOutDisconnect : public OutboundPacket {
 public:
-    explicit PacketLoginOutDisconnect(std::string reason) : m_reason(std::move(reason)) {}
+    explicit PacketLoginOutDisconnect(std::string reason) : OutboundPacket(0x00), m_reason(std::move(reason)) {}
 
-    void send(const std::shared_ptr<Connection> &) const;
-
+    void write_data(ByteBuffer&) override;
 private:
     std::string m_reason;
 };

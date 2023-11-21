@@ -24,28 +24,23 @@ add_executable(mccpp
         src/player/Player.cpp
         src/player/MojangProfile.cpp
         src/net/ByteBuffer.cpp
-        src/net/Packet.cpp
-        src/net/PacketHandler.cpp
         src/net/Connection.cpp
         src/net/NetworkManager.cpp
         src/net/HttpClient.cpp
-        src/net/handshaking/HandshakingPacketHandler.cpp
+        src/net/OutboundPacket.cpp
         src/net/handshaking/in/PacketHandshakingInHandshake.cpp
-        src/net/status/StatusPacketHandler.cpp
         src/net/status/in/PacketStatusInStatusRequest.cpp
         src/net/status/in/PacketStatusInPingRequest.cpp
         src/net/status/out/PacketStatusOutStatusResponse.cpp
         src/net/status/out/PacketStatusOutPingResponse.cpp
-        src/net/login/LoginPacketHandler.cpp
         src/net/login/in/PacketLoginInLoginStart.cpp
         src/net/login/in/PacketLoginInEncryptionResponse.cpp
         src/net/login/in/PacketLoginInLoginAcknowledged.cpp
-        src/net/login/in/PacketLoginInLoginPluginRequest.cpp
+        src/net/login/in/PacketLoginInLoginPluginResponse.cpp
         src/net/login/out/PacketLoginOutEncryptionRequest.cpp
         src/net/login/out/PacketLoginOutDisconnect.cpp
         src/net/login/out/PacketLoginOutLoginSuccess.cpp
-        src/net/login/out/PacketLoginOutLoginPluginResponse.cpp
-        src/net/configuration/ConfigurationPacketHandler.cpp
+        src/net/login/out/PacketLoginOutLoginPluginRequest.cpp
 )
 
 target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl

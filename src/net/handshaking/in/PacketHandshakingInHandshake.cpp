@@ -1,9 +1,8 @@
 #include "PacketHandshakingInHandshake.h"
 #include <glog/logging.h>
 
-void
-PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer,
-                                     size_t *bytes_available) {
+void PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &conn,
+                                          const std::unique_ptr<ByteBuffer> &buffer) {
     int32_t protocol_version = buffer->read_varint();
     LOG(INFO) << "Protocol version: " << protocol_version;
 
@@ -19,11 +18,4 @@ PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &conn, co
 
     LOG(INFO) << "Setting connection state to " << next_state << "...";
     conn->set_state(static_cast<ConnectionState>(next_state));
-
-    *bytes_available = buffer->get_data_length();
-}
-
-void PacketHandshakingInHandshake::handle_legacy(const std::shared_ptr<Connection> &conn,
-                                                 const std::unique_ptr<ByteBuffer> &buffer, size_t *bytes_available) {
-
 }

@@ -5,13 +5,11 @@
 #ifndef MCCPP_PACKETHANDSHAKINGINHANDSHAKE_H
 #define MCCPP_PACKETHANDSHAKINGINHANDSHAKE_H
 
-#include "../../Packet.h"
+#include "../../InboundPacket.h"
 
-class PacketHandshakingInHandshake {
+class PacketHandshakingInHandshake : public InboundPacket {
 public:
-    static void handle(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &, size_t *);
-
-    static void handle_legacy(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &, size_t *);
+    void handle(const std::shared_ptr<Connection> &, const std::unique_ptr<ByteBuffer> &) override;
 };
 
 

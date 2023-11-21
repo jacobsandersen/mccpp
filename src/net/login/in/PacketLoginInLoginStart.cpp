@@ -8,8 +8,7 @@
 #include "../out/PacketLoginOutDisconnect.h"
 
 void
-PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer,
-                                size_t *bytes_available) {
+PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer) {
     std::string username = buffer->read_string();
     LOG(INFO) << "Username: " << username;
 
@@ -21,8 +20,6 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection> &conn, const s
 
     Player player(conn, username, unique_id_ptr);
     MinecraftServer::get_server()->add_player(std::make_shared<Player>(player));
-
-    *bytes_available = buffer->get_data_length();
 
     // below, encryption request
     // TODO: move this elsewhere, clean up verify token creation

@@ -1,14 +1,19 @@
 #include "Connection.h"
+#include <glog/logging.h>
 #include <cryptopp/aes.h>
 #include <cryptopp/filters.h>
 #include <iostream>
 
-asio::ip::tcp::socket *Connection::get_socket() {
+asio::ip::tcp::socket* Connection::get_socket() {
     return &m_socket;
 }
 
-asio::streambuf *Connection::get_buffer() {
-    return &m_buffer;
+ByteBuffer& Connection::get_data_buffer() {
+    return m_data_buffer;
+}
+
+BufferReadContext& Connection::get_read_context() {
+    return m_read_context;
 }
 
 ConnectionState Connection::get_state() const {
@@ -17,6 +22,14 @@ ConnectionState Connection::get_state() const {
 
 void Connection::set_state(ConnectionState state) {
     m_state = state;
+}
+
+const std::shared_ptr<uuids::uuid> &Connection::get_unique_id() const {
+    return m_unique_id;
+}
+
+void Connection::set_unique_id(const std::shared_ptr<uuids::uuid> &unique_id) {
+    m_unique_id = unique_id;
 }
 
 const std::vector<uint8_t> &Connection::get_verify_token() const {
@@ -35,16 +48,31 @@ void Connection::set_shared_secret(const std::vector<uint8_t> &sharedSecret) {
     m_shared_secret = sharedSecret;
 }
 
-const std::shared_ptr<uuids::uuid> &Connection::get_unique_id() const {
-    return m_unique_id;
+bool Connection::get_compress_packets() const {
+    return m_compress_packets;
 }
 
-void Connection::set_unique_id(const std::shared_ptr<uuids::uuid> &unique_id) {
-    m_unique_id = unique_id;
+void Connection::enable_compression() {
+    m_compress_packets = true;
 }
 
 bool Connection::get_encrypt_packets() const {
     return m_encrypt_packets;
+}
+
+void Connection::enable_encryption() {
+    if (m_encrypt_packets) {
+        return;
+    }
+
+    m_encrypt_packets = true;
+
+    std::vector<uint8_t> shared_secret_vec = get_shared_secret();
+    CryptoPP::SecByteBlock shared_secret(shared_secret_vec.data(), shared_secret_vec.size());
+
+    auto aes = new CryptoPP::AES::Encryption(shared_secret, SHARED_SECRET_SIZE);
+    m_cfb_stream_cipher_encryption = CryptoPP::CFB_Mode_ExternalCipher::Encryption(*aes, shared_secret, 1);
+    m_cfb_stream_cipher_decryption = CryptoPP::CFB_Mode_ExternalCipher::Decryption(*aes, shared_secret, 1);
 }
 
 std::deque<uint8_t> Connection::encrypt_bytes(std::deque<uint8_t> bytes) {
@@ -85,19 +113,4 @@ std::deque<uint8_t> Connection::decrypt_bytes(std::deque<uint8_t> enc_bytes) {
     }
 
     return bytes;
-}
-
-void Connection::enable_encryption() {
-    if (m_encrypt_packets) {
-        return;
-    }
-
-    m_encrypt_packets = true;
-
-    std::vector<uint8_t> shared_secret_vec = get_shared_secret();
-    CryptoPP::SecByteBlock shared_secret(shared_secret_vec.data(), shared_secret_vec.size());
-
-    auto aes = new CryptoPP::AES::Encryption(shared_secret, SHARED_SECRET_SIZE);
-    m_cfb_stream_cipher_encryption = CryptoPP::CFB_Mode_ExternalCipher::Encryption(*aes, shared_secret, 1);
-    m_cfb_stream_cipher_decryption = CryptoPP::CFB_Mode_ExternalCipher::Decryption(*aes, shared_secret, 1);
 }
