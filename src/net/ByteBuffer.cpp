@@ -1,3 +1,4 @@
+#include <glog/logging.h>
 #include <stdexcept>
 #include <cstring>
 #include <utility>
@@ -339,6 +340,8 @@ uint32_t ByteBuffer::get_data_length() const {
     return m_data.size();
 }
 
+#define COMPRESSION_CHUNK 4096
+
 int ByteBuffer::compress_buffer() {
     z_stream stream;
     stream.zalloc = Z_NULL;
@@ -383,12 +386,15 @@ int ByteBuffer::compress_buffer() {
 }
 
 int ByteBuffer::decompress_buffer() {
+    LOG(INFO) << "Decompressing buffer...";
+
     z_stream stream;
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
     stream.opaque = Z_NULL;
 
     if (inflateInit(&stream) != Z_OK) {
+        LOG(WARNING) << "Inflate initialization failed";
         return -1;
     }
 
@@ -397,13 +403,19 @@ int ByteBuffer::decompress_buffer() {
     stream.next_in = input_bytes.data();
     stream.avail_in = input_bytes.size();
 
-    std::vector<uint8_t> output_bytes(input_bytes.size());
-    do {
-        stream.next_out = output_bytes.data() + stream.total_out;
-        stream.avail_out = output_bytes.size() - stream.total_out;
+    LOG(INFO) << "Set up the next_in and avail_in variables";
 
+    std::vector<uint8_t> output_bytes(input_bytes.size() * 2);
+    do {
+        LOG(INFO) << " Iterating. Setting next_out and avail_out.";
+
+        stream.next_out = output_bytes.data() + stream.total_out;
+        stream.avail_out = output_bytes.capacity() - stream.total_out;
+
+        LOG(INFO) << " Inflating...";
         if (inflate(&stream, Z_NO_FLUSH) == Z_STREAM_ERROR) {
-            deflateEnd(&stream);
+            LOG(WARNING) << "Inflate failed. Stopping decompression.";
+            inflateEnd(&stream);
             return -1;
         }
 
@@ -412,14 +424,20 @@ int ByteBuffer::decompress_buffer() {
         }
     } while (stream.avail_in > 0);
 
+    LOG(INFO) << "Done decompressing. Total out = " << stream.total_out;
+
     inflateEnd(&stream);
     output_bytes.resize(stream.total_out);
+
+    LOG(INFO) << "Replacing bytes in buffer...";
 
     m_data.clear();
 
     for (uint8_t byte : output_bytes) {
         m_data.push_back(byte);
     }
+
+    LOG(INFO) << "Done decompressing.";
 
     return 0;
 }

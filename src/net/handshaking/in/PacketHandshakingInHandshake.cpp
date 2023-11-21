@@ -3,6 +3,8 @@
 
 void PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection> &conn,
                                           const std::unique_ptr<ByteBuffer> &buffer) {
+    LOG(INFO) << "Received a Handshake";
+
     int32_t protocol_version = buffer->read_varint();
     LOG(INFO) << "Protocol version: " << protocol_version;
 

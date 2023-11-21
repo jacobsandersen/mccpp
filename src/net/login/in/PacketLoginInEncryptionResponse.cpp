@@ -1,12 +1,14 @@
 #include <cryptopp/hex.h>
 #include <json/value.h>
 #include <json/reader.h>
+#include <glog/logging.h>
 #include "PacketLoginInEncryptionResponse.h"
 #include "../../../MinecraftServer.h"
 #include "../out/PacketLoginOutDisconnect.h"
 #include "../../HttpClient.h"
 #include "../../../util/UUIDUtil.h"
 #include "../out/PacketLoginOutLoginSuccess.h"
+#include "../out/PacketLoginOutSetCompression.h"
 
 #define SESSION_URL "https://sessionserver.mojang.com/session/minecraft/hasJoined"
 
@@ -54,11 +56,15 @@ std::string mcHexDigest(const std::string &hashIn) {
 
 void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &conn,
                                              const std::unique_ptr<ByteBuffer> &buffer) {
+    LOG(INFO) << "Received encryption response";
+
     int32_t shared_secret_length = buffer->read_varint();
     std::vector<uint8_t> shared_secret = buffer->read_ubytes(shared_secret_length);
 
     int32_t verify_token_length = buffer->read_varint();
     std::vector<uint8_t> verify_token = buffer->read_ubytes(verify_token_length);
+
+    LOG(INFO) << "Read encryption response data";
 
     RSAKeypair keypair = MinecraftServer::get_server()->get_rsa_keypair();
 
@@ -70,14 +76,22 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
     conn->set_shared_secret(decrypted_shared_secret);
     conn->enable_encryption();
 
+    LOG(INFO) << "Decrypted verify token and shared secret. Encryption enabled.";
+
     if (decrypted_verify_token != conn->get_verify_token()) {
+        LOG(WARNING) << "Client failed verify token. Sending disconnect.";
+
         auto pkt = new PacketLoginOutDisconnect("Verify token incorrect. Your client is broken.");
         pkt->send(conn);
         delete pkt;
         return;
     }
 
+    LOG(INFO) << "Getting their Player entry";
+
     std::shared_ptr<Player> player = MinecraftServer::get_server()->get_player(conn->get_unique_id());
+
+    LOG(INFO) << "Generating Minecraft hex digest";
 
     std::string hash;
     CryptoPP::SHA1 sha1;
@@ -89,6 +103,8 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
 
     std::string finalDigest = mcHexDigest(hash);
 
+    LOG(INFO) << "Digest generated. Authenticating user with Mojang.";
+
     std::map<std::string, std::string> params;
     params.insert({"username", player->get_username()});
     params.insert({"serverId", finalDigest});
@@ -97,18 +113,27 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
     int64_t resp_code{};
     bool request_status = HttpClient::get_url(SESSION_URL, params, &resp_body, &resp_code);
     if (!request_status || resp_code != 200) {
+        LOG(WARNING) << "User failed Mojang authentication. Sending disconnect.";
+
         PacketLoginOutDisconnect pkt("Failed to register your session with Mojang. Try again later.");
         pkt.send(conn);
         return;
     }
 
+    LOG(INFO) << "Parsing Mojang response.";
+
     Json::Value resp_json;
     Json::Reader reader;
     if (!reader.parse(resp_body, resp_json)) {
+        LOG(WARNING) << "Failed to parse Mojang's response. Malformed?";
+        LOG(WARNING) << "Failed body: " << resp_body;
+
         PacketLoginOutDisconnect pkt("Failed to parse Mojang's response. Mojang issue? Try again later.");
         pkt.send(conn);
         return;
     }
+
+    LOG(INFO) << "Parsing Mojang Profile...";
 
     std::vector<MojangProfileProperty> properties;
     for (auto property: resp_json["properties"]) {
@@ -120,10 +145,14 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
         properties.emplace_back(property["name"].asString(), property["value"].asString(), signature);
     }
 
+    LOG(INFO) << "Canonicalizing the UUID...";
+
     std::string canonicalized_unique_id = UUIDUtil::canonicalize_uuid(resp_json["id"].asString());
 
     auto maybe_unique_id = uuids::uuid::from_string(canonicalized_unique_id);
     if (!maybe_unique_id.has_value()) {
+        LOG(WARNING) << "Failed to canonicalize the UUID! Malformed?";
+        LOG(WARNING) << "Failed UUID: " << resp_json["id"].asString();
         PacketLoginOutDisconnect pkt("Failed to parse your UUID. Try again later.");
         pkt.send(conn);
         return;
@@ -133,8 +162,22 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection> &
 
     MojangProfile profile(unique_id, resp_json["name"].asString(), properties);
 
+    LOG(INFO) << "Mojang Profile successfully parsed. Adding to Player object.";
+
     player->set_mojang_profile(std::make_shared<MojangProfile>(profile));
 
+    toml::value server_config = MinecraftServer::get_server()->get_config_manager().get_server_config();
+    int16_t compression_threshold = toml::find<int16_t>(server_config, "compression_threshold");
+    if (compression_threshold >= 0) {
+        LOG(INFO) << "OK. Enabling packet compression.";
+        PacketLoginOutSetCompression set_compression{};
+        set_compression.send(conn);
+        conn->enable_compression();
+    } else {
+        LOG(INFO) << "Skipping packet compression.";
+    }
+
+    LOG(INFO) << "OK. Sending login success.";
     PacketLoginOutLoginSuccess resp(unique_id, player->get_username(), properties);
     resp.send(conn);
 }

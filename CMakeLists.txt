@@ -41,6 +41,7 @@ add_executable(mccpp
         src/net/login/out/PacketLoginOutDisconnect.cpp
         src/net/login/out/PacketLoginOutLoginSuccess.cpp
         src/net/login/out/PacketLoginOutLoginPluginRequest.cpp
+        src/net/login/out/PacketLoginOutSetCompression.cpp
 )
 
 target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl

@@ -4,6 +4,7 @@
 
 #include <glog/logging.h>
 #include "NetworkManager.h"
+#include "../VarInt.h"
 
 void NetworkManager::start() {
     start_accept();
@@ -98,6 +99,8 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection> &conn) {
                 return;
             }
 
+            LOG(INFO) << "Main buffer still contains " << buffer.get_data_length() << " bytes.";
+
             if (conn->get_compress_packets()) {
                 LOG(INFO) << "Packet compression is enabled. Next state -> ReadDataLength";
                 ctx.read_state = BufferReadState::ReadDataLength;
@@ -105,7 +108,8 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection> &conn) {
                 LOG(INFO) << "Packet compression not enabled. Copying data into temporary buffer.";
                 ctx.partial_buffer = std::make_unique<ByteBuffer>();
                 ctx.partial_buffer->write_ubytes(buffer.read_ubytes(*ctx.packet_length));
-                LOG(INFO) << "Temporary buffer created. Size = " << ctx.partial_buffer->get_data_length() << ". Next state -> ReadPacketId";
+                LOG(INFO) << "Temporary buffer created. Size = " << ctx.partial_buffer->get_data_length() << ".";
+                LOG(INFO) << "Main buffer still contains " << buffer.get_data_length() << " bytes. Next state -> ReadPacketId";
                 ctx.read_state = BufferReadState::ReadPacketId;
             }
 
@@ -128,15 +132,19 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection> &conn) {
                 return;
             }
 
+            LOG(INFO) << "Main buffer still contains " << buffer.get_data_length() << " bytes.";
+
             ctx.partial_buffer = std::make_unique<ByteBuffer>();
 
+            LOG(INFO) << "Copying real packet length (" << *ctx.packet_length - VarInt::encoding_length(*ctx.data_length) << ") bytes to temporary buffer.";
+            ctx.partial_buffer->write_ubytes(buffer.read_ubytes(*ctx.packet_length - VarInt::encoding_length(*ctx.data_length)));
+            LOG(INFO) << "Main buffer still contains " << buffer.get_data_length() << " bytes. Next state -> ReadPacketId";
+
             if (*ctx.data_length == 0) {
-                LOG(INFO) << "Data length == 0: Buffer not actually compressed. Copying packet length (" << *ctx.packet_length << ") bytes to temporary buffer. Next state -> ReadPacketId";
-                ctx.partial_buffer->write_ubytes(buffer.read_ubytes(*ctx.packet_length));
+                LOG(INFO) << "Data length == 0: Buffer not actually compressed. Next state -> ReadPacketId";
                 ctx.read_state = BufferReadState::ReadPacketId;
             } else {
-                LOG(INFO) << "Data length > 0: Buffer is compressed. Copying data length (" << *ctx.data_length << ") bytes to temporary buffer. Next state -> DecompressData";
-                ctx.partial_buffer->write_ubytes(buffer.read_ubytes(*ctx.data_length));
+                LOG(INFO) << "Data length > 0: Buffer is compressed. Next state -> DecompressData";
                 ctx.read_state = BufferReadState::DecompressData;
             }
 
@@ -149,7 +157,9 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection> &conn) {
 
         case BufferReadState::DecompressData: {
             LOG(INFO) << "In DecompressData state";
+            LOG(INFO) << "Temporary buffer before decompression size = " << ctx.partial_buffer->get_data_length() << " bytes";
             ctx.partial_buffer->decompress_buffer();
+            LOG(INFO) << "Temporary buffer after decompression size = " << ctx.partial_buffer->get_data_length() << " bytes";
             LOG(INFO) << "Data decompressed. Next state -> ReadPacketId";
             ctx.read_state = BufferReadState::ReadPacketId;
             LOG(INFO) << "DecompressData state finished. Recursing.";
