@@ -37,3 +37,7 @@ Full network rewrite. Handles packet compression/decompression.
 ## Update 11/21/23 0254 PDT
 
 Handle the two sent configuration packets. I need to write NBT processing tools to send registry data to proceed.
+
+## Update 11/22/23 0352 PDT
+
+NBT abstract syntax and builder created. Builder could use some work to be more fluent. Next, NBT serde.
