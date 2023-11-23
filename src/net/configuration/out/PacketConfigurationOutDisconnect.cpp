@@ -1,11 +1,10 @@
-#include <iostream>
 #include <json/value.h>
 #include <json/writer.h>
-#include "PacketLoginOutDisconnect.h"
+#include "PacketConfigurationOutDisconnect.h"
 
-void PacketLoginOutDisconnect::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
+void PacketConfigurationOutDisconnect::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
     Json::Value response;
-    response["text"] = "Disconnected during login: " + m_reason;
+    response["text"] = "Disconnected during configuration: " + m_reason;
     response["bold"] = true;
     response["color"] = "#D64045";
 

@@ -6,6 +6,7 @@
 #include <deque>
 #include <cryptopp/modes.h>
 #include "../ByteBuffer.h"
+#include "../BasicTimer.h"
 
 #define VERIFY_TOKEN_SIZE 4
 #define SHARED_SECRET_SIZE 16
@@ -36,7 +37,9 @@ struct BufferReadContext {
 
 class Connection {
 public:
-    explicit Connection(asio::io_context &context) : m_socket(context), m_read_context() {}
+    explicit Connection(asio::io_context &context) : m_context(context), m_socket(context), m_read_context() {}
+
+    asio::io_context &get_context() const;
 
     [[nodiscard]] asio::ip::tcp::socket *get_socket();
 
@@ -58,6 +61,12 @@ public:
 
     [[nodiscard]] const std::vector<uint8_t> &get_shared_secret() const;
 
+    void start_new_timer(std::chrono::seconds timeout, const std::function<void()>& callback);
+
+    [[nodiscard]] int64_t get_last_keep_alive_payload() const;
+
+    void set_last_keep_alive_payload(int64_t keep_alive_payload);
+
     void set_shared_secret(const std::vector<uint8_t> &sharedSecret);
 
     [[nodiscard]] bool get_compress_packets() const;
@@ -72,12 +81,15 @@ public:
 
     std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
 private:
+    asio::io_context& m_context;
     asio::ip::tcp::socket m_socket;
     ByteBuffer m_data_buffer{};
     BufferReadContext m_read_context{};
     ConnectionState m_state = ConnectionState::Handshaking;
     std::vector<uint8_t> m_verify_token{};
     std::vector<uint8_t> m_shared_secret{};
+    int64_t m_last_keep_alive_payload{};
+    std::unique_ptr<BasicTimer> m_timer{};
     bool m_compress_packets{};
     bool m_encrypt_packets{};
     std::shared_ptr<uuids::uuid> m_unique_id{};

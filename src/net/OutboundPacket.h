@@ -9,7 +9,7 @@ class OutboundPacket {
 public:
     explicit OutboundPacket(int32_t packet_id) : m_packet_id(packet_id) {}
 
-    virtual void write_data(ByteBuffer&) = 0;
+    virtual void write_data(const std::shared_ptr<Connection>&, ByteBuffer&) = 0;
 
     void send(const std::shared_ptr<Connection>&);
 private:

@@ -21,6 +21,7 @@ add_executable(mccpp
         src/VarInt.cpp
         src/RSAKeypair.cpp
         src/ByteBuffer.cpp
+        src/BasicTimer.cpp
         src/util/UUIDUtil.cpp
         src/player/Player.cpp
         src/player/MojangProfile.cpp
@@ -48,6 +49,9 @@ add_executable(mccpp
         src/net/login/out/PacketLoginOutSetCompression.cpp
         src/net/configuration/in/PacketConfigurationInClientInformation.cpp
         src/net/configuration/in/PacketConfigurationInPluginMessage.cpp
+        src/net/configuration/in/PacketConfigurationInKeepAlive.cpp
+        src/net/configuration/out/PacketConfigurationOutKeepAlive.cpp
+        src/net/configuration/out/PacketConfigurationOutDisconnect.cpp
 )
 
 target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl

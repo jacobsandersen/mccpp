@@ -1,6 +1,6 @@
 #include "PacketLoginOutLoginSuccess.h"
 
-void PacketLoginOutLoginSuccess::write_data(ByteBuffer &buffer) {
+void PacketLoginOutLoginSuccess::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
     if (m_username.length() > 16) {
         throw std::invalid_argument("Tried to send login success with username longer than 16 characters.");
     }

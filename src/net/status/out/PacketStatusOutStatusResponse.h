@@ -31,7 +31,7 @@ public:
             m_enforces_secure_chat(enforces_secure_chat),
             m_previews_chat(previews_chat) {}
 
-    void write_data(ByteBuffer&) override;
+    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
 private:
     std::string m_version_name;
     uint16_t m_protocol_version;

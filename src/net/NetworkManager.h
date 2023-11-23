@@ -14,6 +14,7 @@
 #include "login/in/PacketLoginInLoginAcknowledged.h"
 #include "configuration/in/PacketConfigurationInPluginMessage.h"
 #include "configuration/in/PacketConfigurationInClientInformation.h"
+#include "configuration/in/PacketConfigurationInKeepAlive.h"
 
 using std::unordered_map, std::unique_ptr, std::make_unique;
 
@@ -49,6 +50,7 @@ public:
         auto configuration_handlers = make_unique<unordered_map<int32_t, unique_ptr<InboundPacket>>>();
         configuration_handlers->insert({0x00, make_unique<PacketConfigurationInClientInformation>()});
         configuration_handlers->insert({0x01, make_unique<PacketConfigurationInPluginMessage>()});
+        configuration_handlers->insert({0x03, make_unique<PacketConfigurationInKeepAlive>()});
         m_packet_handlers.insert({ConnectionState::Configuration, std::move(configuration_handlers)});
 
         // play packets

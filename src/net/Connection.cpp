@@ -3,6 +3,11 @@
 #include <cryptopp/aes.h>
 #include <cryptopp/filters.h>
 #include <iostream>
+#include <utility>
+
+asio::io_context &Connection::get_context() const {
+    return m_context;
+}
 
 asio::ip::tcp::socket* Connection::get_socket() {
     return &m_socket;
@@ -46,6 +51,23 @@ const std::vector<uint8_t> &Connection::get_shared_secret() const {
 
 void Connection::set_shared_secret(const std::vector<uint8_t> &sharedSecret) {
     m_shared_secret = sharedSecret;
+}
+
+void Connection::start_new_timer(std::chrono::seconds timeout, const std::function<void()>& callback) {
+    if (m_timer != nullptr) {
+        m_timer->cancel();
+    }
+
+    m_timer = std::make_unique<BasicTimer>(m_context);
+    m_timer->start(timeout, callback);
+}
+
+int64_t Connection::get_last_keep_alive_payload() const {
+    return m_last_keep_alive_payload;
+}
+
+void Connection::set_last_keep_alive_payload(int64_t keep_alive_payload) {
+    m_last_keep_alive_payload = keep_alive_payload;
 }
 
 bool Connection::get_compress_packets() const {

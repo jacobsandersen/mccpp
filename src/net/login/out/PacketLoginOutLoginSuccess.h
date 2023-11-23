@@ -18,7 +18,7 @@ public:
             m_username(std::move(username)),
             m_properties(std::move(properties)) {}
 
-    void write_data(ByteBuffer&) override;
+    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
 private:
     uuids::uuid m_unique_id;
     std::string m_username;

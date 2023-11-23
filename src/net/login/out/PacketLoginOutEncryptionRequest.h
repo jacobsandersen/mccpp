@@ -18,7 +18,7 @@ public:
             verify_token_length(verify_token_length),
             verify_token_bytes(verify_token_bytes) {}
 
-    void write_data(ByteBuffer&) override;
+    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
 private:
     std::string server_id;
     int32_t public_key_length;

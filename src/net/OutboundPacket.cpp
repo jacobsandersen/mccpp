@@ -7,7 +7,7 @@ void OutboundPacket::send(const std::shared_ptr<Connection> &conn) {
     LOG(INFO) << "Sending a packet...";
 
     ByteBuffer in;
-    write_data(in);
+    write_data(conn, in);
 
     uint8_t packet_id_length = VarInt::encoding_length(m_packet_id);
     uint32_t data_length = in.get_data_length();

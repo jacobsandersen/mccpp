@@ -1,6 +1,6 @@
 #include "PacketLoginOutEncryptionRequest.h"
 
-void PacketLoginOutEncryptionRequest::write_data(ByteBuffer &buffer) {
+void PacketLoginOutEncryptionRequest::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
     if (server_id.length() > 20) {
         buffer.write_string(server_id.substr(0, 20), 20);
     } else {

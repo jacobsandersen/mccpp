@@ -15,7 +15,7 @@ public:
             m_successful(successful),
             m_bytes(std::move(bytes)) {}
 
-    void write_data(ByteBuffer&) override;
+    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
 private:
     int32_t m_message_id;
     bool m_successful;
