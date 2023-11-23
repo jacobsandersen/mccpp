@@ -4,7 +4,7 @@
 #include <utility>
 #include <zlib.h>
 #include "ByteBuffer.h"
-#include "../VarInt.h"
+#include "VarInt.h"
 
 template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type

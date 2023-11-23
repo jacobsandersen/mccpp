@@ -8,7 +8,7 @@
 
 #include <memory>
 #include "../../Connection.h"
-#include "../../ByteBuffer.h"
+#include "../../../ByteBuffer.h"
 #include "../../InboundPacket.h"
 
 class PacketLoginInLoginStart : public InboundPacket {

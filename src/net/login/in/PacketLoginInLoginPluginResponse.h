@@ -3,7 +3,7 @@
 
 
 #include "../../Connection.h"
-#include "../../ByteBuffer.h"
+#include "../../../ByteBuffer.h"
 #include "../../InboundPacket.h"
 
 class PacketLoginInLoginPluginResponse : public InboundPacket {

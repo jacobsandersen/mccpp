@@ -2,7 +2,7 @@
 #define MCCPP_VARINT_H
 
 #include <istream>
-#include "net/ByteBuffer.h"
+#include "ByteBuffer.h"
 
 class VarInt {
 public:

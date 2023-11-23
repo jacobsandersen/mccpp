@@ -5,7 +5,7 @@
 #include <uuid.h>
 #include <deque>
 #include <cryptopp/modes.h>
-#include "ByteBuffer.h"
+#include "../ByteBuffer.h"
 
 #define VERIFY_TOKEN_SIZE 4
 #define SHARED_SECRET_SIZE 16

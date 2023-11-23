@@ -3,7 +3,7 @@
 
 #include <utility>
 
-#include "../net/ByteBuffer.h"
+#include "../ByteBuffer.h"
 #include "NBTTag.h"
 
 using std::shared_ptr, std::make_shared;

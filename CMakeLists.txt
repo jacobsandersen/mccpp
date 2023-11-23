@@ -20,6 +20,7 @@ add_executable(mccpp
         src/ConfigManager.cpp
         src/VarInt.cpp
         src/RSAKeypair.cpp
+        src/ByteBuffer.cpp
         src/util/UUIDUtil.cpp
         src/player/Player.cpp
         src/player/MojangProfile.cpp
@@ -27,7 +28,6 @@ add_executable(mccpp
         src/nbt/NBTTag.cpp
         src/nbt/NBTBuilder.cpp
         src/nbt/NBTParser.cpp
-        src/net/ByteBuffer.cpp
         src/net/Connection.cpp
         src/net/NetworkManager.cpp
         src/net/HttpClient.cpp

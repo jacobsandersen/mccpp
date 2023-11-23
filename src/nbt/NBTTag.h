@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <utility>
 #include "NBTTagType.h"
-#include "../net/ByteBuffer.h"
+#include "../ByteBuffer.h"
 
 namespace NBT {
     template <typename T> class Tag {
