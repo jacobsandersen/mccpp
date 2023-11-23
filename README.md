@@ -41,3 +41,8 @@ Handle the two sent configuration packets. I need to write NBT processing tools 
 ## Update 11/22/23 0352 PDT
 
 NBT abstract syntax and builder created. Builder could use some work to be more fluent. Next, NBT serde.
+
+## Update 11/22/1918 PDT
+
+NBT builder generified a bit. Needs more work. Now able to send configuration disconnect, configuration keep alive.
+Handles configuration keep alive response. Client can now wait indefinitely in this state.
