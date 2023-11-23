@@ -25,6 +25,7 @@ add_executable(mccpp
         src/util/UUIDUtil.cpp
         src/player/Player.cpp
         src/player/MojangProfile.cpp
+        src/player/ClientInformation.cpp
         src/nbt/NBTTagType.cpp
         src/nbt/NBTTag.cpp
         src/nbt/NBTBuilder.cpp
@@ -52,6 +53,7 @@ add_executable(mccpp
         src/net/configuration/in/PacketConfigurationInKeepAlive.cpp
         src/net/configuration/out/PacketConfigurationOutKeepAlive.cpp
         src/net/configuration/out/PacketConfigurationOutDisconnect.cpp
+        src/net/configuration/out/PacketConfigurationOutRegistryData.cpp
 )
 
 target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl

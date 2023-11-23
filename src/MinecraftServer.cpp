@@ -46,6 +46,13 @@ std::shared_ptr<Player> MinecraftServer::get_player(const std::shared_ptr<uuids:
     return nullptr;
 }
 
+void MinecraftServer::remove_player(const std::shared_ptr<uuids::uuid> &unique_id) {
+    if (unique_id == nullptr) return;
+    m_players.erase(std::remove_if(m_players.begin(), m_players.end(), [unique_id](std::shared_ptr<Player> player) {
+        return player->get_unique_id() == unique_id;
+    }), m_players.end());
+}
+
 const NetworkManager &MinecraftServer::get_network_manager() const {
     return m_network_manager;
 }

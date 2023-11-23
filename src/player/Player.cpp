@@ -21,3 +21,7 @@ const std::shared_ptr<MojangProfile> &Player::get_mojang_profile() const {
 void Player::set_mojang_profile(const std::shared_ptr<MojangProfile> &mojang_profile) {
     m_mojang_profile = mojang_profile;
 }
+
+const std::shared_ptr<ClientInformation> &Player::get_client_information() const {
+    return m_client_information;
+}

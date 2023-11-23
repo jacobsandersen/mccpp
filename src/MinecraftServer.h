@@ -34,6 +34,8 @@ public:
 
     std::shared_ptr<Player> get_player(const std::shared_ptr<uuids::uuid> &unique_id);
 
+    void remove_player(const std::shared_ptr<uuids::uuid> &unique_id);
+
     void add_player(const std::shared_ptr<Player> &);
 
 private:

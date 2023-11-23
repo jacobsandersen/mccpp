@@ -6,10 +6,7 @@ void BasicTimer::start(const std::chrono::seconds &duration, std::function<void(
     m_timer.expires_after(duration);
     m_timer.async_wait([this](const std::error_code& error) {
         if (!error) {
-            LOG(INFO) << "Timer expired! Calling callback function.";
             m_callback();
-        } else {
-            LOG(WARNING) << "Timer: " << error.message();
         }
     });
 }
