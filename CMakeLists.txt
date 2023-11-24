@@ -22,6 +22,23 @@ add_executable(mccpp
         src/RSAKeypair.cpp
         src/ByteBuffer.cpp
         src/BasicTimer.cpp
+        src/nbt/TagCompoundBuilder.cpp
+        src/nbt/TagListBuilder.cpp
+        src/nbt/tag/Tag.cpp
+        src/nbt/tag/TagEnd.cpp
+        src/nbt/tag/TagByte.cpp
+        src/nbt/tag/TagShort.cpp
+        src/nbt/tag/TagInt.cpp
+        src/nbt/tag/TagLong.cpp
+        src/nbt/tag/TagFloat.cpp
+        src/nbt/tag/TagDouble.cpp
+        src/nbt/tag/TagByteArray.cpp
+        src/nbt/tag/TagString.cpp
+        src/nbt/tag/TagList.cpp
+        src/nbt/tag/TagCompound.cpp
+        src/nbt/tag/TagIntArray.cpp
+        src/nbt/tag/TagLongArray.cpp
+        src/nbt/tag/TagType.cpp
         src/util/UUIDUtil.cpp
         src/player/Player.cpp
         src/player/MojangProfile.cpp
