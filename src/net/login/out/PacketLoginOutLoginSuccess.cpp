@@ -6,7 +6,7 @@ void PacketLoginOutLoginSuccess::write_data(const std::shared_ptr<Connection> &c
     }
 
     buffer.write_uuid(m_unique_id);
-    buffer.write_string(m_username, m_username.length());
+    buffer.write_string(m_username);
     buffer.write_varint(static_cast<int32_t>(m_properties.size()));
     for (const auto &prop: m_properties) {
         buffer.write_string(prop.name);

@@ -106,11 +106,11 @@ public:
 
     void write_string(const std::string &);
 
-    void write_string(const std::string &, uint16_t);
-
     std::string read_string();
 
-    std::string read_string(uint16_t length);
+    void write_string_modified_utf8(const std::wstring &);
+
+    std::wstring read_string_modified_utf8();
 
     void write_varint(int32_t);
 

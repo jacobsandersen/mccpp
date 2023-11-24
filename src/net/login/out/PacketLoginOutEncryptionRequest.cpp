@@ -2,9 +2,9 @@
 
 void PacketLoginOutEncryptionRequest::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
     if (server_id.length() > 20) {
-        buffer.write_string(server_id.substr(0, 20), 20);
+        buffer.write_string(server_id.substr(0, 20));
     } else {
-        buffer.write_string(server_id, server_id.length());
+        buffer.write_string(server_id);
     }
 
     buffer.write_varint(public_key_length);

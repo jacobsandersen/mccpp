@@ -3,6 +3,7 @@
 #include <cstring>
 #include <utility>
 #include <zlib.h>
+#include <queue>
 #include "ByteBuffer.h"
 #include "VarInt.h"
 
@@ -230,27 +231,6 @@ void ByteBuffer::write_string(const std::string &str) {
     }
 }
 
-void ByteBuffer::write_string(const std::string &str, uint16_t length) {
-    if (str.length() > length) {
-        throw std::invalid_argument("write_string string length greater than enforced length");
-    }
-
-    write_varint(static_cast<int32_t>(length));
-
-    uint16_t bytes_written = 0;
-    for (int8_t byte: str) {
-        write_byte(byte);
-        bytes_written++;
-    }
-
-    if (str.length() < length) {
-        uint16_t remainingLength = length - str.length();
-        for (int i = 0; i < remainingLength; i++) {
-            write_byte(0); // padding byte
-        }
-    }
-}
-
 std::string ByteBuffer::read_string() {
     int32_t length = read_varint();
     std::string s;
@@ -262,16 +242,80 @@ std::string ByteBuffer::read_string() {
     return s;
 }
 
-std::string ByteBuffer::read_string(uint16_t length) {
-    std::string s = read_string();
+void ByteBuffer::write_string_modified_utf8(const std::wstring &str) {
+    write_ushort(str.length());
 
-    if (s.length() < length) {
-        for (int i = 0; i < length - s.length(); i++) {
-            read_byte(); // padding byte
+    for (wchar_t wch : str) {
+        if (wch >= '\u0001' && wch <= '\u0007') {
+            write_byte(static_cast<int8_t>(wch));
+        } else if (wch == '\u0000' || (wch >= L'\u0080' && wch <= L'\u07ff')) {
+            write_byte(static_cast<int8_t>(0xc0 | (0x1f & (wch >> 6))));
+            write_byte(static_cast<int8_t>(0x80 | (0x3f & wch)));
+        } else if (wch >= L'\u0800' && wch <= L'\uffff') {
+            write_byte(static_cast<int8_t>(0xe0 | (0x0f & (wch >> 12))));
+            write_byte(static_cast<int8_t>(0x80 | (0x3f & (wch >> 6))));
+            write_byte(static_cast<int8_t>(0x80 | (0x3f & wch)));
+        }
+    }
+}
+
+std::wstring ByteBuffer::read_string_modified_utf8() {
+    uint16_t length = read_ushort();
+
+    std::queue<int8_t> bytes;
+    for (int i = 0; i < length; i++) {
+        bytes.push(read_byte());
+    }
+
+    std::wstring out;
+
+    while (!bytes.empty()) {
+        int8_t first_byte = bytes.front();
+        bytes.pop();
+
+        if ((first_byte >> 4) == 0b1111 || (first_byte >> 6) == 0b10) {
+            throw std::invalid_argument("First byte in modified UTF-8 group did not match expected pattern.");
+        }
+
+        if ((first_byte >> 4) == 0b1110) {
+            if (bytes.empty()) {
+                throw std::invalid_argument("Expected 2nd byte in 3-byte modified UTF-8 group, found only 1.");
+            }
+
+            int8_t second_byte = bytes.front();
+            bytes.pop();
+
+            if (bytes.empty()) {
+                throw std::invalid_argument("Expected 3rd byte in 3-byte modified UTF-8 group, found only 2.");
+            }
+
+            int8_t third_byte = bytes.front();
+            bytes.pop();
+
+            if ((second_byte >> 6) != 0b10 || (third_byte >> 6) != 0b10) {
+                throw std::invalid_argument("2nd or 3rd byte in 3-byte modified UTF-8 group did not match expected pattern.");
+            }
+
+            out.push_back(((first_byte & 0x0F) << 12) | ((second_byte & 0x3F) << 6) | (third_byte & 0x3F));
+        } else if ((first_byte >> 5) == 0b110) {
+            if (bytes.empty()) {
+                throw std::invalid_argument("Expected 2nd byte in 2-byte modified UTF-8 group, found only 1.");
+            }
+
+            int8_t second_byte = bytes.front();
+            bytes.pop();
+
+            if ((second_byte >> 6) != 0b10) {
+                throw std::invalid_argument("2nd byte in 2-byte modified UTF-8 group did not match expected pattern.");
+            }
+
+            out.push_back(((first_byte & 0x1F) << 6) | (second_byte & 0x3F));
+        } else if ((first_byte >> 7) == 0) {
+            out.push_back(first_byte);
         }
     }
 
-    return s;
+    return out;
 }
 
 void ByteBuffer::write_varint(int32_t value) {
@@ -340,8 +384,6 @@ uint32_t ByteBuffer::get_data_length() const {
     return m_data.size();
 }
 
-#define COMPRESSION_CHUNK 4096
-
 int ByteBuffer::compress_buffer() {
     z_stream stream;
     stream.zalloc = Z_NULL;
@@ -386,8 +428,6 @@ int ByteBuffer::compress_buffer() {
 }
 
 int ByteBuffer::decompress_buffer() {
-    LOG(INFO) << "Decompressing buffer...";
-
     z_stream stream;
     stream.zalloc = Z_NULL;
     stream.zfree = Z_NULL;
@@ -403,16 +443,11 @@ int ByteBuffer::decompress_buffer() {
     stream.next_in = input_bytes.data();
     stream.avail_in = input_bytes.size();
 
-    LOG(INFO) << "Set up the next_in and avail_in variables";
-
     std::vector<uint8_t> output_bytes(input_bytes.size() * 2);
     do {
-        LOG(INFO) << " Iterating. Setting next_out and avail_out.";
-
         stream.next_out = output_bytes.data() + stream.total_out;
         stream.avail_out = output_bytes.capacity() - stream.total_out;
 
-        LOG(INFO) << " Inflating...";
         if (inflate(&stream, Z_NO_FLUSH) == Z_STREAM_ERROR) {
             LOG(WARNING) << "Inflate failed. Stopping decompression.";
             inflateEnd(&stream);
@@ -424,20 +459,14 @@ int ByteBuffer::decompress_buffer() {
         }
     } while (stream.avail_in > 0);
 
-    LOG(INFO) << "Done decompressing. Total out = " << stream.total_out;
-
     inflateEnd(&stream);
     output_bytes.resize(stream.total_out);
-
-    LOG(INFO) << "Replacing bytes in buffer...";
 
     m_data.clear();
 
     for (uint8_t byte : output_bytes) {
         m_data.push_back(byte);
     }
-
-    LOG(INFO) << "Done decompressing.";
 
     return 0;
 }

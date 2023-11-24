@@ -26,10 +26,6 @@ add_executable(mccpp
         src/player/Player.cpp
         src/player/MojangProfile.cpp
         src/player/ClientInformation.cpp
-        src/nbt/NBTTagType.cpp
-        src/nbt/NBTTag.cpp
-        src/nbt/NBTBuilder.cpp
-        src/nbt/NBTParser.cpp
         src/net/Connection.cpp
         src/net/NetworkManager.cpp
         src/net/HttpClient.cpp
