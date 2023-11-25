@@ -3,6 +3,6 @@
 
 void
 PacketStatusInPingRequest::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer) {
-    PacketStatusOutPingResponse resp(buffer->read_long());
+    PacketStatusOutPingResponse resp(buffer->read_be_long());
     resp.send(conn);
 }

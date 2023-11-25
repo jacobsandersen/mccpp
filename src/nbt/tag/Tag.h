@@ -14,6 +14,7 @@ public:
     [[nodiscard]] std::wstring get_name();
     void write_type(ByteBuffer &buffer);
     void write_name(ByteBuffer &buffer);
+    void write(ByteBuffer &buffer);
     virtual void write(ByteBuffer &buffer, bool include_preamble) = 0;
 private:
     TagType m_type;

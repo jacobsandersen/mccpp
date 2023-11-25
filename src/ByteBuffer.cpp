@@ -168,12 +168,28 @@ int16_t ByteBuffer::read_short() {
     return read_buffer<int16_t>(m_data);
 }
 
+void ByteBuffer::write_be_short(int16_t value) {
+    write_short(htobe16(value));
+}
+
+int16_t ByteBuffer::read_be_short() {
+    return be16toh(read_short());
+}
+
 void ByteBuffer::write_ushort(uint16_t value) {
     write_buffer(m_data, value);
 }
 
 uint16_t ByteBuffer::read_ushort() {
     return read_buffer<uint16_t>(m_data);
+}
+
+void ByteBuffer::write_be_ushort(uint16_t value) {
+    write_ushort(htobe16(value));
+}
+
+uint16_t ByteBuffer::read_be_ushort() {
+    return be16toh(read_ushort());
 }
 
 void ByteBuffer::write_int(int32_t value) {
@@ -184,12 +200,28 @@ int32_t ByteBuffer::read_int() {
     return read_buffer<int32_t>(m_data);
 }
 
+void ByteBuffer::write_be_int(int32_t value) {
+    write_int(htobe32(value));
+}
+
+int32_t ByteBuffer::read_be_int() {
+    return be32toh(read_int());
+}
+
 void ByteBuffer::write_uint(uint32_t value) {
     write_buffer(m_data, value);
 }
 
 uint32_t ByteBuffer::read_uint() {
     return read_buffer<uint32_t>(m_data);
+}
+
+void ByteBuffer::write_be_uint(uint32_t value) {
+    write_uint(htobe32(value));
+}
+
+uint32_t ByteBuffer::read_be_uint() {
+    return be32toh(read_uint());
 }
 
 void ByteBuffer::write_long(int64_t value) {
@@ -200,12 +232,28 @@ int64_t ByteBuffer::read_long() {
     return read_buffer<int64_t>(m_data);
 }
 
-uint64_t ByteBuffer::read_ulong() {
-    return read_buffer<uint64_t>(m_data);
+void ByteBuffer::write_be_long(int64_t value) {
+    write_long(htobe64(value));
+}
+
+int64_t ByteBuffer::read_be_long() {
+    return be64toh(read_long());
 }
 
 void ByteBuffer::write_ulong(uint64_t value) {
     write_buffer(m_data, value);
+}
+
+uint64_t ByteBuffer::read_ulong() {
+    return read_buffer<uint64_t>(m_data);
+}
+
+void ByteBuffer::write_be_ulong(uint64_t value) {
+    write_ulong(htobe64(value));
+}
+
+uint64_t ByteBuffer::read_be_ulong() {
+    return be64toh(read_ulong());
 }
 
 void ByteBuffer::write_float(float value) {
@@ -216,12 +264,38 @@ float ByteBuffer::read_float() {
     return read_buffer<float>(m_data);
 }
 
+void ByteBuffer::write_be_float(float value) {
+    uint32_t encoded;
+    std::memcpy(&encoded, &value, sizeof(encoded));
+    write_be_uint(encoded);
+}
+
+float ByteBuffer::read_be_float() {
+    uint32_t encoded = read_be_uint();
+    float decoded;
+    std::memcpy(&decoded, &encoded, sizeof(decoded));
+    return decoded;
+}
+
 void ByteBuffer::write_double(double value) {
     write_buffer(m_data, value);
 }
 
 double ByteBuffer::read_double() {
     return read_buffer<double>(m_data);
+}
+
+void ByteBuffer::write_be_double(double value) {
+    uint64_t encoded;
+    std::memcpy(&encoded, &value, sizeof(encoded));
+    write_be_ulong(encoded);
+}
+
+double ByteBuffer::read_be_double() {
+    uint64_t encoded = read_be_ulong();
+    double decoded;
+    std::memcpy(&decoded, &encoded, sizeof(decoded));
+    return decoded;
 }
 
 void ByteBuffer::write_string(const std::string &str) {
@@ -243,10 +317,10 @@ std::string ByteBuffer::read_string() {
 }
 
 void ByteBuffer::write_string_modified_utf8(const std::wstring &str) {
-    write_ushort(str.length());
+    write_be_ushort(str.length());
 
     for (wchar_t wch : str) {
-        if (wch >= '\u0001' && wch <= '\u0007') {
+        if (wch >= '\u0001' && wch <= '\u007f') {
             write_byte(static_cast<int8_t>(wch));
         } else if (wch == '\u0000' || (wch >= L'\u0080' && wch <= L'\u07ff')) {
             write_byte(static_cast<int8_t>(0xc0 | (0x1f & (wch >> 6))));
@@ -260,7 +334,7 @@ void ByteBuffer::write_string_modified_utf8(const std::wstring &str) {
 }
 
 std::wstring ByteBuffer::read_string_modified_utf8() {
-    uint16_t length = read_ushort();
+    uint16_t length = read_be_ushort();
 
     std::queue<int8_t> bytes;
     for (int i = 0; i < length; i++) {
@@ -470,6 +544,3 @@ int ByteBuffer::decompress_buffer() {
 
     return 0;
 }
-
-
-

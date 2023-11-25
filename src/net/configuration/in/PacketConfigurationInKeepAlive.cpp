@@ -3,7 +3,7 @@
 #include "../out/PacketConfigurationOutKeepAlive.h"
 
 void PacketConfigurationInKeepAlive::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer) {
-    int64_t payload = buffer->read_long();
+    int64_t payload = buffer->read_be_long();
 
     if (conn->get_last_keep_alive_payload() != payload) {
         PacketConfigurationOutDisconnect disconnect("Client responded with invalid Keep Alive");

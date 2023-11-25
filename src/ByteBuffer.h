@@ -76,33 +76,65 @@ public:
 
     int16_t read_short();
 
+    void write_be_short(int16_t);
+
+    int16_t read_be_short();
+
     void write_ushort(uint16_t);
 
     uint16_t read_ushort();
+
+    void write_be_ushort(uint16_t);
+
+    uint16_t read_be_ushort();
 
     void write_int(int32_t);
 
     int32_t read_int();
 
+    void write_be_int(int32_t);
+
+    int32_t read_be_int();
+
     void write_uint(uint32_t);
 
     uint32_t read_uint();
+
+    void write_be_uint(uint32_t);
+
+    uint32_t read_be_uint();
 
     void write_long(int64_t);
 
     int64_t read_long();
 
-    uint64_t read_ulong();
+    void write_be_long(int64_t);
+
+    int64_t read_be_long();
 
     void write_ulong(uint64_t);
+
+    uint64_t read_ulong();
+
+    void write_be_ulong(uint64_t);
+
+    uint64_t read_be_ulong();
 
     void write_float(float);
 
     float read_float();
 
+    void write_be_float(float);
+
+    float read_be_float();
+
     void write_double(double);
 
     double read_double();
+
+    void write_be_double(double);
+
+    double read_be_double();
 
     void write_string(const std::string &);
 

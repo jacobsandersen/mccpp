@@ -16,9 +16,15 @@ void Tag::write_name(ByteBuffer &buffer) {
     buffer.write_string_modified_utf8(m_name);
 }
 
+void Tag::write(ByteBuffer &buffer) {
+    Tag::write(buffer, true);
+}
+
 void Tag::write(ByteBuffer &buffer, bool include_preamble) {
     if (include_preamble) {
         write_type(buffer);
         write_name(buffer);
     }
 }
+
+

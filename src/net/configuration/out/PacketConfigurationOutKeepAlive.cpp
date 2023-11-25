@@ -3,7 +3,7 @@
 
 void PacketConfigurationOutKeepAlive::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
     int64_t payload = std::time(nullptr);
-    buffer.write_long(payload);
+    buffer.write_be_long(payload);
 
     conn->set_last_keep_alive_payload(payload);
 
