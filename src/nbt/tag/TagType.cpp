@@ -14,12 +14,14 @@ const TagType TagType::Compound = TagType(10, "TAG_Compound");
 const TagType TagType::IntArray = TagType(11, "TAG_IntArray");
 const TagType TagType::LongArray = TagType(12, "TAG_LongArray");
 
+const TagType TagType::Types[13] = {End, Byte, Short, Int, Long, Float, Double,
+                                    ByteArray, String, List, Compound, IntArray, LongArray};
 
 uint8_t TagType::get_type_id() const {
     return m_type_id;
 }
 
-std::string TagType::get_type_name() const {
+icu::UnicodeString TagType::get_type_name() const {
     return m_name;
 }
 
@@ -29,4 +31,12 @@ bool TagType::operator==(const TagType &rhs) const {
 
 bool TagType::operator!=(const TagType &rhs) const {
     return !operator==(rhs);
+}
+
+TagType TagType::type_id_to_type(uint8_t tag_type_id) {
+    if (tag_type_id > 12) {
+        throw std::invalid_argument("Tried to get Tag Type with Tag Type ID > 12.");
+    }
+
+    return Types[tag_type_id];
 }

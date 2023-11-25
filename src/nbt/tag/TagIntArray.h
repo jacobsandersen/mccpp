@@ -8,11 +8,13 @@
 
 class TagIntArray : public Tag {
 public:
-    explicit TagIntArray(std::list<int32_t> value) : TagIntArray(L"", value) {}
-    TagIntArray(std::wstring name, std::list<int32_t> value) : Tag(TagType::IntArray, std::move(name)), m_value(std::move(value)) {}
+    TagIntArray(icu::UnicodeString name, std::list<int32_t> value) : Tag(TagType::IntArray, std::move(name)), m_value(std::move(value)) {}
 
+    static TagIntArray read(ByteBuffer &buffer);
+    static TagIntArray read(ByteBuffer &buffer, bool include_name);
     void write(ByteBuffer &buffer, bool include_preamble) override;
     [[nodiscard]] std::list<int32_t> get_value() const;
+    icu::UnicodeString to_string(uint8_t indent) override;
 private:
     std::list<int32_t> m_value;
 };

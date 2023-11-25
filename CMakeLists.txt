@@ -13,6 +13,7 @@ find_package(toml11 REQUIRED)
 find_package(glog REQUIRED)
 find_package(gflags REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(ICU REQUIRED)
 
 add_executable(mccpp
         src/main.cpp
@@ -70,4 +71,5 @@ add_executable(mccpp
 )
 
 target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl
-        panzi-portable-endian::panzi-portable-endian toml11::toml11 glog::glog gflags::gflags ZLIB::ZLIB)
+        panzi-portable-endian::panzi-portable-endian toml11::toml11 glog::glog gflags::gflags ZLIB::ZLIB
+        icu::icu)

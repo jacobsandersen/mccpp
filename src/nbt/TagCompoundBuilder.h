@@ -21,25 +21,25 @@
 class TagCompoundBuilder : public std::enable_shared_from_this<TagCompoundBuilder> {
 public:
     static std::shared_ptr<TagCompoundBuilder> create();
-    static std::shared_ptr<TagCompoundBuilder> create(std::wstring name);
+    static std::shared_ptr<TagCompoundBuilder> create(icu::UnicodeString name);
     TagCompound end();
     std::shared_ptr<TagCompound> end_shared();
-    std::shared_ptr<TagCompoundBuilder> add_byte(std::wstring name, int8_t value);
-    std::shared_ptr<TagCompoundBuilder> add_short(std::wstring name, int16_t value);
-    std::shared_ptr<TagCompoundBuilder> add_int(std::wstring name, int32_t value);
-    std::shared_ptr<TagCompoundBuilder> add_long(std::wstring name, int64_t value);
-    std::shared_ptr<TagCompoundBuilder> add_float(std::wstring name, float value);
-    std::shared_ptr<TagCompoundBuilder> add_double(std::wstring name, double value);
-    std::shared_ptr<TagCompoundBuilder> add_byte_array(std::wstring name, std::list<int8_t> value);
-    std::shared_ptr<TagCompoundBuilder> add_string(std::wstring name, std::wstring value);
+    std::shared_ptr<TagCompoundBuilder> add_byte(icu::UnicodeString name, int8_t value);
+    std::shared_ptr<TagCompoundBuilder> add_short(icu::UnicodeString name, int16_t value);
+    std::shared_ptr<TagCompoundBuilder> add_int(icu::UnicodeString name, int32_t value);
+    std::shared_ptr<TagCompoundBuilder> add_long(icu::UnicodeString name, int64_t value);
+    std::shared_ptr<TagCompoundBuilder> add_float(icu::UnicodeString name, float value);
+    std::shared_ptr<TagCompoundBuilder> add_double(icu::UnicodeString name, double value);
+    std::shared_ptr<TagCompoundBuilder> add_byte_array(icu::UnicodeString name, std::list<int8_t> value);
+    std::shared_ptr<TagCompoundBuilder> add_string(icu::UnicodeString name, icu::UnicodeString value);
     std::shared_ptr<TagCompoundBuilder> add_list(std::shared_ptr<TagList> value);
     std::shared_ptr<TagCompoundBuilder> add_compound(std::shared_ptr<TagCompound> value);
-    std::shared_ptr<TagCompoundBuilder> add_int_array(std::wstring name, std::list<int32_t> value);
-    std::shared_ptr<TagCompoundBuilder> add_long_array(std::wstring name, std::list<int64_t> value);
+    std::shared_ptr<TagCompoundBuilder> add_int_array(icu::UnicodeString name, std::list<int32_t> value);
+    std::shared_ptr<TagCompoundBuilder> add_long_array(icu::UnicodeString name, std::list<int64_t> value);
 private:
-    explicit TagCompoundBuilder(std::wstring name) : m_name(std::move(name)) {}
+    explicit TagCompoundBuilder(icu::UnicodeString name) : m_name(std::move(name)) {}
 
-    std::wstring m_name{};
+    icu::UnicodeString m_name{};
     std::list<std::shared_ptr<Tag>> m_items{};
 };
 

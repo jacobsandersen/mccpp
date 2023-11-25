@@ -9,6 +9,8 @@
 #include <deque>
 #include <vector>
 #include <uuid.h>
+#include <unicode/unistr.h>
+#include "nbt/tag/TagType.h"
 
 class ByteBuffer {
 public:
@@ -140,9 +142,9 @@ public:
 
     std::string read_string();
 
-    void write_string_modified_utf8(const std::wstring &);
+    void write_string_modified_utf8(const icu::UnicodeString &);
 
-    std::wstring read_string_modified_utf8();
+    icu::UnicodeString read_string_modified_utf8();
 
     void write_varint(int32_t);
 
@@ -151,6 +153,8 @@ public:
     void write_varlong(int64_t);
 
     int64_t read_varlong();
+
+    TagType read_nbt_tag_type();
 
     uuids::uuid read_uuid();
 

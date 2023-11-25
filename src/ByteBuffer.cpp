@@ -4,8 +4,10 @@
 #include <utility>
 #include <zlib.h>
 #include <queue>
+#include <unicode/schriter.h>
 #include "ByteBuffer.h"
 #include "VarInt.h"
+#include "nbt/tag/TagType.h"
 
 template<typename T>
 typename std::enable_if<std::is_integral<T>::value || std::is_floating_point<T>::value, void>::type
@@ -316,24 +318,27 @@ std::string ByteBuffer::read_string() {
     return s;
 }
 
-void ByteBuffer::write_string_modified_utf8(const std::wstring &str) {
+void ByteBuffer::write_string_modified_utf8(const icu::UnicodeString &str) {
     write_be_ushort(str.length());
 
-    for (wchar_t wch : str) {
-        if (wch >= '\u0001' && wch <= '\u007f') {
-            write_byte(static_cast<int8_t>(wch));
-        } else if (wch == '\u0000' || (wch >= L'\u0080' && wch <= L'\u07ff')) {
-            write_byte(static_cast<int8_t>(0xc0 | (0x1f & (wch >> 6))));
-            write_byte(static_cast<int8_t>(0x80 | (0x3f & wch)));
-        } else if (wch >= L'\u0800' && wch <= L'\uffff') {
-            write_byte(static_cast<int8_t>(0xe0 | (0x0f & (wch >> 12))));
-            write_byte(static_cast<int8_t>(0x80 | (0x3f & (wch >> 6))));
-            write_byte(static_cast<int8_t>(0x80 | (0x3f & wch)));
+    icu::StringCharacterIterator itr(str);
+    itr.setToStart();
+    while (itr.hasNext()) {
+        UChar32 next = itr.next32PostInc();
+        if (next >= u'\u0001' && next <= u'\u007f') {
+            write_byte(static_cast<int8_t>(next));
+        } else if (next == u'\u0000' || (next >= u'\u0080' && next <= u'\u07ff')) {
+            write_byte(static_cast<int8_t>(0xc0 | (0x1f & (next >> 6))));
+            write_byte(static_cast<int8_t>(0x80 | (0x3f & next)));
+        } else if (next >= u'\u0800' && next <= u'\uffff') {
+            write_byte(static_cast<int8_t>(0xe0 | (0x0f & (next >> 12))));
+            write_byte(static_cast<int8_t>(0x80 | (0x3f & (next >> 6))));
+            write_byte(static_cast<int8_t>(0x80 | (0x3f & next)));
         }
     }
 }
 
-std::wstring ByteBuffer::read_string_modified_utf8() {
+icu::UnicodeString ByteBuffer::read_string_modified_utf8() {
     uint16_t length = read_be_ushort();
 
     std::queue<int8_t> bytes;
@@ -341,7 +346,7 @@ std::wstring ByteBuffer::read_string_modified_utf8() {
         bytes.push(read_byte());
     }
 
-    std::wstring out;
+    icu::UnicodeString str;
 
     while (!bytes.empty()) {
         int8_t first_byte = bytes.front();
@@ -370,7 +375,7 @@ std::wstring ByteBuffer::read_string_modified_utf8() {
                 throw std::invalid_argument("2nd or 3rd byte in 3-byte modified UTF-8 group did not match expected pattern.");
             }
 
-            out.push_back(((first_byte & 0x0F) << 12) | ((second_byte & 0x3F) << 6) | (third_byte & 0x3F));
+            str.append(((first_byte & 0x0F) << 12) | ((second_byte & 0x3F) << 6) | (third_byte & 0x3F));
         } else if ((first_byte >> 5) == 0b110) {
             if (bytes.empty()) {
                 throw std::invalid_argument("Expected 2nd byte in 2-byte modified UTF-8 group, found only 1.");
@@ -383,13 +388,13 @@ std::wstring ByteBuffer::read_string_modified_utf8() {
                 throw std::invalid_argument("2nd byte in 2-byte modified UTF-8 group did not match expected pattern.");
             }
 
-            out.push_back(((first_byte & 0x1F) << 6) | (second_byte & 0x3F));
+            str.append(((first_byte & 0x1F) << 6) | (second_byte & 0x3F));
         } else if ((first_byte >> 7) == 0) {
-            out.push_back(first_byte);
+            str.append(first_byte);
         }
     }
 
-    return out;
+    return str;
 }
 
 void ByteBuffer::write_varint(int32_t value) {
@@ -543,4 +548,8 @@ int ByteBuffer::decompress_buffer() {
     }
 
     return 0;
+}
+
+TagType ByteBuffer::read_nbt_tag_type() {
+    return TagType::type_id_to_type(read_ubyte());
 }

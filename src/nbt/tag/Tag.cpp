@@ -4,7 +4,7 @@ TagType Tag::get_type() {
     return m_type;
 }
 
-std::wstring Tag::get_name() {
+icu::UnicodeString Tag::get_name() {
     return m_name;
 }
 
@@ -27,4 +27,8 @@ void Tag::write(ByteBuffer &buffer, bool include_preamble) {
     }
 }
 
-
+icu::UnicodeString Tag::to_string(uint8_t indent) {
+    icu::UnicodeString indentation;
+    for (int i = 0; i < indent; i++) indentation.append("\t");
+    return icu::UnicodeString(indentation + m_type.get_type_name() + "(" + (m_name.isEmpty() ? "None" : "'" + get_name() + "'") + "):");
+}

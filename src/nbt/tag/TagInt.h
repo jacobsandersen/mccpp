@@ -5,11 +5,13 @@
 
 class TagInt : public Tag {
 public:
-    explicit TagInt(int32_t value) : TagInt(L"", value) {}
-    TagInt(std::wstring name, int32_t value) : Tag(TagType::Int, std::move(name)), m_value(value) {}
+    TagInt(icu::UnicodeString name, int32_t value) : Tag(TagType::Int, std::move(name)), m_value(value) {}
 
+    static TagInt read(ByteBuffer &buffer);
+    static TagInt read(ByteBuffer &buffer, bool include_name);
     void write(ByteBuffer &buffer, bool include_preamble) override;
     [[nodiscard]] int32_t get_value() const;
+    icu::UnicodeString to_string(uint8_t indent) override;
 private:
     int32_t m_value;
 };

@@ -4,6 +4,9 @@
 #include <cstdint>
 #include <string>
 #include <utility>
+#include <stdexcept>
+#include <unordered_map>
+#include <unicode/unistr.h>
 
 class TagType {
 public:
@@ -20,17 +23,20 @@ public:
     static const TagType Compound;
     static const TagType IntArray;
     static const TagType LongArray;
+    static const TagType Types[13];
+
+    static TagType type_id_to_type(uint8_t tag_type_id);
 
     [[nodiscard]] uint8_t get_type_id() const;
-    [[nodiscard]] std::string get_type_name() const;
+    [[nodiscard]] icu::UnicodeString get_type_name() const;
 
     bool operator==(const TagType& rhs) const;
     bool operator!=(const TagType& rhs) const;
 private:
-    TagType(uint8_t type_id, std::string name) : m_type_id(type_id), m_name(std::move(name)) {}
+    TagType(uint8_t type_id, icu::UnicodeString name) : m_type_id(type_id), m_name(std::move(name)) {}
 
     uint8_t m_type_id;
-    std::string m_name;
+    icu::UnicodeString m_name;
 };
 
 

@@ -6,9 +6,10 @@
 
 class TagEnd : public Tag {
 public:
-    TagEnd() : Tag(TagType::End, L"") {}
+    TagEnd() : Tag(TagType::End, "") {}
 
     void write(ByteBuffer &buffer, bool include_preamble) override;
+    icu::UnicodeString to_string(uint8_t indent) override;
 };
 
 

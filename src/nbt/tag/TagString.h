@@ -7,14 +7,15 @@
 
 class TagString : public Tag {
 public:
-    explicit TagString(std::wstring value) : TagString(L"", std::move(value)) {}
-    TagString(std::wstring name, std::wstring value) : Tag(TagType::String, std::move(name)), m_value(std::move(value)) {}
+    TagString(icu::UnicodeString name, icu::UnicodeString value) : Tag(TagType::String, std::move(name)), m_value(std::move(value)) {}
 
+    static TagString read(ByteBuffer &buffer);
+    static TagString read(ByteBuffer &buffer, bool include_name);
     void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] std::wstring get_value() const;
-
+    [[nodiscard]] icu::UnicodeString get_value() const;
+    icu::UnicodeString to_string(uint8_t indent) override;
 private:
-    std::wstring m_value;
+    icu::UnicodeString m_value;
 };
 
 
