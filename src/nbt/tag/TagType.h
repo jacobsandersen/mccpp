@@ -26,6 +26,8 @@ public:
     static const TagType Types[13];
 
     static TagType type_id_to_type(uint8_t tag_type_id);
+    static TagType expected_tag_type(int64_t integral_value);
+    static TagType expected_tag_type(double fp_value);
 
     [[nodiscard]] uint8_t get_type_id() const;
     [[nodiscard]] icu::UnicodeString get_type_name() const;

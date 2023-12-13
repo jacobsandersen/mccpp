@@ -1,3 +1,4 @@
+#include <iostream>
 #include "TagDouble.h"
 
 TagDouble TagDouble::read(ByteBuffer &buffer) {
@@ -19,6 +20,13 @@ double TagDouble::get_value() const {
     return m_value;
 }
 
+static std::string stringified_dbl_max_precision(double value) {
+    std::ostringstream os;
+    os.precision(std::numeric_limits<double>::digits10);
+    os << std::fixed << value;
+    return std::move(os).str();
+}
+
 icu::UnicodeString TagDouble::to_string(uint8_t indent) {
-    return icu::UnicodeString(Tag::to_string(indent) + " " + icu::UnicodeString::fromUTF8(std::to_string(get_value())));
+    return icu::UnicodeString(Tag::to_string(indent) + " " + icu::UnicodeString::fromUTF8(stringified_dbl_max_precision(get_value())));
 }

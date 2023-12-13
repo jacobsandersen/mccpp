@@ -25,6 +25,7 @@ add_executable(mccpp
         src/BasicTimer.cpp
         src/nbt/TagCompoundBuilder.cpp
         src/nbt/TagListBuilder.cpp
+        src/nbt/JsonToNbtReader.cpp
         src/nbt/tag/Tag.cpp
         src/nbt/tag/TagEnd.cpp
         src/nbt/tag/TagByte.cpp

@@ -1,4 +1,12 @@
+#include <limits>
 #include "TagType.h"
+
+#define MIN_INT8 (-128)
+#define MAX_INT8 127
+#define MIN_INT16 (-32768)
+#define MAX_INT16 32767
+#define MIN_INT32 (-2147483648)
+#define MAX_INT32 2147483647
 
 const TagType TagType::End = TagType(0, "TAG_End");
 const TagType TagType::Byte = TagType(1, "TAG_Byte");
@@ -39,4 +47,26 @@ TagType TagType::type_id_to_type(uint8_t tag_type_id) {
     }
 
     return Types[tag_type_id];
+}
+
+TagType TagType::expected_tag_type(int64_t integral_value) {
+    if (integral_value >= MIN_INT8 && integral_value <= MAX_INT8) {
+        return TagType::Byte;
+    } else if (integral_value >= MIN_INT16 && integral_value <= MAX_INT16) {
+        return TagType::Short;
+    } else if (integral_value >= MIN_INT32 && integral_value <= MAX_INT32) {
+        return TagType::Int;
+    } else {
+        return TagType::Long;
+    }
+}
+
+TagType TagType::expected_tag_type(double fp_value) {
+    if (std::abs(fp_value - static_cast<float>(fp_value)) < std::numeric_limits<double>::epsilon()) {
+        // the double value minus its float representation (with precision loss) is less than the actual double epsilon,
+        // so the original number albeit being in a double is probably a float
+        return TagType::Float;
+    } else {
+        return TagType::Double;
+    }
 }

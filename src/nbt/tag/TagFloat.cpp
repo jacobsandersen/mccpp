@@ -19,6 +19,13 @@ float TagFloat::get_value() const {
     return m_value;
 }
 
+static std::string stringified_flt_max_precision(float value) {
+    std::ostringstream os;
+    os.precision(std::numeric_limits<float>::digits10);
+    os << std::fixed << value;
+    return std::move(os).str();
+}
+
 icu::UnicodeString TagFloat::to_string(uint8_t indent) {
-    return icu::UnicodeString(Tag::to_string(indent) + " " + icu::UnicodeString::fromUTF8(std::to_string(get_value())));
+    return icu::UnicodeString(Tag::to_string(indent) + " " + icu::UnicodeString::fromUTF8(stringified_flt_max_precision(get_value())));
 }
