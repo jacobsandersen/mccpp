@@ -18,7 +18,8 @@ void NetworkManager::start()
             try
             {
                 m_context.run();
-            } catch (const std::exception &err)
+            }
+            catch (const std::exception& err)
             {
                 LOG(FATAL) << "Network thread crashed: " << err.what() << std::endl;
                 m_context.stop();
@@ -27,7 +28,7 @@ void NetworkManager::start()
     }
 
     LOG(INFO) << "Worker threads started";
-    for (auto &thread : threads)
+    for (auto& thread : threads)
     {
         thread.join();
     }
@@ -199,7 +200,8 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection>& conn)
     case BufferReadState::HandlePacket:
         {
             LOG(INFO) << "process :: handle packet";
-            if (const auto& handlers = *m_packet_handlers.find(conn->get_state())->second; !handlers.contains(*ctx.packet_id))
+            if (const auto& handlers = *m_packet_handlers.find(conn->get_state())->second; !handlers.contains(
+                *ctx.packet_id))
             {
                 LOG(WARNING) << "Tried to handle unknown packet " << *ctx.packet_id << " in state " << static_cast<int>(
                     conn->get_state());

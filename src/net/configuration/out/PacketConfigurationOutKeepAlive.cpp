@@ -17,9 +17,11 @@ void PacketConfigurationOutKeepAlive::write_data(const std::shared_ptr<Connectio
         {
             PacketConfigurationOutDisconnect disconnect("Client did not respond to Keep Alive");
             disconnect.send(locked);
-        } else
+        }
+        else
         {
-            LOG(WARNING) << "Configuration keep alive timer fired (waiting for client to respond), but connection was no longer valid";
+            LOG(WARNING) <<
+                "Configuration keep alive timer fired (waiting for client to respond), but connection was no longer valid";
         }
     });
 }

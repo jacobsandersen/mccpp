@@ -28,9 +28,11 @@ void PacketConfigurationInKeepAlive::handle(const std::shared_ptr<Connection>& c
 
             PacketConfigurationOutKeepAlive new_keep_alive;
             new_keep_alive.send(locked);
-        } else
+        }
+        else
         {
-            LOG(WARNING) << "Configuration keep alive timer fired (waiting to send a new keep alive), but connection was no longer valid";
+            LOG(WARNING) <<
+                "Configuration keep alive timer fired (waiting to send a new keep alive), but connection was no longer valid";
         }
     });
 }
