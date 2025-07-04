@@ -4,27 +4,31 @@
 constexpr int32_t SEGMENT_BITS = 0x7F;
 constexpr int32_t CONTINUE_BIT = 0x80;
 
-int32_t VarInt::decode_varint(ByteBuffer *buf, uint8_t *bytes_read) {
+int32_t VarInt::decode_varint(ByteBuffer* buf, uint8_t* bytes_read)
+{
     int32_t value = 0;
     int8_t position = 0;
 
     if (bytes_read) *bytes_read = 0;
 
     int8_t currentByte;
-    while (true) {
+    while (true)
+    {
         currentByte = buf->read_byte();
         if (bytes_read) (*bytes_read)++;
 
         auto byteValue = static_cast<int32_t>(currentByte & SEGMENT_BITS);
         value |= byteValue << position;
 
-        if ((currentByte & CONTINUE_BIT) == 0) {
+        if ((currentByte & CONTINUE_BIT) == 0)
+        {
             break;
         }
 
         position += 7;
 
-        if (position >= 32) {
+        if (position >= 32)
+        {
             throw std::runtime_error("VarInt is too big");
         }
     }
@@ -32,16 +36,19 @@ int32_t VarInt::decode_varint(ByteBuffer *buf, uint8_t *bytes_read) {
     return value;
 }
 
-void VarInt::encode_varint(int32_t value, int8_t *buffer, uint8_t *bytes_written) {
+void VarInt::encode_varint(int32_t value, int8_t* buffer, uint8_t* bytes_written)
+{
     int8_t position = 0;
 
     if (bytes_written) *bytes_written = 0;
 
-    while (true) {
+    while (true)
+    {
         buffer[position] = static_cast<int8_t>(value & SEGMENT_BITS);
         value >>= 7;
 
-        if (value == 0) {
+        if (value == 0)
+        {
             if (bytes_written) (*bytes_written)++;
             return;
         }
@@ -52,27 +59,31 @@ void VarInt::encode_varint(int32_t value, int8_t *buffer, uint8_t *bytes_written
     }
 }
 
-int64_t VarInt::decode_varlong(ByteBuffer *buf, uint8_t *bytes_read) {
+int64_t VarInt::decode_varlong(ByteBuffer* buf, uint8_t* bytes_read)
+{
     int64_t value = 0;
     int8_t position = 0;
 
     if (bytes_read) *bytes_read = 0;
 
     int8_t currentByte;
-    while (true) {
+    while (true)
+    {
         currentByte = buf->read_byte();
         if (bytes_read) (*bytes_read)++;
 
         auto byteValue = static_cast<int64_t>(currentByte & SEGMENT_BITS);
         value |= byteValue << position;
 
-        if ((currentByte & CONTINUE_BIT) == 0) {
+        if ((currentByte & CONTINUE_BIT) == 0)
+        {
             break;
         }
 
         position += 7;
 
-        if (position >= 64) {
+        if (position >= 64)
+        {
             throw std::runtime_error("VarLong is too big");
         }
     }
@@ -80,16 +91,19 @@ int64_t VarInt::decode_varlong(ByteBuffer *buf, uint8_t *bytes_read) {
     return value;
 }
 
-void VarInt::encode_varlong(int64_t value, int8_t *buffer, uint8_t *bytes_written) {
+void VarInt::encode_varlong(int64_t value, int8_t* buffer, uint8_t* bytes_written)
+{
     int position = 0;
 
     if (bytes_written) *bytes_written = 0;
 
-    while (true) {
+    while (true)
+    {
         buffer[position] = static_cast<int8_t>(value & SEGMENT_BITS);
         value >>= 7;
 
-        if (value == 0) {
+        if (value == 0)
+        {
             if (bytes_written) (*bytes_written)++;
             return;
         }
@@ -100,10 +114,12 @@ void VarInt::encode_varlong(int64_t value, int8_t *buffer, uint8_t *bytes_writte
     }
 }
 
-uint8_t VarInt::encoding_length(int64_t value) {
+uint8_t VarInt::encoding_length(int64_t value)
+{
     int length = 1;
 
-    while ((value & ~SEGMENT_BITS) != 0) {
+    while ((value & ~SEGMENT_BITS) != 0)
+    {
         value >>= 7;
         ++length;
     }

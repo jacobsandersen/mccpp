@@ -11,7 +11,8 @@
 #define VERIFY_TOKEN_SIZE 4
 #define SHARED_SECRET_SIZE 16
 
-enum class ConnectionState {
+enum class ConnectionState
+{
     Handshaking,
     Status,
     Login,
@@ -19,7 +20,8 @@ enum class ConnectionState {
     Play
 };
 
-enum class BufferReadState {
+enum class BufferReadState
+{
     ReadPacketLength,
     ReadDataLength,
     DecompressData,
@@ -27,7 +29,8 @@ enum class BufferReadState {
     HandlePacket
 };
 
-struct BufferReadContext {
+struct BufferReadContext
+{
     BufferReadState read_state = BufferReadState::ReadPacketLength;
     std::unique_ptr<ByteBuffer> partial_buffer = nullptr;
     std::unique_ptr<int32_t> packet_length = nullptr;
@@ -35,31 +38,34 @@ struct BufferReadContext {
     std::unique_ptr<int32_t> packet_id = nullptr;
 };
 
-class Connection {
+class Connection
+{
 public:
-    explicit Connection(boost::asio::io_context &context) : m_context(context), m_socket(context), m_read_context() {}
+    explicit Connection(boost::asio::io_context& context) : m_context(context), m_socket(context), m_read_context()
+    {
+    }
 
-    boost::asio::io_context &get_context() const;
+    boost::asio::io_context& get_context() const;
 
-    [[nodiscard]] boost::asio::ip::tcp::socket *get_socket();
+    [[nodiscard]] boost::asio::ip::tcp::socket* get_socket();
 
-    [[nodiscard]] ByteBuffer &get_data_buffer();
+    [[nodiscard]] ByteBuffer& get_data_buffer();
 
-    [[nodiscard]] BufferReadContext &get_read_context();
+    [[nodiscard]] BufferReadContext& get_read_context();
 
     [[nodiscard]] ConnectionState get_state() const;
 
     void set_state(ConnectionState state);
 
-    [[nodiscard]] const std::shared_ptr<uuids::uuid> &get_unique_id() const;
+    [[nodiscard]] const std::shared_ptr<uuids::uuid>& get_unique_id() const;
 
-    void set_unique_id(const std::shared_ptr<uuids::uuid> &unique_id);
+    void set_unique_id(const std::shared_ptr<uuids::uuid>& unique_id);
 
-    [[nodiscard]] const std::vector<uint8_t> &get_verify_token() const;
+    [[nodiscard]] const std::vector<uint8_t>& get_verify_token() const;
 
-    void set_verify_token(const std::vector<uint8_t> &verifyToken);
+    void set_verify_token(const std::vector<uint8_t>& verifyToken);
 
-    [[nodiscard]] const std::vector<uint8_t> &get_shared_secret() const;
+    [[nodiscard]] const std::vector<uint8_t>& get_shared_secret() const;
 
     void start_new_timer(std::chrono::seconds timeout, const std::function<void()>& callback);
 
@@ -67,7 +73,7 @@ public:
 
     void set_last_keep_alive_payload(int64_t keep_alive_payload);
 
-    void set_shared_secret(const std::vector<uint8_t> &sharedSecret);
+    void set_shared_secret(const std::vector<uint8_t>& sharedSecret);
 
     [[nodiscard]] bool get_compress_packets() const;
 
@@ -80,6 +86,7 @@ public:
     std::deque<uint8_t> encrypt_bytes(std::deque<uint8_t>);
 
     std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
+
 private:
     boost::asio::io_context& m_context;
     boost::asio::ip::tcp::socket m_socket;

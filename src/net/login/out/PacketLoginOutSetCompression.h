@@ -4,11 +4,14 @@
 
 #include "../../OutboundPacket.h"
 
-class PacketLoginOutSetCompression : public OutboundPacket {
+class PacketLoginOutSetCompression : public OutboundPacket
+{
 public:
-    PacketLoginOutSetCompression() : OutboundPacket(0x03) {}
+    PacketLoginOutSetCompression() : OutboundPacket(0x03)
+    {
+    }
 
-    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
+    void write_data(const std::shared_ptr<Connection>& conn, ByteBuffer& buffer) override;
 };
 
 

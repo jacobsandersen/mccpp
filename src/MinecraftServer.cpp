@@ -3,32 +3,42 @@
 #include "MinecraftServer.h"
 #include "VarInt.h"
 
-MinecraftServer *instance = nullptr;
+MinecraftServer* instance = nullptr;
 
-MinecraftServer *MinecraftServer::get_server() {
-    if (!instance) {
+MinecraftServer* MinecraftServer::get_server()
+{
+    if (!instance)
+    {
         instance = new MinecraftServer();
     }
 
     return instance;
 }
 
-void MinecraftServer::start() {
+void MinecraftServer::start()
+{
     LOG(INFO) << "Starting MCCPP...";
-    std::thread([this]() {
+    std::thread([this]()
+    {
         m_network_manager.start();
     }).detach();
     LOG(INFO) << "MCCPP started!";
-    while (true) {}
+    while (true)
+    {
+    }
 }
 
-std::vector<std::shared_ptr<Player>> MinecraftServer::get_players() {
+std::vector<std::shared_ptr<Player>> MinecraftServer::get_players()
+{
     return m_players;
 }
 
-std::shared_ptr<Player> MinecraftServer::get_player(const std::string &username) {
-    for (std::shared_ptr<Player> player: get_players()) {
-        if (player->get_username() == username) {
+std::shared_ptr<Player> MinecraftServer::get_player(const std::string& username)
+{
+    for (std::shared_ptr<Player> player : get_players())
+    {
+        if (player->get_username() == username)
+        {
             return player;
         }
     }
@@ -36,9 +46,12 @@ std::shared_ptr<Player> MinecraftServer::get_player(const std::string &username)
     return nullptr;
 }
 
-std::shared_ptr<Player> MinecraftServer::get_player(const std::shared_ptr<uuids::uuid> &unique_id) {
-    for (std::shared_ptr<Player> player: get_players()) {
-        if (player->get_unique_id() == unique_id) {
+std::shared_ptr<Player> MinecraftServer::get_player(const std::shared_ptr<uuids::uuid>& unique_id)
+{
+    for (std::shared_ptr<Player> player : get_players())
+    {
+        if (player->get_unique_id() == unique_id)
+        {
             return player;
         }
     }
@@ -46,34 +59,42 @@ std::shared_ptr<Player> MinecraftServer::get_player(const std::shared_ptr<uuids:
     return nullptr;
 }
 
-void MinecraftServer::remove_player(const std::shared_ptr<uuids::uuid> &unique_id) {
+void MinecraftServer::remove_player(const std::shared_ptr<uuids::uuid>& unique_id)
+{
     if (unique_id == nullptr) return;
-    m_players.erase(std::remove_if(m_players.begin(), m_players.end(), [unique_id](std::shared_ptr<Player> player) {
+    m_players.erase(std::remove_if(m_players.begin(), m_players.end(), [unique_id](std::shared_ptr<Player> player)
+    {
         return player->get_unique_id() == unique_id;
     }), m_players.end());
 }
 
-const NetworkManager &MinecraftServer::get_network_manager() const {
+const NetworkManager& MinecraftServer::get_network_manager() const
+{
     return m_network_manager;
 }
 
-const RSAKeypair &MinecraftServer::get_rsa_keypair() const {
+const RSAKeypair& MinecraftServer::get_rsa_keypair() const
+{
     return m_rsa_keypair;
 }
 
-void MinecraftServer::add_player(const std::shared_ptr<Player> &player) {
+void MinecraftServer::add_player(const std::shared_ptr<Player>& player)
+{
     m_players.push_back(player);
 }
 
-const ConfigManager &MinecraftServer::get_config_manager() const {
+const ConfigManager& MinecraftServer::get_config_manager() const
+{
     return m_config_manager;
 }
 
-uint32_t MinecraftServer::get_protocol_version() const {
+uint32_t MinecraftServer::get_protocol_version() const
+{
     return m_protocol_version;
 }
 
-const std::string &MinecraftServer::get_version_name() const {
+const std::string& MinecraftServer::get_version_name() const
+{
     return m_version_name;
 }
 

@@ -20,13 +20,14 @@ using std::unordered_map, std::unique_ptr, std::make_unique;
 
 #define MINECRAFT_PORT 25565
 
-class NetworkManager {
+class NetworkManager
+{
 public:
     NetworkManager() :
-            m_context(),
-            m_acceptor(m_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), MINECRAFT_PORT)),
-            m_packet_handlers() {
-
+        m_context(),
+        m_acceptor(m_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), MINECRAFT_PORT)),
+        m_packet_handlers()
+    {
         // handshaking packets
         auto handshaking_handlers = make_unique<unordered_map<int32_t, unique_ptr<InboundPacket>>>();
         handshaking_handlers->insert({0x00, make_unique<PacketHandshakingInHandshake>()});

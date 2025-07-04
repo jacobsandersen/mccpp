@@ -7,12 +7,12 @@
 #include "../../../MinecraftServer.h"
 
 void
-PacketStatusInStatusRequest::handle(const std::shared_ptr<Connection> &conn,
-                                    const std::unique_ptr<ByteBuffer> &buffer) {
-
+PacketStatusInStatusRequest::handle(const std::shared_ptr<Connection>& conn,
+                                    const std::unique_ptr<ByteBuffer>& buffer)
+{
     LOG(INFO) << "PacketStatusInStatusRequest::handle";
 
-    MinecraftServer *server = MinecraftServer::get_server();
+    MinecraftServer* server = MinecraftServer::get_server();
     toml::value server_config = server->get_config_manager().get_server_config();
 
     uint16_t max_players = toml::find<uint16_t>(server_config, "max_players");
