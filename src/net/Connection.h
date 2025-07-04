@@ -1,7 +1,7 @@
 #ifndef MCCPP_CONNECTION_H
 #define MCCPP_CONNECTION_H
 
-#include <asio.hpp>
+#include <boost/asio.hpp>
 #include <uuid.h>
 #include <deque>
 #include <cryptopp/modes.h>
@@ -37,11 +37,11 @@ struct BufferReadContext {
 
 class Connection {
 public:
-    explicit Connection(asio::io_context &context) : m_context(context), m_socket(context), m_read_context() {}
+    explicit Connection(boost::asio::io_context &context) : m_context(context), m_socket(context), m_read_context() {}
 
-    asio::io_context &get_context() const;
+    boost::asio::io_context &get_context() const;
 
-    [[nodiscard]] asio::ip::tcp::socket *get_socket();
+    [[nodiscard]] boost::asio::ip::tcp::socket *get_socket();
 
     [[nodiscard]] ByteBuffer &get_data_buffer();
 
@@ -81,8 +81,8 @@ public:
 
     std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
 private:
-    asio::io_context& m_context;
-    asio::ip::tcp::socket m_socket;
+    boost::asio::io_context& m_context;
+    boost::asio::ip::tcp::socket m_socket;
     ByteBuffer m_data_buffer{};
     BufferReadContext m_read_context{};
     ConnectionState m_state = ConnectionState::Handshaking;

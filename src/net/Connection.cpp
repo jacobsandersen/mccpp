@@ -5,11 +5,11 @@
 #include <iostream>
 #include <utility>
 
-asio::io_context &Connection::get_context() const {
+boost::asio::io_context &Connection::get_context() const {
     return m_context;
 }
 
-asio::ip::tcp::socket* Connection::get_socket() {
+boost::asio::ip::tcp::socket* Connection::get_socket() {
     return &m_socket;
 }
 

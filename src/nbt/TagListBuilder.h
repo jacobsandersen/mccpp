@@ -18,7 +18,8 @@
 #include "tag/TagIntArray.h"
 #include "tag/TagLongArray.h"
 
-class TagListBuilder : public std::enable_shared_from_this<TagListBuilder> {
+class TagListBuilder : public std::enable_shared_from_this<TagListBuilder>
+{
 public:
     static std::shared_ptr<TagListBuilder> create(TagType list_type);
     static std::shared_ptr<TagListBuilder> create(icu::UnicodeString name, TagType list_type);
@@ -36,8 +37,13 @@ public:
     std::shared_ptr<TagListBuilder> add_long_array(std::list<int64_t> value);
     TagList build();
     std::shared_ptr<TagList> build_shared();
+
 private:
-    TagListBuilder(icu::UnicodeString name, TagType list_type) : m_name(std::move(name)), m_list_type(std::move(list_type)) {}
+    TagListBuilder(icu::UnicodeString name, TagType list_type) : m_name(std::move(name)),
+                                                                 m_list_type(std::move(list_type))
+    {
+    }
+
     icu::UnicodeString m_name;
     TagType m_list_type;
     std::list<std::shared_ptr<Tag>> m_items{};

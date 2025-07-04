@@ -11,4 +11,5 @@ void PacketLoginOutEncryptionRequest::write_data(const std::shared_ptr<Connectio
     buffer.write_ubytes(public_key_bytes, public_key_length);
     buffer.write_varint(verify_token_length);
     buffer.write_ubytes(verify_token_bytes, verify_token_length);
+    buffer.write_boolean(should_authenticate);
 }

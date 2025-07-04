@@ -2,8 +2,8 @@
 #define MCCPP_PACKETCONFIGURATIONOUTREGISTRYDATA_H
 
 
-class PacketConfigurationOutRegistryData {
-
+class PacketConfigurationOutRegistryData
+{
 };
 
 

@@ -6,11 +6,15 @@
 
 #include "../../OutboundPacket.h"
 
-class PacketConfigurationOutDisconnect : public OutboundPacket {
+class PacketConfigurationOutDisconnect : public OutboundPacket
+{
 public:
-    explicit PacketConfigurationOutDisconnect(std::string reason) : OutboundPacket(0x01), m_reason(std::move(reason)) {}
+    explicit PacketConfigurationOutDisconnect(std::string reason) : OutboundPacket(0x02), m_reason(std::move(reason))
+    {
+    }
 
     void write_data(const std::shared_ptr<Connection>&, ByteBuffer&) override;
+
 private:
     std::string m_reason;
 };

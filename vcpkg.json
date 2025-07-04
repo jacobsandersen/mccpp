@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    "cryptopp",
+    "curl",
+    "gflags",
+    "glog",
+    "icu",
+    "jsoncpp",
+    "stduuid",
+    "toml11",
+    "zlib",
+    "boost-asio",
+    "boost-endian"
+  ]
+}

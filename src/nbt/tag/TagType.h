@@ -8,7 +8,8 @@
 #include <unordered_map>
 #include <unicode/unistr.h>
 
-class TagType {
+class TagType
+{
 public:
     static const TagType End;
     static const TagType Byte;
@@ -32,8 +33,11 @@ public:
 
     bool operator==(const TagType& rhs) const;
     bool operator!=(const TagType& rhs) const;
+
 private:
-    TagType(uint8_t type_id, icu::UnicodeString name) : m_type_id(type_id), m_name(std::move(name)) {}
+    TagType(uint8_t type_id, icu::UnicodeString name) : m_type_id(type_id), m_name(std::move(name))
+    {
+    }
 
     uint8_t m_type_id;
     icu::UnicodeString m_name;

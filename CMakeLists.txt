@@ -3,17 +3,19 @@ project(mccpp)
 
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(asio REQUIRED)
-find_package(jsoncpp REQUIRED)
-find_package(cryptopp REQUIRED)
-find_package(stduuid REQUIRED)
+find_package(boost_asio CONFIG REQUIRED)
+find_package(boost_endian CONFIG REQUIRED)
+find_package(jsoncpp CONFIG REQUIRED)
+find_package(cryptopp CONFIG REQUIRED)
+find_package(stduuid CONFIG REQUIRED)
 find_package(CURL REQUIRED)
-find_package(panzi-portable-endian REQUIRED)
-find_package(toml11 REQUIRED)
-find_package(glog REQUIRED)
-find_package(gflags REQUIRED)
+find_package(toml11 CONFIG REQUIRED)
+find_package(glog CONFIG REQUIRED)
+find_package(gflags CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(ICU REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+pkg_check_modules(ICU REQUIRED IMPORTED_TARGET icu-i18n icu-io icu-uc)
 
 add_executable(mccpp
         src/main.cpp
@@ -70,6 +72,8 @@ add_executable(mccpp
         src/net/configuration/out/PacketConfigurationOutRegistryData.cpp
 )
 
-target_link_libraries(mccpp asio::asio JsonCpp::JsonCpp cryptopp::cryptopp stduuid::stduuid CURL::libcurl
-        panzi-portable-endian::panzi-portable-endian toml11::toml11 glog::glog gflags::gflags ZLIB::ZLIB
-        icu::icu)
+target_link_libraries(mccpp
+        Boost::asio Boost::endian JsonCpp::JsonCpp cryptopp::cryptopp stduuid
+        CURL::libcurl toml11::toml11 glog::glog gflags::gflags ZLIB::ZLIB
+        PkgConfig::ICU
+)

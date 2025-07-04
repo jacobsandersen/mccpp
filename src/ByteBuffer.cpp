@@ -5,6 +5,7 @@
 #include <zlib.h>
 #include <queue>
 #include <unicode/schriter.h>
+#include <boost/endian/conversion.hpp>
 #include "ByteBuffer.h"
 #include "VarInt.h"
 #include "nbt/tag/TagType.h"
@@ -171,11 +172,11 @@ int16_t ByteBuffer::read_short() {
 }
 
 void ByteBuffer::write_be_short(int16_t value) {
-    write_short(htobe16(value));
+    write_short(boost::endian::native_to_big(value));
 }
 
 int16_t ByteBuffer::read_be_short() {
-    return be16toh(read_short());
+    return boost::endian::big_to_native(read_short());
 }
 
 void ByteBuffer::write_ushort(uint16_t value) {
@@ -187,11 +188,11 @@ uint16_t ByteBuffer::read_ushort() {
 }
 
 void ByteBuffer::write_be_ushort(uint16_t value) {
-    write_ushort(htobe16(value));
+    write_ushort(boost::endian::native_to_big(value));
 }
 
 uint16_t ByteBuffer::read_be_ushort() {
-    return be16toh(read_ushort());
+    return boost::endian::big_to_native(read_short());
 }
 
 void ByteBuffer::write_int(int32_t value) {
@@ -203,11 +204,11 @@ int32_t ByteBuffer::read_int() {
 }
 
 void ByteBuffer::write_be_int(int32_t value) {
-    write_int(htobe32(value));
+    write_int(boost::endian::native_to_big(value));
 }
 
 int32_t ByteBuffer::read_be_int() {
-    return be32toh(read_int());
+    return boost::endian::big_to_native(read_int());
 }
 
 void ByteBuffer::write_uint(uint32_t value) {
@@ -219,11 +220,11 @@ uint32_t ByteBuffer::read_uint() {
 }
 
 void ByteBuffer::write_be_uint(uint32_t value) {
-    write_uint(htobe32(value));
+    write_uint(boost::endian::native_to_big(value));
 }
 
 uint32_t ByteBuffer::read_be_uint() {
-    return be32toh(read_uint());
+    return boost::endian::big_to_native(read_int());
 }
 
 void ByteBuffer::write_long(int64_t value) {
@@ -235,11 +236,11 @@ int64_t ByteBuffer::read_long() {
 }
 
 void ByteBuffer::write_be_long(int64_t value) {
-    write_long(htobe64(value));
+    write_long(boost::endian::native_to_big(value));
 }
 
 int64_t ByteBuffer::read_be_long() {
-    return be64toh(read_long());
+    return boost::endian::big_to_native(read_long());
 }
 
 void ByteBuffer::write_ulong(uint64_t value) {
@@ -251,11 +252,11 @@ uint64_t ByteBuffer::read_ulong() {
 }
 
 void ByteBuffer::write_be_ulong(uint64_t value) {
-    write_ulong(htobe64(value));
+    write_ulong(boost::endian::native_to_big(value));
 }
 
 uint64_t ByteBuffer::read_be_ulong() {
-    return be64toh(read_ulong());
+    return boost::endian::big_to_native(read_long());
 }
 
 void ByteBuffer::write_float(float value) {

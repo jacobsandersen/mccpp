@@ -1,7 +1,7 @@
 #ifndef MCCPP_MINECRAFTSERVER_H
 #define MCCPP_MINECRAFTSERVER_H
 
-#include <asio.hpp>
+#include <boost/asio.hpp>
 #include <cryptopp/rsa.h>
 #include <toml.hpp>
 #include "net/Connection.h"
@@ -10,7 +10,7 @@
 #include "RSAKeypair.h"
 #include "ConfigManager.h"
 
-using asio::ip::tcp;
+using boost::asio::ip::tcp;
 
 class MinecraftServer {
 public:
@@ -40,8 +40,8 @@ public:
 
 private:
     MinecraftServer()
-            : m_network_manager(), m_config_manager(), m_rsa_keypair(), m_version_name("1.20.2"),
-              m_protocol_version(764) {}
+            : m_network_manager(), m_config_manager(), m_rsa_keypair(), m_version_name("1.21.7"),
+              m_protocol_version(772) {}
 
     NetworkManager m_network_manager;
     ConfigManager m_config_manager;

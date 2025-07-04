@@ -2,9 +2,12 @@
 #include "../../../MinecraftServer.h"
 #include "../out/PacketConfigurationOutDisconnect.h"
 
-void PacketConfigurationInClientInformation::handle(const std::shared_ptr<Connection> &conn, const std::unique_ptr<ByteBuffer> &buffer) {
+void PacketConfigurationInClientInformation::handle(const std::shared_ptr<Connection>& conn,
+                                                    const std::unique_ptr<ByteBuffer>& buffer)
+{
     auto player = MinecraftServer::get_server()->get_player(conn->get_unique_id());
-    if (player == nullptr) {
+    if (player == nullptr)
+    {
         PacketConfigurationOutDisconnect disconnect("Could not get Player instance for your UUID");
         disconnect.send(conn);
         return;

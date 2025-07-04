@@ -41,9 +41,18 @@ void OutboundPacket::send(const std::shared_ptr<Connection> &conn) {
     packed.set_data(conn->encrypt_bytes(packed.get_data()));
 
     std::deque<uint8_t> data = packed.get_data();
+    const auto buffer = std::make_shared<std::vector<uint8_t>>(std::vector(data.begin(), data.end()));
 
-    asio::async_write(
+    LOG(INFO) << "OutboundPacket - now calling boost::asio::async_write";
+    boost::asio::async_write(
             *conn->get_socket(),
-            asio::buffer(std::vector(data.begin(), data.end())),
-            asio::transfer_all());
+            boost::asio::buffer(*buffer),
+            boost::asio::transfer_all(),
+            [](const boost::system::error_code& ec, std::size_t bytes_transferred) {
+        if (ec) {
+            LOG(ERROR) << "OutboundPacket - boost::asio::async_write failed: " << ec.message();
+        } else {
+            LOG(INFO) << "OutboundPacket - bytes transferred: " << bytes_transferred;
+        }
+    });
 }
