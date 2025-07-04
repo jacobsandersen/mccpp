@@ -10,7 +10,7 @@ void
 PacketStatusInStatusRequest::handle(const std::shared_ptr<Connection>& conn,
                                     const std::unique_ptr<ByteBuffer>& buffer)
 {
-    LOG(INFO) << "PacketStatusInStatusRequest::handle";
+    LOG(INFO) << "Received status request, collecting information...";
 
     MinecraftServer* server = MinecraftServer::get_server();
     toml::value server_config = server->get_config_manager().get_server_config();
@@ -19,7 +19,7 @@ PacketStatusInStatusRequest::handle(const std::shared_ptr<Connection>& conn,
     std::string motd = toml::find<std::string>(server_config, "motd");
     std::string favicon = toml::find<std::string>(server_config, "favicon");
 
-    LOG(INFO) << "Sending PacketStatusOutStatusResponse";
+    LOG(INFO) << "Information collected, sending status...";
 
     // TODO: figure out player sample & those booleans
     PacketStatusOutStatusResponse resp(server->get_version_name(), server->get_protocol_version(), max_players,

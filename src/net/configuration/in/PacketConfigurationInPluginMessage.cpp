@@ -1,9 +1,18 @@
 #include "PacketConfigurationInPluginMessage.h"
 
+#include <glog/logging.h>
+
 void PacketConfigurationInPluginMessage::handle(const std::shared_ptr<Connection>& conn,
                                                 const std::unique_ptr<ByteBuffer>& buffer)
 {
-    std::string channel = buffer->read_string();
-    std::vector<uint8_t> data = buffer->read_ubytes(buffer->get_data_length());
-    // TODO: handle
+    LOG(INFO) << "Received configuration plugin message...";
+
+    const std::string channel = buffer->read_string();
+    LOG(INFO) << ">> Plugin message channel: " << channel;
+
+    if (channel == "minecraft:brand")
+    {
+        const std::string brand = buffer->read_string();
+        LOG(INFO) << ">> Client brand: " << brand;
+    }
 }

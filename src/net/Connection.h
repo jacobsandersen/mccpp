@@ -7,6 +7,7 @@
 #include <cryptopp/modes.h>
 #include "../ByteBuffer.h"
 #include "../BasicTimer.h"
+#include "../KnownPack.h"
 
 #define VERIFY_TOKEN_SIZE 4
 #define SHARED_SECRET_SIZE 16
@@ -87,6 +88,12 @@ public:
 
     std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
 
+    void set_known_packs(std::vector<KnownPack> known_packs);
+
+    std::vector<KnownPack> get_known_packs() const;
+
+    void unclean_close();
+
 private:
     boost::asio::io_context& m_context;
     boost::asio::ip::tcp::socket m_socket;
@@ -102,6 +109,7 @@ private:
     std::shared_ptr<uuids::uuid> m_unique_id{};
     CryptoPP::CFB_Mode_ExternalCipher::Encryption m_cfb_stream_cipher_encryption{};
     CryptoPP::CFB_Mode_ExternalCipher::Decryption m_cfb_stream_cipher_decryption{};
+    std::vector<KnownPack> m_known_packs{};
 };
 
 #endif

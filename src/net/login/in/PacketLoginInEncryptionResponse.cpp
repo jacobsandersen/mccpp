@@ -2,6 +2,9 @@
 #include <json/value.h>
 #include <json/reader.h>
 #include "PacketLoginInEncryptionResponse.h"
+
+#include <glog/logging.h>
+
 #include "../../../MinecraftServer.h"
 #include "../out/PacketLoginOutDisconnect.h"
 #include "../../HttpClient.h"
@@ -65,6 +68,8 @@ std::string mcHexDigest(const std::string& hashIn)
 void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& conn,
                                              const std::unique_ptr<ByteBuffer>& buffer)
 {
+    LOG(INFO) << "Encryption response received, beginning validation...";
+
     int32_t shared_secret_length = buffer->read_varint();
     std::vector<uint8_t> shared_secret = buffer->read_ubytes(shared_secret_length);
 
@@ -83,13 +88,15 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& 
 
     if (decrypted_verify_token != conn->get_verify_token())
     {
+        LOG(WARNING) << "Failed to validate connection's verify token, sending disconnection...";
+
         auto pkt = new PacketLoginOutDisconnect("Verify token incorrect. Your client is broken.");
         pkt->send(conn);
         delete pkt;
         return;
     }
 
-    std::shared_ptr<Player> player = MinecraftServer::get_server()->get_player(conn->get_unique_id());
+    LOG(INFO) << "OK. Building server hash for Yggdrasil authentication...";
 
     std::string hash;
     CryptoPP::SHA1 sha1;
@@ -98,22 +105,30 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& 
     sha1.Update(public_key.data(), public_key.size());
     hash.resize(sha1.DigestSize());
     sha1.Final((CryptoPP::byte*)&hash[0]);
-
     std::string finalDigest = mcHexDigest(hash);
 
+    LOG(INFO) << "OK. Creating Yggdrasil request payload...";
+
+    std::shared_ptr<Player> player = MinecraftServer::get_server()->get_player(conn->get_unique_id());
     std::map<std::string, std::string> params;
     params.insert({"username", player->get_username()});
     params.insert({"serverId", finalDigest});
+
+    LOG(INFO) << "OK. Logging in to Mojang...";
 
     std::string resp_body;
     int64_t resp_code{};
     bool request_status = HttpClient::get_url(SESSION_URL, params, &resp_body, &resp_code);
     if (!request_status || resp_code != 200)
     {
+        LOG(WARNING) << "Failed to log in to Mojang. Sending disconnection...";
+
         PacketLoginOutDisconnect pkt("Failed to register your session with Mojang. Try again later.");
         pkt.send(conn);
         return;
     }
+
+    LOG(INFO) << "OK. Parsing user's profile and setting up...";
 
     Json::Value resp_json;
     Json::Reader reader;
@@ -141,6 +156,8 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& 
     auto maybe_unique_id = uuids::uuid::from_string(canonicalized_unique_id);
     if (!maybe_unique_id.has_value())
     {
+        LOG(WARNING) << "Failed to parse user's UUID from Mojang response. Sending disconnection...";
+
         PacketLoginOutDisconnect pkt("Failed to parse your UUID. Try again later.");
         pkt.send(conn);
         return;
@@ -152,14 +169,20 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& 
 
     player->set_mojang_profile(std::make_shared<MojangProfile>(profile));
 
+    LOG(INFO) << "OK. Checking if we need to enable compression for the connection...";
+
     toml::value server_config = MinecraftServer::get_server()->get_config_manager().get_server_config();
     int16_t compression_threshold = toml::find<int16_t>(server_config, "compression_threshold");
     if (compression_threshold >= 0)
     {
+        LOG(INFO) << "Enabling connection compression with threshold " << compression_threshold;
+
         PacketLoginOutSetCompression set_compression{};
         set_compression.send(conn);
         conn->enable_compression();
     }
+
+    LOG(INFO) << "OK. Sending login success...";
 
     PacketLoginOutLoginSuccess resp(unique_id, player->get_username(), properties);
     resp.send(conn);

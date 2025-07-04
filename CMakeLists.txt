@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.28)
 project(mccpp)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -71,6 +71,14 @@ add_executable(mccpp
         src/net/configuration/out/PacketConfigurationOutKeepAlive.cpp
         src/net/configuration/out/PacketConfigurationOutDisconnect.cpp
         src/net/configuration/out/PacketConfigurationOutRegistryData.cpp
+        src/net/configuration/out/PacketConfigurationOutFeatureFlags.cpp
+        src/net/configuration/out/PacketConfigurationOutFeatureFlags.h
+        src/net/configuration/out/PacketConfigurationOutKnownPacks.cpp
+        src/net/configuration/out/PacketConfigurationOutKnownPacks.h
+        src/net/configuration/in/PacketConfigurationInKnownPacks.cpp
+        src/net/configuration/in/PacketConfigurationInKnownPacks.h
+        src/KnownPack.cpp
+        src/KnownPack.h
 )
 
 target_link_libraries(mccpp

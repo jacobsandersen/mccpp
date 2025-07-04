@@ -1,6 +1,9 @@
 #include <random>
 #include <uuid.h>
 #include "PacketLoginInLoginStart.h"
+
+#include <glog/logging.h>
+
 #include "../out/PacketLoginOutEncryptionRequest.h"
 #include "../../../MinecraftServer.h"
 #include "../out/PacketLoginOutDisconnect.h"
@@ -8,8 +11,12 @@
 void
 PacketLoginInLoginStart::handle(const std::shared_ptr<Connection>& conn, const std::unique_ptr<ByteBuffer>& buffer)
 {
+    LOG(INFO) << "Received login start...";
+
     std::string username = buffer->read_string();
     uuids::uuid unique_id = buffer->read_uuid();
+
+    LOG(INFO) << username << " (" << uuids::to_string(unique_id) << ") is joining the server...";
 
     auto unique_id_ptr = std::make_shared<uuids::uuid>(unique_id);
     conn->set_unique_id(unique_id_ptr);
@@ -17,11 +24,12 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection>& conn, const s
     Player player(conn, username, unique_id_ptr);
     MinecraftServer::get_server()->add_player(std::make_shared<Player>(player));
 
-    // below, encryption request
-    // TODO: move this elsewhere, clean up verify token creation
+    LOG(INFO) << "Getting server's encoded public key...";
 
     std::vector<uint8_t> encoded_public_key = MinecraftServer::get_server()->get_rsa_keypair().
                                                                              get_der_encoded_public_key();
+
+    LOG(INFO) << "Generating verify token challenge for client...";
 
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -34,6 +42,8 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection>& conn, const s
     }
 
     conn->set_verify_token(verify_token);
+
+    LOG(INFO) << "Sending encryption request to user's client...";
 
     PacketLoginOutEncryptionRequest resp(
         "",

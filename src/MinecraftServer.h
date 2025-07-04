@@ -39,11 +39,12 @@ public:
 
     void add_player(const std::shared_ptr<Player>&);
 
+    const std::vector<KnownPack>& get_known_packs() const;
+
 private:
-    MinecraftServer()
-        : m_network_manager(), m_config_manager(), m_rsa_keypair(), m_version_name("1.21.7"),
-          m_protocol_version(772)
+    MinecraftServer() : m_version_name("1.21.7"), m_protocol_version(772)
     {
+        m_known_packs.emplace_back("minecraft", "core", "1.21.5");
     }
 
     NetworkManager m_network_manager;
@@ -51,6 +52,7 @@ private:
     RSAKeypair m_rsa_keypair;
     std::string m_version_name;
     uint32_t m_protocol_version;
+    std::vector<KnownPack> m_known_packs;
 
     std::vector<std::shared_ptr<Player>> m_players{};
 };

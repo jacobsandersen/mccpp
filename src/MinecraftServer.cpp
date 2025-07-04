@@ -92,6 +92,11 @@ const std::string& MinecraftServer::get_version_name() const
     return m_version_name;
 }
 
+const std::vector<KnownPack>& MinecraftServer::get_known_packs() const
+{
+    return m_known_packs;
+}
+
 
 
 

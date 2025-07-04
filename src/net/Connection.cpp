@@ -136,3 +136,18 @@ std::deque<uint8_t> Connection::decrypt_bytes(std::deque<uint8_t> enc_bytes) {
 
     return bytes;
 }
+
+void Connection::set_known_packs(std::vector<KnownPack> known_packs)
+{
+    m_known_packs = std::move(known_packs);
+}
+
+std::vector<KnownPack> Connection::get_known_packs() const
+{
+    return m_known_packs;
+}
+
+void Connection::unclean_close()
+{
+    m_socket.close();
+}
