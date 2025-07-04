@@ -28,6 +28,12 @@ Example `CMakeUserPresets.json`:
 
 # Changelog
 
+## Update 07/04/25 1737 PHST
+
+Conan -> vcpkg; change how server starts up threads & use more threads for network manager; update protocol version and
+fix the changed packets so they are all recognized again. Fix keep alive timers so they access connection safely without
+causing a segfault.
+
 ## Update 11/22/23 1918 PDT
 
 NBT builder generified a bit. Needs more work. Now able to send configuration disconnect, configuration keep alive.
