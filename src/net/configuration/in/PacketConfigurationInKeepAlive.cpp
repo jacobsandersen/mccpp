@@ -1,4 +1,7 @@
 #include "PacketConfigurationInKeepAlive.h"
+
+#include <glog/logging.h>
+
 #include "../out/PacketConfigurationOutDisconnect.h"
 #include "../out/PacketConfigurationOutKeepAlive.h"
 
@@ -14,14 +17,20 @@ void PacketConfigurationInKeepAlive::handle(const std::shared_ptr<Connection>& c
         return;
     }
 
-    conn->start_new_timer(std::chrono::seconds(15), [conn]()
+    conn->start_new_timer(std::chrono::seconds(15), [weak_conn = std::weak_ptr(conn)]()
     {
-        if (conn->get_state() != ConnectionState::Configuration)
+        if (const auto locked = weak_conn.lock())
         {
-            return;
-        }
+            if (locked->get_state() != ConnectionState::Configuration)
+            {
+                return;
+            }
 
-        PacketConfigurationOutKeepAlive new_keep_alive;
-        new_keep_alive.send(conn);
+            PacketConfigurationOutKeepAlive new_keep_alive;
+            new_keep_alive.send(locked);
+        } else
+        {
+            LOG(WARNING) << "Configuration keep alive timer fired, but connection was no longer valid";
+        }
     });
 }

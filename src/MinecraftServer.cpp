@@ -18,14 +18,8 @@ MinecraftServer* MinecraftServer::get_server()
 void MinecraftServer::start()
 {
     LOG(INFO) << "Starting MCCPP...";
-    std::thread([this]()
-    {
-        m_network_manager.start();
-    }).detach();
-    LOG(INFO) << "MCCPP started!";
-    while (true)
-    {
-    }
+    m_network_manager.start();
+    LOG(INFO) << "MCCPP stopping...";
 }
 
 std::vector<std::shared_ptr<Player>> MinecraftServer::get_players()

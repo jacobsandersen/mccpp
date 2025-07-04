@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.26)
 project(mccpp)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Debug)
 
 find_package(boost_asio CONFIG REQUIRED)
 find_package(boost_endian CONFIG REQUIRED)
@@ -73,6 +74,7 @@ add_executable(mccpp
 )
 
 target_link_libraries(mccpp
+        PRIVATE
         Boost::asio Boost::endian JsonCpp::JsonCpp cryptopp::cryptopp stduuid
         CURL::libcurl toml11::toml11 glog::glog gflags::gflags ZLIB::ZLIB
         PkgConfig::ICU

@@ -6,7 +6,31 @@
 void NetworkManager::start()
 {
     start_accept();
-    m_context.run();
+
+    const int thread_count = std::max(2u, std::thread::hardware_concurrency());
+
+    LOG(INFO) << "NetworkManager starting " << thread_count << " network worker threads...";
+    std::vector<std::thread> threads;
+    for (int i = 0; i < thread_count; ++i)
+    {
+        threads.emplace_back([this]()
+        {
+            try
+            {
+                m_context.run();
+            } catch (const std::exception &err)
+            {
+                LOG(FATAL) << "Network thread crashed: " << err.what() << std::endl;
+                m_context.stop();
+            }
+        });
+    }
+
+    LOG(INFO) << "Worker threads started";
+    for (auto &thread : threads)
+    {
+        thread.join();
+    }
 }
 
 void NetworkManager::start_accept()
@@ -33,7 +57,7 @@ void NetworkManager::start_accept()
 
 void NetworkManager::start_read(const std::shared_ptr<Connection>& conn)
 {
-    auto buf = new boost::asio::streambuf;
+    auto buf = std::make_shared<boost::asio::streambuf>();
 
     LOG(INFO) << "Starting read...";
 
@@ -41,11 +65,11 @@ void NetworkManager::start_read(const std::shared_ptr<Connection>& conn)
         *conn->get_socket(),
         *buf,
         boost::asio::transfer_at_least(1),
-        [this, conn, buf](const boost::system::error_code& err, size_t bytes_transferred)
+        [this, conn, buf](const boost::system::error_code& err, const size_t bytes_transferred)
         {
             if (!err)
             {
-                std::istream is(buf);
+                std::istream is(buf.get());
 
                 ByteBuffer tmp;
                 for (int i = 0; i < bytes_transferred; i++)
@@ -55,14 +79,10 @@ void NetworkManager::start_read(const std::shared_ptr<Connection>& conn)
                     tmp.write_byte(raw);
                 }
 
-                delete buf;
-
                 tmp.set_data(conn->decrypt_bytes(tmp.get_data()));
-
                 conn->get_data_buffer().append(tmp);
 
                 process_buffer(conn);
-
                 start_read(conn);
             }
             else
@@ -179,8 +199,7 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection>& conn)
     case BufferReadState::HandlePacket:
         {
             LOG(INFO) << "process :: handle packet";
-            auto& handlers = *m_packet_handlers.find(conn->get_state())->second;
-            if (!handlers.count(*ctx.packet_id))
+            if (const auto& handlers = *m_packet_handlers.find(conn->get_state())->second; !handlers.contains(*ctx.packet_id))
             {
                 LOG(WARNING) << "Tried to handle unknown packet " << *ctx.packet_id << " in state " << static_cast<int>(
                     conn->get_state());
