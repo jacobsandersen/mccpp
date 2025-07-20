@@ -26,7 +26,7 @@ uint8_t TagType::get_type_id() const
 
 icu::UnicodeString TagType::get_type_name() const
 {
-    return m_name;
+    return m_type_name;
 }
 
 bool TagType::operator==(const TagType& rhs) const
@@ -39,12 +39,12 @@ bool TagType::operator!=(const TagType& rhs) const
     return !operator==(rhs);
 }
 
-TagType TagType::type_id_to_type(uint8_t tag_type_id)
+TagType TagType::type_id_to_type(const uint8_t type_id)
 {
-    if (tag_type_id > 12)
+    if (type_id > 12)
     {
         throw std::invalid_argument("Tried to get Tag Type with Tag Type ID > 12.");
     }
 
-    return Types[tag_type_id];
+    return Types[type_id];
 }

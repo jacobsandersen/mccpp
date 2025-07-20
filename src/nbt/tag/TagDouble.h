@@ -1,21 +1,19 @@
-#ifndef MCCPP_TAGDOUBLE_H
-#define MCCPP_TAGDOUBLE_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-
+#ifndef TAGDOUBLE_H
+#define TAGDOUBLE_H
 #include "Tag.h"
 
-class TagDouble : public Tag {
+class TagDouble final : public Tag
+{
 public:
-    TagDouble(icu::UnicodeString name, double value) : Tag(TagType::Double, std::move(name)), m_value(value) {}
-
-    static TagDouble read(ByteBuffer &buffer);
-    static TagDouble read(ByteBuffer &buffer, bool include_name);
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] double get_value() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    explicit TagDouble(const double value) : TagDouble("", value) {}
+    TagDouble(icu::UnicodeString name, const double value) : Tag(TagType::Double, std::move(name)), m_value(value) {}
+    void write_payload(ByteBuffer& buffer) const override;
 private:
     double m_value;
 };
 
-
-#endif //MCCPP_TAGDOUBLE_H
+#endif //TAGDOUBLE_H

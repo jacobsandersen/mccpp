@@ -1,22 +1,21 @@
-#ifndef MCCPP_TAGBYTE_H
-#define MCCPP_TAGBYTE_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-#include <utility>
+#ifndef TAGBYTE_H
+#define TAGBYTE_H
 
 #include "Tag.h"
 
-class TagByte : public Tag {
+class TagByte final : public Tag {
 public:
-    TagByte(icu::UnicodeString name, int8_t value) : Tag(TagType::Byte, std::move(name)), m_value(value) {}
-
-    static TagByte read(ByteBuffer &buffer);
-    static TagByte read(ByteBuffer &buffer, bool include_name);
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] int8_t get_value() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    explicit TagByte(const int8_t byte) : TagByte("", byte) {}
+    TagByte(icu::UnicodeString name, const int8_t byte) : Tag(TagType::Byte, std::move(name)), m_byte(byte) {}
+    void write_payload(ByteBuffer& buffer) const override;
 private:
-    int8_t m_value;
+    int8_t m_byte;
 };
 
 
-#endif //MCCPP_TAGBYTE_H
+
+#endif //TAGBYTE_H

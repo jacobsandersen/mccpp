@@ -1,16 +1,18 @@
-#ifndef MCCPP_TAGEND_H
-#define MCCPP_TAGEND_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
+#ifndef TAGEND_H
+#define TAGEND_H
 
 #include "Tag.h"
 
-class TagEnd : public Tag {
+class TagEnd final : public Tag {
 public:
-    TagEnd() : Tag(TagType::End, "") {}
+    TagEnd() : Tag(TagType::End) {}
 
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    static void create_and_write(ByteBuffer& buffer);
+    void write_payload(ByteBuffer& buffer) const override {} // No payload
 };
 
-
-#endif //MCCPP_TAGEND_H
+#endif //TAGEND_H

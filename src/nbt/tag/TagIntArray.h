@@ -1,23 +1,20 @@
-#ifndef MCCPP_TAGINTARRAY_H
-#define MCCPP_TAGINTARRAY_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-#include <list>
+#ifndef TAGINTARRAY_H
+#define TAGINTARRAY_H
 #include <utility>
 
 #include "Tag.h"
 
-class TagIntArray : public Tag {
+class TagIntArray final : Tag {
 public:
-    TagIntArray(icu::UnicodeString name, std::list<int32_t> value) : Tag(TagType::IntArray, std::move(name)), m_value(std::move(value)) {}
-
-    static TagIntArray read(ByteBuffer &buffer);
-    static TagIntArray read(ByteBuffer &buffer, bool include_name);
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] std::list<int32_t> get_value() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    explicit TagIntArray(std::vector<int32_t> data) : TagIntArray("", std::move(data)) {}
+    TagIntArray(icu::UnicodeString name, std::vector<int32_t> data) : Tag(TagType::IntArray, std::move(name)), m_data(std::move(data)) {}
+    void write_payload(ByteBuffer& buffer) const override;
 private:
-    std::list<int32_t> m_value;
+    std::vector<int32_t> m_data;
 };
 
-
-#endif //MCCPP_TAGINTARRAY_H
+#endif //TAGINTARRAY_H

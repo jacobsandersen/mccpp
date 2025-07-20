@@ -1,27 +1,20 @@
-#ifndef MCCPP_TAGSTRING_H
-#define MCCPP_TAGSTRING_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-#include <utility>
+#ifndef TAGSTRING_H
+#define TAGSTRING_H
 
 #include "Tag.h"
 
-class TagString : public Tag
-{
+class TagString final : public Tag {
 public:
-    TagString(icu::UnicodeString name, icu::UnicodeString value) : Tag(TagType::String, std::move(name)),
-                                                                   m_value(std::move(value))
-    {
-    }
-
-    static TagString read(ByteBuffer& buffer);
-    static TagString read(ByteBuffer& buffer, bool include_name);
-    void write(ByteBuffer& buffer, bool include_preamble) override;
-    [[nodiscard]] icu::UnicodeString get_value() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
-
+    explicit TagString(icu::UnicodeString value) : TagString("", std::move(value)) {}
+    TagString(icu::UnicodeString name, icu::UnicodeString value) : Tag(TagType::String, std::move(name)), m_value(std::move(value)) {}
+    void write_payload(ByteBuffer& buffer) const override;
 private:
     icu::UnicodeString m_value;
 };
 
 
-#endif //MCCPP_TAGSTRING_H
+#endif //TAGSTRING_H

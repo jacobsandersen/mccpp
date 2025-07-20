@@ -1,23 +1,18 @@
-#ifndef MCCPP_TAGLONGARRAY_H
-#define MCCPP_TAGLONGARRAY_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-#include <list>
-#include <utility>
-
+#ifndef TAGLONGARRAY_H
+#define TAGLONGARRAY_H
 #include "Tag.h"
 
-class TagLongArray : public Tag {
+class TagLongArray final : public Tag {
 public:
-    TagLongArray(icu::UnicodeString name, std::list<int64_t> value) : Tag(TagType::LongArray, std::move(name)), m_value(std::move(value)) {}
-
-    static TagLongArray read(ByteBuffer &buffer);
-    static TagLongArray read(ByteBuffer &buffer, bool include_name);
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] std::list<int64_t> get_value() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    explicit TagLongArray(std::vector<int64_t> data) : TagLongArray("", std::move(data)) {}
+    TagLongArray(icu::UnicodeString name, std::vector<int64_t> data) : Tag(TagType::LongArray, std::move(name)), m_data(std::move(data)) {}
+    void write_payload(ByteBuffer& buffer) const override;
 private:
-    std::list<int64_t> m_value;
+    std::vector<int64_t> m_data;
 };
 
-
-#endif //MCCPP_TAGLONGARRAY_H
+#endif //TAGLONGARRAY_H

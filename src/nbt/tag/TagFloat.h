@@ -1,20 +1,18 @@
-#ifndef MCCPP_TAGFLOAT_H
-#define MCCPP_TAGFLOAT_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
+#ifndef TAGFLOAT_H
+#define TAGFLOAT_H
 #include "Tag.h"
 
-class TagFloat : public Tag {
+class TagFloat final : public Tag {
 public:
-    TagFloat(icu::UnicodeString name, float value) : Tag(TagType::Float, std::move(name)), m_value(value) {}
-
-    static TagFloat read(ByteBuffer &buffer);
-    static TagFloat read(ByteBuffer &buffer, bool include_name);
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] float get_value() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    explicit TagFloat(const float value) : TagFloat("", value) {}
+    TagFloat(icu::UnicodeString name, const float value) : Tag(TagType::Float, std::move(name)), m_value(value) {}
+    void write_payload(ByteBuffer& buffer) const override;
 private:
     float m_value;
 };
 
-
-#endif //MCCPP_TAGFLOAT_H
+#endif //TAGFLOAT_H

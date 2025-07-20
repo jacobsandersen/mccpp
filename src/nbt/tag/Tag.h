@@ -1,27 +1,50 @@
-#ifndef MCCPP_TAG_H
-#define MCCPP_TAG_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-#include <cstdint>
+#ifndef TAG_H
+#define TAG_H
+
 #include <utility>
-#include <unicode/unistr.h>
-#include <unicode/msgfmt.h>
+
 #include "../../ByteBuffer.h"
 #include "TagType.h"
 
-class Tag {
+class Tag
+{
 public:
-    Tag(TagType type, icu::UnicodeString name) : m_type(std::move(type)), m_name(std::move(name)) {}
+    explicit Tag(TagType type): Tag(std::move(type), "") {};
+    Tag(TagType type, icu::UnicodeString name): m_type(std::move(type)), m_name(std::move(name)) {};
 
-    [[nodiscard]] TagType get_type();
-    [[nodiscard]] icu::UnicodeString get_name();
-    void write_type(ByteBuffer &buffer);
-    void write_name(ByteBuffer &buffer);
-    void write(ByteBuffer &buffer);
-    virtual void write(ByteBuffer &buffer, bool include_preamble) = 0;
-    virtual icu::UnicodeString to_string(uint8_t indent) = 0;
+    virtual ~Tag() = default;
+
+    void write(ByteBuffer& buffer) const
+    {
+        return write(buffer, true);
+    }
+
+    void write(ByteBuffer& buffer, bool include_name) const
+    {
+        buffer.write_ubyte(m_type.get_type_id());
+        if (include_name) buffer.write_string_modified_utf8(m_name);
+        write_payload(buffer);
+    }
+
+    virtual void write_payload(ByteBuffer& buffer) const = 0;
+
+    [[nodiscard]] TagType get_type() const
+    {
+        return m_type;
+    }
+
+    [[nodiscard]] icu::UnicodeString get_name() const
+    {
+        return m_name;
+    }
 private:
     TagType m_type;
     icu::UnicodeString m_name;
 };
 
-#endif
+
+#endif //TAG_H

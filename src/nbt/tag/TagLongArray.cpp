@@ -1,33 +1,19 @@
+//
+// Created by Jacob Andersen on 7/19/25.
+//
+
 #include "TagLongArray.h"
 
-TagLongArray TagLongArray::read(ByteBuffer &buffer) {
-    return read(buffer, true);
-}
-
-TagLongArray TagLongArray::read(ByteBuffer &buffer, bool include_name) {
-    icu::UnicodeString name = include_name ? buffer.read_string_modified_utf8() : "";
-
-    int32_t length = buffer.read_be_int();
-    std::list<int64_t> items;
-    for (int i = 0; i < length; i++) {
-        items.push_back(buffer.read_be_long());
+void TagLongArray::write_payload(ByteBuffer& buffer) const
+{
+    if (m_data.size() > std::numeric_limits<int32_t>::max())
+    {
+        throw std::overflow_error("TagLongArray::write_payload: long array too large, unable to write signed 4-byte length prefix");
     }
 
-    return {name, items};
-}
-
-void TagLongArray::write(ByteBuffer &buffer, bool include_preamble) {
-    Tag::write(buffer, include_preamble);
-    buffer.write_be_int(static_cast<int32_t>(m_value.size()));
-    for (auto& datum : m_value) {
-        buffer.write_be_long(datum);
+    buffer.write_int(static_cast<int32_t>(m_data.size()));
+    for (const int64_t datum : m_data)
+    {
+        buffer.write_long(datum);
     }
-}
-
-std::list<int64_t> TagLongArray::get_value() const {
-    return m_value;
-}
-
-icu::UnicodeString TagLongArray::to_string(uint8_t indent) {
-    return icu::UnicodeString(Tag::to_string(indent) + " [" + icu::UnicodeString::fromUTF8(std::to_string(get_value().size()))) + " longs]";
 }

@@ -1,34 +1,49 @@
-#ifndef MCCPP_TAGLIST_H
-#define MCCPP_TAGLIST_H
+//
+// Created by Jacob Andersen on 7/19/25.
+//
 
-#include <utility>
-#include <list>
+#ifndef TAGLIST_H
+#define TAGLIST_H
 
 #include "Tag.h"
+#include "TagType.h"
+#include "../util/Concepts.h"
 
-class TagList : public Tag {
+template <typename T> requires DerivedTag<T> && (!IsTagEnd<T>)
+class TagList final : public Tag {
 public:
-    TagList(icu::UnicodeString name, TagType list_type, std::list<std::shared_ptr<Tag>> items) :
-        Tag(TagType::List, std::move(name)),
-        m_list_type(std::move(list_type)),
-        m_items(std::move(items)) {
-        for (auto& item : m_items) {
-            if (item->get_type().get_type_id() != m_list_type.get_type_id()) {
-                throw std::invalid_argument("Tried to create TagList with items of multiple tag types.");
-            }
-        }
+    explicit TagList(TagType child_type) : TagList("", child_type) {}
+    TagList(const icu::UnicodeString& name, TagType child_type) : Tag(TagType::List, std::move(name)), m_child_type(std::move(child_type)) {}
+
+    void add(T tag)
+    {
+        static_assert(m_child_type == tag.get_type());
+        m_internal_list.push_back(tag);
     }
 
-    static TagList read(ByteBuffer &buffer);
-    static TagList read(ByteBuffer &buffer, bool include_name);
-    void write(ByteBuffer &buffer, bool include_preamble) override;
-    [[nodiscard]] TagType get_list_type() const;
-    [[nodiscard]] std::list<std::shared_ptr<Tag>> get_items() const;
-    icu::UnicodeString to_string(uint8_t indent) override;
+    void write_payload(ByteBuffer& buffer) const override
+    {
+        auto type = m_child_type;
+        if (m_internal_list.empty())
+        {
+            type = TagType::End;
+        }
+
+        if (m_internal_list.size() > std::numeric_limits<int32_t>::max())
+        {
+            throw std::overflow_error("TagList::write_payload: list too large, unable to write signed 4-byte length prefix");
+        }
+
+        buffer.write_ubyte(type.get_type_id());
+        buffer.write_int(m_internal_list.size());
+        for (const auto& member : m_internal_list)
+        {
+            member.write_payload(buffer);
+        }
+    }
 private:
-    TagType m_list_type;
-    std::list<std::shared_ptr<Tag>> m_items;
+    TagType m_child_type;
+    std::vector<T> m_internal_list;
 };
 
-
-#endif //MCCPP_TAGLIST_H
+#endif //TAGLIST_H
