@@ -31,7 +31,8 @@ void PacketConfigurationInKeepAlive::handle(const std::shared_ptr<Connection>& c
         {
             if (locked->get_state() != ConnectionState::Configuration)
             {
-                LOG(WARNING) << "About to send new configuration-state keep alive, but connection no longer in configuration state";
+                LOG(WARNING) <<
+                    "About to send new configuration-state keep alive, but connection no longer in configuration state";
                 return;
             }
 

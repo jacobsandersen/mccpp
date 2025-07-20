@@ -23,7 +23,8 @@ void PacketHandshakingInHandshake::handle(const std::shared_ptr<Connection>& con
         break;
     case 3:
     default:
-        LOG(WARNING) << "Connection requested next state unknown or 3 (transfer) which is not supported. Connection closed.";
+        LOG(WARNING) <<
+            "Connection requested next state unknown or 3 (transfer) which is not supported. Connection closed.";
         conn->unclean_close();
         break;
     }

@@ -2,7 +2,8 @@
 #include <json/writer.h>
 #include "PacketStatusOutStatusResponse.h"
 
-void PacketStatusOutStatusResponse::write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) {
+void PacketStatusOutStatusResponse::write_data(const std::shared_ptr<Connection>& conn, ByteBuffer& buffer)
+{
     Json::Value response;
     response["version"]["name"] = m_version_name;
     response["version"]["protocol"] = m_protocol_version;
