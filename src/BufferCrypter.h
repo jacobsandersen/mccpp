@@ -10,8 +10,10 @@
 #include "ByteBuffer.h"
 #include "SharedConstants.h"
 
-namespace Celerity {
-    class BufferCrypter {
+namespace Celerity
+{
+    class BufferCrypter
+    {
     public:
         explicit BufferCrypter(const std::vector<uint8_t>& shared_secret)
         {
@@ -28,6 +30,7 @@ namespace Celerity {
 
         ByteBuffer& encrypt(ByteBuffer& buffer);
         ByteBuffer& decrypt(ByteBuffer& buffer);
+
     private:
         CryptoPP::SecByteBlock m_shared_secret;
         CryptoPP::AES::Encryption* m_aes;

@@ -6,7 +6,8 @@
 
 #include <cryptopp/filters.h>
 
-namespace Celerity {
+namespace Celerity
+{
     ByteBuffer& BufferCrypter::encrypt(ByteBuffer& buffer)
     {
         const auto bytes = buffer.get_bytes();
