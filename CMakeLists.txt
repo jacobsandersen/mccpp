@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
-project(mccpp)
+project(celerity)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_BUILD_TYPE Debug)
@@ -19,7 +19,7 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(ICU REQUIRED IMPORTED_TARGET icu-i18n icu-io icu-uc)
 
-add_executable(mccpp
+add_executable(celerity
         src/main.cpp
         src/MinecraftServer.cpp
         src/ConfigManager.cpp
@@ -77,7 +77,7 @@ add_executable(mccpp
         src/nbt/tag/TagLongArray.cpp
 )
 
-target_link_libraries(mccpp
+target_link_libraries(celerity
         PRIVATE
         Boost::asio Boost::endian Boost::any JsonCpp::JsonCpp cryptopp::cryptopp stduuid
         CURL::libcurl toml11::toml11 glog::glog gflags::gflags ZLIB::ZLIB

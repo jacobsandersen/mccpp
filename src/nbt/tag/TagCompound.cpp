@@ -4,17 +4,16 @@
 
 #include "TagCompound.h"
 
-void TagCompound::write_payload(ByteBuffer& buffer) const
-{
-    for (const auto& elem : m_internal_list)
-    {
-        if (elem->get_name().isBogus())
-        {
-            throw std::runtime_error("A child of a compound tag must have a name.");
-        }
-
-        elem->write(buffer);
+namespace celerity::nbt::tag {
+void TagCompound::write_payload(ByteBuffer& buffer) const {
+  for (const auto& elem : m_internal_list) {
+    if (elem->get_name().isBogus()) {
+      throw std::runtime_error("A child of a compound tag must have a name.");
     }
 
-    TagEnd::create_and_write(buffer);
+    elem->write(buffer);
+  }
+
+  TagEnd::create_and_write(buffer);
 }
+}  // namespace celerity::nbt::tag

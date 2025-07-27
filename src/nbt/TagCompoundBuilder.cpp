@@ -4,13 +4,12 @@
 
 #include "TagCompoundBuilder.h"
 
-std::shared_ptr<TagCompoundBuilder> TagCompoundBuilder::create(icu::UnicodeString name)
-{
-    return std::shared_ptr<TagCompoundBuilder>(new TagCompoundBuilder(std::move(name)));
+namespace celerity::nbt {
+std::shared_ptr<TagCompoundBuilder> TagCompoundBuilder::create(
+    icu::UnicodeString name) {
+  return std::shared_ptr<TagCompoundBuilder>(
+      new TagCompoundBuilder(std::move(name)));
 }
 
-
-TagCompound TagCompoundBuilder::build()
-{
-    return std::move(m_compound);
-}
+tag::TagCompound TagCompoundBuilder::build() { return std::move(m_compound); }
+}  // namespace celerity::nbt

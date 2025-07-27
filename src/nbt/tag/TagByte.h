@@ -7,15 +7,17 @@
 
 #include "Tag.h"
 
+namespace celerity::nbt::tag {
 class TagByte final : public Tag {
-public:
-    explicit TagByte(const int8_t byte) : TagByte("", byte) {}
-    TagByte(icu::UnicodeString name, const int8_t byte) : Tag(TagType::Byte, std::move(name)), m_byte(byte) {}
-    void write_payload(ByteBuffer& buffer) const override;
-private:
-    int8_t m_byte;
+ public:
+  explicit TagByte(const int8_t byte) : TagByte("", byte) {}
+  TagByte(icu::UnicodeString name, const int8_t byte)
+      : Tag(TagType::Byte, std::move(name)), m_byte(byte) {}
+  void write_payload(ByteBuffer& buffer) const override;
+
+ private:
+  int8_t m_byte;
 };
+}  // namespace celerity::nbt::tag
 
-
-
-#endif //TAGBYTE_H
+#endif  // TAGBYTE_H

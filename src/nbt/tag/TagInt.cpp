@@ -4,7 +4,8 @@
 
 #include "TagInt.h"
 
-void TagInt::write_payload(ByteBuffer& buffer) const
-{
-    buffer.write_int(m_value);
+namespace celerity::nbt::tag {
+void TagInt::write_payload(ByteBuffer& buffer) const {
+  buffer.write_int(m_value);
 }
+}  // namespace celerity::nbt::tag

@@ -5,36 +5,31 @@
 #ifndef TAGLISTBUILDER_H
 #define TAGLISTBUILDER_H
 
-#include "tag/Tag.h"
+#include "Concepts.h"
 #include "tag/TagList.h"
-#include "util/Concepts.h"
 
-template <typename T> requires DerivedTag<T> && (!IsTagEnd<T>)
+namespace celerity::nbt {
+template <typename T>
+  requires DerivedTag<T> && (!IsTagEnd<T>)
 class TagListBuilder : public std::enable_shared_from_this<TagListBuilder<T>> {
-public:
-    static std::shared_ptr<TagListBuilder> create()
-    {
-        return create("");
-    }
-    static std::shared_ptr<TagListBuilder> create(icu::UnicodeString name)
-    {
-        return std::make_shared<TagListBuilder>(name);
-    }
+ public:
+  static std::shared_ptr<TagListBuilder> create() { return create(""); }
+  static std::shared_ptr<TagListBuilder> create(icu::UnicodeString name) {
+    return std::make_shared<TagListBuilder>(name);
+  }
 
-    std::shared_ptr<TagListBuilder> add(T item)
-    {
-        m_list.add(item);
-        return this->shared_from_this();
-    }
+  std::shared_ptr<TagListBuilder> add(T item) {
+    m_list.add(item);
+    return this->shared_from_this();
+  }
 
-    TagList<T> build()
-    {
-        return std::move(m_list);
-    }
-private:
-    TagListBuilder() : TagListBuilder("") {}
-    explicit TagListBuilder(icu::UnicodeString name) : m_list(std::move(name)) {}
-    TagList<T> m_list;
+  tag::TagList<T> build() { return std::move(m_list); }
+
+ private:
+  TagListBuilder() : TagListBuilder("") {}
+  explicit TagListBuilder(icu::UnicodeString name) : m_list(std::move(name)) {}
+  tag::TagList<T> m_list;
 };
+}  // namespace celerity::nbt
 
-#endif //TAGLISTBUILDER_H
+#endif  // TAGLISTBUILDER_H

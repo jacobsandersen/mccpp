@@ -4,7 +4,8 @@
 
 #include "TagString.h"
 
-void TagString::write_payload(ByteBuffer& buffer) const
-{
-    buffer.write_string_modified_utf8(m_value);
+namespace celerity::nbt::tag {
+void TagString::write_payload(ByteBuffer& buffer) const {
+  buffer.write_string_modified_utf8(m_value);
 }
+}  // namespace celerity::nbt::tag

@@ -4,7 +4,8 @@
 
 #include "TagLong.h"
 
-void TagLong::write_payload(ByteBuffer& buffer) const
-{
-    buffer.write_long(m_value);
+namespace celerity::nbt::tag {
+void TagLong::write_payload(ByteBuffer& buffer) const {
+  buffer.write_long(m_value);
 }
+}  // namespace celerity::nbt::tag

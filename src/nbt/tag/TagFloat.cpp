@@ -4,7 +4,8 @@
 
 #include "TagFloat.h"
 
-void TagFloat::write_payload(ByteBuffer& buffer) const
-{
-    buffer.write_float(m_value);
+namespace celerity::nbt::tag {
+void TagFloat::write_payload(ByteBuffer& buffer) const {
+  buffer.write_float(m_value);
 }
+}  // namespace celerity::nbt::tag

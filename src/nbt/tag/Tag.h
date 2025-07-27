@@ -10,41 +10,34 @@
 #include "../../ByteBuffer.h"
 #include "TagType.h"
 
-class Tag
-{
-public:
-    explicit Tag(TagType type): Tag(std::move(type), "") {};
-    Tag(TagType type, icu::UnicodeString name): m_type(std::move(type)), m_name(std::move(name)) {};
+namespace celerity::nbt::tag {
+class Tag {
+ public:
+  explicit Tag(TagType type) : Tag(std::move(type), "") {};
 
-    virtual ~Tag() = default;
+  Tag(TagType type, icu::UnicodeString name)
+      : m_type(std::move(type)), m_name(std::move(name)) {};
 
-    void write(ByteBuffer& buffer) const
-    {
-        return write(buffer, true);
-    }
+  virtual ~Tag() = default;
 
-    void write(ByteBuffer& buffer, const bool include_name) const
-    {
-        buffer.write_ubyte(m_type.get_type_id());
-        if (include_name) buffer.write_string_modified_utf8(m_name);
-        write_payload(buffer);
-    }
+  void write(ByteBuffer& buffer) const { return write(buffer, true); }
 
-    virtual void write_payload(ByteBuffer& buffer) const = 0;
+  void write(ByteBuffer& buffer, const bool include_name) const {
+    buffer.write_ubyte(m_type.get_type_id());
+    if (include_name) buffer.write_string_modified_utf8(m_name);
+    write_payload(buffer);
+  }
 
-    [[nodiscard]] TagType get_type() const
-    {
-        return m_type;
-    }
+  virtual void write_payload(ByteBuffer& buffer) const = 0;
 
-    [[nodiscard]] icu::UnicodeString get_name() const
-    {
-        return m_name;
-    }
-private:
-    TagType m_type;
-    icu::UnicodeString m_name;
+  [[nodiscard]] TagType get_type() const { return m_type; }
+
+  [[nodiscard]] icu::UnicodeString get_name() const { return m_name; }
+
+ private:
+  TagType m_type;
+  icu::UnicodeString m_name;
 };
+}  // namespace celerity::nbt::tag
 
-
-#endif //TAG_H
+#endif  // TAG_H

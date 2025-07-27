@@ -1,29 +1,34 @@
 #ifndef MCCPP_PACKETLOGINOUTLOGINSUCCESS_H
 #define MCCPP_PACKETLOGINOUTLOGINSUCCESS_H
 
-#include <string>
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <utility>
-#include "../../Connection.h"
+
 #include "../../../player/MojangProfile.h"
+#include "../../Connection.h"
 #include "../../OutboundPacket.h"
 
+namespace celerity::net::login {
 class PacketLoginOutLoginSuccess : public OutboundPacket {
-public:
-    PacketLoginOutLoginSuccess(uuids::uuid unique_id, std::string username,
-                               std::vector<MojangProfileProperty> properties) :
-            OutboundPacket(0x02),
-            m_unique_id(unique_id),
-            m_username(std::move(username)),
-            m_properties(std::move(properties)) {}
+ public:
+  PacketLoginOutLoginSuccess(
+      uuids::uuid unique_id, std::string username,
+      std::vector<player::MojangProfileProperty> properties)
+      : OutboundPacket(0x02),
+        m_unique_id(unique_id),
+        m_username(std::move(username)),
+        m_properties(std::move(properties)) {}
 
-    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
-private:
-    uuids::uuid m_unique_id;
-    std::string m_username;
-    std::vector<MojangProfileProperty> m_properties;
+  void write_data(const std::shared_ptr<Connection> &conn,
+                  ByteBuffer &buffer) override;
+
+ private:
+  uuids::uuid m_unique_id;
+  std::string m_username;
+  std::vector<player::MojangProfileProperty> m_properties;
 };
+}  // namespace celerity::net::login
 
-
-#endif //MCCPP_PACKETLOGINOUTLOGINSUCCESS_H
+#endif  // MCCPP_PACKETLOGINOUTLOGINSUCCESS_H

@@ -1,19 +1,25 @@
 #ifndef MCCPP_PACKETLOGINOUTDISCONNECT_H
 #define MCCPP_PACKETLOGINOUTDISCONNECT_H
 
-#include <string>
 #include <memory>
+#include <string>
 #include <utility>
+
 #include "../../Connection.h"
 #include "../../OutboundPacket.h"
 
+namespace celerity::net::login {
 class PacketLoginOutDisconnect : public OutboundPacket {
-public:
-    explicit PacketLoginOutDisconnect(std::string reason) : OutboundPacket(0x00), m_reason(std::move(reason)) {}
+ public:
+  explicit PacketLoginOutDisconnect(std::string reason)
+      : OutboundPacket(0x00), m_reason(std::move(reason)) {}
 
-    void write_data(const std::shared_ptr<Connection> &conn, ByteBuffer &buffer) override;
-private:
-    std::string m_reason;
+  void write_data(const std::shared_ptr<Connection> &conn,
+                  ByteBuffer &buffer) override;
+
+ private:
+  std::string m_reason;
 };
+}  // namespace celerity::net::login
 
 #endif

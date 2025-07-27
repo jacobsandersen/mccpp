@@ -4,7 +4,8 @@
 
 #include "TagEnd.h"
 
-void TagEnd::create_and_write(ByteBuffer& buffer)
-{
-    TagEnd().write(buffer, false);
+namespace celerity::nbt::tag {
+void TagEnd::create_and_write(ByteBuffer& buffer) {
+  TagEnd().write(buffer, false);
 }
+}  // namespace celerity::nbt::tag

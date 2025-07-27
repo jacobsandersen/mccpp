@@ -3,15 +3,16 @@
 
 #include <toml.hpp>
 
+namespace celerity {
 class ConfigManager {
-public:
-    ConfigManager() : m_server_config(toml::parse("../server.toml")) {}
+ public:
+  ConfigManager() : m_server_config(toml::parse("../server.toml")) {}
 
-    [[nodiscard]] const toml::value &get_server_config() const;
+  [[nodiscard]] const toml::value &get_server_config() const;
 
-private:
-    toml::value m_server_config;
+ private:
+  toml::value m_server_config;
 };
+}  // namespace celerity
 
-
-#endif //MCCPP_CONFIGMANAGER_H
+#endif  // MCCPP_CONFIGMANAGER_H

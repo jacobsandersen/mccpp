@@ -1,5 +1,6 @@
 #include "TagType.h"
 
+namespace celerity::nbt::tag {
 const TagType TagType::End = TagType(0, "TAG_End");
 const TagType TagType::Byte = TagType(1, "TAG_Byte");
 const TagType TagType::Short = TagType(2, "TAG_Short");
@@ -14,37 +15,25 @@ const TagType TagType::Compound = TagType(10, "TAG_Compound");
 const TagType TagType::IntArray = TagType(11, "TAG_IntArray");
 const TagType TagType::LongArray = TagType(12, "TAG_LongArray");
 
-const TagType TagType::Types[13] = {
-    End, Byte, Short, Int, Long, Float, Double,
-    ByteArray, String, List, Compound, IntArray, LongArray
-};
+const TagType TagType::Types[13] = {End,      Byte,     Short,     Int,    Long,
+                                    Float,    Double,   ByteArray, String, List,
+                                    Compound, IntArray, LongArray};
 
-uint8_t TagType::get_type_id() const
-{
-    return m_type_id;
+uint8_t TagType::get_type_id() const { return m_type_id; }
+
+icu::UnicodeString TagType::get_type_name() const { return m_type_name; }
+
+bool TagType::operator==(const TagType& rhs) const {
+  return m_type_id == rhs.m_type_id;
 }
 
-icu::UnicodeString TagType::get_type_name() const
-{
-    return m_type_name;
-}
+bool TagType::operator!=(const TagType& rhs) const { return !operator==(rhs); }
 
-bool TagType::operator==(const TagType& rhs) const
-{
-    return m_type_id == rhs.m_type_id;
-}
+TagType TagType::type_id_to_type(const uint8_t type_id) {
+  if (type_id > 12) {
+    throw std::invalid_argument("Tried to get Tag Type with Tag Type ID > 12.");
+  }
 
-bool TagType::operator!=(const TagType& rhs) const
-{
-    return !operator==(rhs);
+  return Types[type_id];
 }
-
-TagType TagType::type_id_to_type(const uint8_t type_id)
-{
-    if (type_id > 12)
-    {
-        throw std::invalid_argument("Tried to get Tag Type with Tag Type ID > 12.");
-    }
-
-    return Types[type_id];
-}
+}  // namespace celerity::nbt::tag

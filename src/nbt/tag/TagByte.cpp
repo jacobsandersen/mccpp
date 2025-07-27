@@ -4,7 +4,8 @@
 
 #include "TagByte.h"
 
-void TagByte::write_payload(ByteBuffer& buffer) const
-{
-    buffer.write_byte(m_byte);
+namespace celerity::nbt::tag {
+void TagByte::write_payload(ByteBuffer& buffer) const {
+  buffer.write_byte(m_byte);
 }
+}  // namespace celerity::nbt::tag

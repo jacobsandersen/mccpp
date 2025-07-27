@@ -4,7 +4,8 @@
 
 #include "TagDouble.h"
 
-void TagDouble::write_payload(ByteBuffer& buffer) const
-{
-    buffer.write_double(m_value);
+namespace celerity::nbt::tag {
+void TagDouble::write_payload(ByteBuffer& buffer) const {
+  buffer.write_double(m_value);
 }
+}  // namespace celerity::nbt::tag

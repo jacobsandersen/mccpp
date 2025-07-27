@@ -4,15 +4,21 @@
 
 #ifndef TAGLONGARRAY_H
 #define TAGLONGARRAY_H
+
 #include "Tag.h"
 
+namespace celerity::nbt::tag {
 class TagLongArray final : public Tag {
-public:
-    explicit TagLongArray(std::vector<int64_t> data) : TagLongArray("", std::move(data)) {}
-    TagLongArray(icu::UnicodeString name, std::vector<int64_t> data) : Tag(TagType::LongArray, std::move(name)), m_data(std::move(data)) {}
-    void write_payload(ByteBuffer& buffer) const override;
-private:
-    std::vector<int64_t> m_data;
-};
+ public:
+  explicit TagLongArray(std::vector<int64_t> data)
+      : TagLongArray("", std::move(data)) {}
+  TagLongArray(icu::UnicodeString name, std::vector<int64_t> data)
+      : Tag(TagType::LongArray, std::move(name)), m_data(std::move(data)) {}
+  void write_payload(ByteBuffer& buffer) const override;
 
-#endif //TAGLONGARRAY_H
+ private:
+  std::vector<int64_t> m_data;
+};
+}  // namespace celerity::nbt::tag
+
+#endif  // TAGLONGARRAY_H
