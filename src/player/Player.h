@@ -1,5 +1,5 @@
-#ifndef MCCPP_PLAYER_H
-#define MCCPP_PLAYER_H
+#ifndef CELERITY_PLAYER_PLAYER_H
+#define CELERITY_PLAYER_PLAYER_H
 
 #include <uuid.h>
 

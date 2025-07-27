@@ -2,8 +2,8 @@
 // Created by simple on 11/13/23.
 //
 
-#ifndef MCCPP_BYTEBUFFER_H
-#define MCCPP_BYTEBUFFER_H
+#ifndef CELERITY_BYTEBUFFER_H
+#define CELERITY_BYTEBUFFER_H
 
 #include <unicode/unistr.h>
 #include <uuid.h>

@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGFLOAT_H
-#define TAGFLOAT_H
+#ifndef CELERITY_NBT_TAG_TAGFLOAT_H
+#define CELERITY_NBT_TAG_TAGFLOAT_H
 
 #include "Tag.h"
 
@@ -20,4 +20,4 @@ class TagFloat final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGFLOAT_H
+#endif

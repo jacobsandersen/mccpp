@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGDOUBLE_H
-#define TAGDOUBLE_H
+#ifndef CELERITY_NBT_TAG_TAGDOUBLE_H
+#define CELERITY_NBT_TAG_TAGDOUBLE_H
 
 #include "Tag.h"
 
@@ -20,4 +20,4 @@ class TagDouble final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGDOUBLE_H
+#endif

@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGCOMPOUNDBUILDER_H
-#define TAGCOMPOUNDBUILDER_H
+#ifndef CELERITY_NBT_TAGCOMPOUNDBUILDER_H
+#define CELERITY_NBT_TAGCOMPOUNDBUILDER_H
 
 #include "Concepts.h"
 #include "tag/TagCompound.h"
@@ -33,4 +33,4 @@ class TagCompoundBuilder
 };
 }  // namespace celerity::nbt
 
-#endif  // TAGCOMPOUNDBUILDER_H
+#endif

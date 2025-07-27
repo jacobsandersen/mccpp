@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef CONCEPTS_H
-#define CONCEPTS_H
+#ifndef CELERITY_NBT_CONCEPTS_H
+#define CELERITY_NBT_CONCEPTS_H
 
 #include "tag/Tag.h"
 #include "tag/TagEnd.h"
@@ -15,4 +15,4 @@ template <typename T>
 concept IsTagEnd = std::is_same_v<T, tag::TagEnd>;
 }  // namespace celerity::nbt
 
-#endif  // CONCEPTS_H
+#endif

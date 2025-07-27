@@ -1,5 +1,5 @@
-#ifndef MCCPP_PACKETLOGINOUTSETCOMPRESSION_H
-#define MCCPP_PACKETLOGINOUTSETCOMPRESSION_H
+#ifndef CELERITY_NET_LOGIN_PACKETLOGINOUTSETCOMPRESSION_H
+#define CELERITY_NET_LOGIN_PACKETLOGINOUTSETCOMPRESSION_H
 
 #include "../../OutboundPacket.h"
 
@@ -12,4 +12,4 @@ class PacketLoginOutSetCompression : public OutboundPacket {
                   ByteBuffer& buffer) override;
 };
 }  // namespace celerity::net::login
-#endif  // MCCPP_PACKETLOGINOUTSETCOMPRESSION_H
+#endif

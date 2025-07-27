@@ -1,5 +1,5 @@
-#ifndef MCCPP_TAGTYPE_H
-#define MCCPP_TAGTYPE_H
+#ifndef CELERITY_NBT_TAG_TAGTYPE_H
+#define CELERITY_NBT_TAG_TAGTYPE_H
 
 #include <unicode/unistr.h>
 
@@ -43,4 +43,4 @@ template <typename T>
 concept IsTagType = std::is_same_v<T, TagType>;
 }  // namespace celerity::nbt::tag
 
-#endif  // MCCPP_TAGTYPE_H
+#endif

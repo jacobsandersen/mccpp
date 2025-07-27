@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/4/25.
 //
 
-#ifndef MCCPP_PACKETCONFIGURATIONINKNOWNPACKS_H
-#define MCCPP_PACKETCONFIGURATIONINKNOWNPACKS_H
+#ifndef CELERITY_NET_CONFIGURATION_PACKETCONFIGURATIONINKNOWNPACKS_H
+#define CELERITY_NET_CONFIGURATION_PACKETCONFIGURATIONINKNOWNPACKS_H
 
 #include "../../InboundPacket.h"
 
@@ -15,4 +15,4 @@ class PacketConfigurationInKnownPacks final : public InboundPacket {
 };
 }  // namespace celerity::net::configuration
 
-#endif  // MCCPP_PACKETCONFIGURATIONINKNOWNPACKS_H
+#endif

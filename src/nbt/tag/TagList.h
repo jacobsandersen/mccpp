@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGLIST_H
-#define TAGLIST_H
+#ifndef CELERITY_NBT_TAG_TAGLIST_H
+#define CELERITY_NBT_TAG_TAGLIST_H
 
 #include "../Concepts.h"
 #include "Tag.h"
@@ -49,4 +49,4 @@ class TagList final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGLIST_H
+#endif

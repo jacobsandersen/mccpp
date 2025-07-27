@@ -2,7 +2,7 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGBYTE_H
+#ifndef CELERITY_NBT_TAG_TAGBYTE_H
 #define TAGBYTE_H
 
 #include "Tag.h"
@@ -20,4 +20,4 @@ class TagByte final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGBYTE_H
+#endif

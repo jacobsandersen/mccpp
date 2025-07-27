@@ -1,5 +1,5 @@
-#ifndef MCCPP_VARINT_H
-#define MCCPP_VARINT_H
+#ifndef CELERITY_VARINT_H
+#define CELERITY_VARINT_H
 
 #include "ByteBuffer.h"
 

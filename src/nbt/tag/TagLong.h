@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGLONG_H
-#define TAGLONG_H
+#ifndef CELERITY_NBT_TAG_TAGLONG_H
+#define CELERITY_NBT_TAG_TAGLONG_H
 
 #include "Tag.h"
 
@@ -20,4 +20,4 @@ class TagLong final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGLONG_H
+#endif

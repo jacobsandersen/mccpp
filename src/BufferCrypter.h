@@ -2,8 +2,9 @@
 // Created by Jacob Andersen on 7/26/25.
 //
 
-#ifndef BUFFERCRYPTER_H
-#define BUFFERCRYPTER_H
+#ifndef CELERITY_BUFFERCRYPTER_H
+#define CELERITY_BUFFERCRYPTER_H
+
 #include <cryptopp/aes.h>
 #include <cryptopp/modes.h>
 
@@ -36,4 +37,4 @@ class BufferCrypter {
 };
 }  // namespace celerity
 
-#endif  // BUFFERCRYPTER_H
+#endif

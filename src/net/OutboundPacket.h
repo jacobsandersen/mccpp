@@ -1,5 +1,5 @@
-#ifndef MCCPP_OUTBOUNDPACKET_H
-#define MCCPP_OUTBOUNDPACKET_H
+#ifndef CELERITY_NET_OUTBOUNDPACKET_H
+#define CELERITY_NET_OUTBOUNDPACKET_H
 
 #include "../ByteBuffer.h"
 #include "Connection.h"

@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGBYTEARRAY_H
-#define TAGBYTEARRAY_H
+#ifndef CELERITY_NBT_TAG_TAGBYTEARRAY_H
+#define CELERITY_NBT_TAG_TAGBYTEARRAY_H
 
 #include <utility>
 
@@ -25,4 +25,4 @@ class TagByteArray final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGBYTEARRAY_H
+#endif

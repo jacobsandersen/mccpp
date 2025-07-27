@@ -2,8 +2,9 @@
 // Created by Jacob Andersen on 7/22/25.
 //
 
-#ifndef BUFFERCOMPRESSOR_H
-#define BUFFERCOMPRESSOR_H
+#ifndef CELERITY_BUFFERCOMPRESSOR_H
+#define CELERITY_BUFFERCOMPRESSOR_H
+
 #include "ByteBuffer.h"
 
 namespace celerity {
@@ -17,4 +18,4 @@ class BufferCompressor {
 };
 }  // namespace celerity
 
-#endif  // BUFFERCOMPRESSOR_H
+#endif

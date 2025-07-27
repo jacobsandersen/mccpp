@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGLISTBUILDER_H
-#define TAGLISTBUILDER_H
+#ifndef CELERITY_NBT_TAGLISTBUILDER_H
+#define CELERITY_NBT_TAGLISTBUILDER_H
 
 #include "Concepts.h"
 #include "tag/TagList.h"
@@ -32,4 +32,4 @@ class TagListBuilder : public std::enable_shared_from_this<TagListBuilder<T>> {
 };
 }  // namespace celerity::nbt
 
-#endif  // TAGLISTBUILDER_H
+#endif

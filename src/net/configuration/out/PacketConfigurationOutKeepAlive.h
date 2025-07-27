@@ -1,5 +1,5 @@
-#ifndef MCCPP_PACKETCONFIGURATIONOUTKEEPALIVE_H
-#define MCCPP_PACKETCONFIGURATIONOUTKEEPALIVE_H
+#ifndef CELERITY_NET_CONFIGURATION_PACKETCONFIGURATIONOUTKEEPALIVE_H
+#define CELERITY_NET_CONFIGURATION_PACKETCONFIGURATIONOUTKEEPALIVE_H
 
 #include "../../OutboundPacket.h"
 
@@ -13,4 +13,4 @@ class PacketConfigurationOutKeepAlive : public OutboundPacket {
 };
 }  // namespace celerity::net::configuration
 
-#endif  // MCCPP_PACKETCONFIGURATIONOUTKEEPALIVE_H
+#endif

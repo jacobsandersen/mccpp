@@ -1,5 +1,5 @@
-#ifndef MCCPP_CONNECTION_H
-#define MCCPP_CONNECTION_H
+#ifndef CELERITY_NET_CONNECTION_H
+#define CELERITY_NET_CONNECTION_H
 
 #include <cryptopp/modes.h>
 #include <uuid.h>

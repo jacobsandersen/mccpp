@@ -1,5 +1,5 @@
-#ifndef MCCPP_PACKETLOGINOUTLOGINSUCCESS_H
-#define MCCPP_PACKETLOGINOUTLOGINSUCCESS_H
+#ifndef CELERITY_NET_LOGIN_PACKETLOGINOUTLOGINSUCCESS_H
+#define CELERITY_NET_LOGIN_PACKETLOGINOUTLOGINSUCCESS_H
 
 #include <cstdint>
 #include <memory>
@@ -31,4 +31,4 @@ class PacketLoginOutLoginSuccess : public OutboundPacket {
 };
 }  // namespace celerity::net::login
 
-#endif  // MCCPP_PACKETLOGINOUTLOGINSUCCESS_H
+#endif

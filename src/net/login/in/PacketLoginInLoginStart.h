@@ -2,8 +2,8 @@
 // Created by simple on 11/17/23.
 //
 
-#ifndef MCCPP_PACKETLOGININLOGINSTART_H
-#define MCCPP_PACKETLOGININLOGINSTART_H
+#ifndef CELERITY_NET_LOGIN_PACKETLOGININLOGINSTART_H
+#define CELERITY_NET_LOGIN_PACKETLOGININLOGINSTART_H
 
 #include <memory>
 
@@ -19,4 +19,4 @@ class PacketLoginInLoginStart : public InboundPacket {
 };
 }  // namespace celerity::net::login
 
-#endif  // MCCPP_PACKETLOGININLOGINSTART_H
+#endif

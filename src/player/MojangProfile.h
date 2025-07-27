@@ -1,5 +1,5 @@
-#ifndef MCCPP_MOJANGPROFILE_H
-#define MCCPP_MOJANGPROFILE_H
+#ifndef CELERITY_PLAYER_MOJANGPROFILE_H
+#define CELERITY_PLAYER_MOJANGPROFILE_H
 
 #include <uuid.h>
 
@@ -42,4 +42,4 @@ class MojangProfile {
   std::vector<MojangProfileProperty> m_properties;
 };
 }  // namespace celerity::player
-#endif  // MCCPP_MOJANGPROFILE_H
+#endif

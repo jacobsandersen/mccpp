@@ -1,5 +1,5 @@
-#ifndef MCCPP_CLIENTINFORMATION_H
-#define MCCPP_CLIENTINFORMATION_H
+#ifndef CELERITY_PLAYER_CLIENTINFORMATION_H
+#define CELERITY_PLAYER_CLIENTINFORMATION_H
 
 #include <string>
 
@@ -50,4 +50,4 @@ class ClientInformation {
 };
 }  // namespace celerity::player
 
-#endif  // MCCPP_CLIENTINFORMATION_H
+#endif

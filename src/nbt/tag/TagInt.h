@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGINT_H
-#define TAGINT_H
+#ifndef CELERITY_NBT_TAG_TAGINT_H
+#define CELERITY_NBT_TAG_TAGINT_H
 
 #include "Tag.h"
 
@@ -20,4 +20,4 @@ class TagInt final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGINT_H
+#endif

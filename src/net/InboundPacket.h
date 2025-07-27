@@ -1,5 +1,5 @@
-#ifndef MCCPP_INBOUNDPACKET_H
-#define MCCPP_INBOUNDPACKET_H
+#ifndef CELERITY_NET_INBOUNDPACKET_H
+#define CELERITY_NET_INBOUNDPACKET_H
 
 #include "../ByteBuffer.h"
 #include "Connection.h"

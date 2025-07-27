@@ -2,8 +2,9 @@
 // Created by Jacob Andersen on 7/4/25.
 //
 
-#ifndef KNOWNPACK_H
-#define KNOWNPACK_H
+#ifndef CELERITY_KNOWNPACK_H
+#define CELERITY_KNOWNPACK_H
+
 #include <string>
 
 namespace celerity {
@@ -24,4 +25,4 @@ class KnownPack final {
   const std::string m_version;
 };
 }  // namespace celerity
-#endif  // KNOWNPACK_H
+#endif

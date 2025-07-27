@@ -1,5 +1,5 @@
-#ifndef MCCPP_NETWORKMANAGER_H
-#define MCCPP_NETWORKMANAGER_H
+#ifndef CELERITY_NET_NETWORKMANAGER_H
+#define CELERITY_NET_NETWORKMANAGER_H
 
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/ip/tcp.hpp>

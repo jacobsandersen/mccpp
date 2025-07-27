@@ -2,12 +2,13 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGINTARRAY_H
-#define TAGINTARRAY_H
+#ifndef CELERITY_NBT_TAG_TAGINTARRAY_H
+#define CELERITY_NBT_TAG_TAGINTARRAY_H
 
 #include <utility>
 
 #include "Tag.h"
+
 namespace celerity::nbt::tag {
 class TagIntArray final : Tag {
  public:
@@ -22,4 +23,4 @@ class TagIntArray final : Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGINTARRAY_H
+#endif

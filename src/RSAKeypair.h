@@ -1,5 +1,5 @@
-#ifndef MCCPP_RSAKEYPAIR_H
-#define MCCPP_RSAKEYPAIR_H
+#ifndef CELERITY_RSAKEYPAIR_H
+#define CELERITY_RSAKEYPAIR_H
 
 #include <cryptopp/osrng.h>
 #include <cryptopp/rsa.h>

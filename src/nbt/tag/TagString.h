@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGSTRING_H
-#define TAGSTRING_H
+#ifndef CELERITY_NBT_TAG_TAGSTRING_H
+#define CELERITY_NBT_TAG_TAGSTRING_H
 
 #include "Tag.h"
 
@@ -21,4 +21,4 @@ class TagString final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGSTRING_H
+#endif

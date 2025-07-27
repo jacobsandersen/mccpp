@@ -2,8 +2,8 @@
 // Created by simple on 11/17/23.
 //
 
-#ifndef MCCPP_PACKETSTATUSOUTPINGRESPONSE_H
-#define MCCPP_PACKETSTATUSOUTPINGRESPONSE_H
+#ifndef CELERITY_NET_STATUS_PACKETSTATUSOUTPINGRESPONSE_H
+#define CELERITY_NET_STATUS_PACKETSTATUSOUTPINGRESPONSE_H
 
 #include <cstdint>
 #include <memory>
@@ -25,4 +25,4 @@ class PacketStatusOutPingResponse : public OutboundPacket {
 };
 }  // namespace celerity::net::status
 
-#endif  // MCCPP_PACKETSTATUSOUTPINGRESPONSE_H
+#endif

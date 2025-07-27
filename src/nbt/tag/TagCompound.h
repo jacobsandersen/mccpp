@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGCOMPOUND_H
-#define TAGCOMPOUND_H
+#ifndef CELERITY_NBT_TAG_TAGCOMPOUND_H
+#define CELERITY_NBT_TAG_TAGCOMPOUND_H
 
 #include "../Concepts.h"
 #include "Tag.h"
@@ -28,4 +28,4 @@ class TagCompound final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGCOMPOUND_H
+#endif

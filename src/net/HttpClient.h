@@ -1,5 +1,5 @@
-#ifndef MCCPP_HTTPCLIENT_H
-#define MCCPP_HTTPCLIENT_H
+#ifndef CELERITY_NET_HTTPCLIENT_H
+#define CELERITY_NET_HTTPCLIENT_H
 
 #include <map>
 #include <string>

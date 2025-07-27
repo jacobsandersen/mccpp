@@ -16,9 +16,9 @@ MinecraftServer* MinecraftServer::get_server() {
 }
 
 void MinecraftServer::start() {
-  LOG(INFO) << "Starting MCCPP...";
+  LOG(INFO) << "Starting Celerity...";
   m_network_manager.start();
-  LOG(INFO) << "MCCPP stopping...";
+  LOG(INFO) << "Celerity stopping...";
 }
 
 std::vector<std::shared_ptr<player::Player>> MinecraftServer::get_players() {

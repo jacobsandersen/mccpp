@@ -1,5 +1,5 @@
-#ifndef MCCPP_UUIDUTIL_H
-#define MCCPP_UUIDUTIL_H
+#ifndef CELERITY_UTIL_UUIDUTIL_H
+#define CELERITY_UTIL_UUIDUTIL_H
 
 #include <uuid.h>
 

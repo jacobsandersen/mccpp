@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAG_H
-#define TAG_H
+#ifndef CELERITY_NBT_TAG_TAG_H
+#define CELERITY_NBT_TAG_TAG_H
 
 #include <utility>
 
@@ -40,4 +40,4 @@ class Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAG_H
+#endif

@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGSHORT_H
-#define TAGSHORT_H
+#ifndef CELERITY_NBT_TAG_TAGSHORT_H
+#define CELERITY_NBT_TAG_TAGSHORT_H
 
 #include "Tag.h"
 
@@ -20,4 +20,4 @@ class TagShort final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGSHORT_H
+#endif

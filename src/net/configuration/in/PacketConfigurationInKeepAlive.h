@@ -1,5 +1,5 @@
-#ifndef MCCPP_PACKETCONFIGURATIONINKEEPALIVE_H
-#define MCCPP_PACKETCONFIGURATIONINKEEPALIVE_H
+#ifndef CELERITY_NET_CONFIGURATION_PACKETCONFIGURATIONINKEEPALIVE_H
+#define CELERITY_NET_CONFIGURATION_PACKETCONFIGURATIONINKEEPALIVE_H
 
 #include "../../InboundPacket.h"
 
@@ -11,4 +11,4 @@ class PacketConfigurationInKeepAlive : public InboundPacket {
 };
 }  // namespace celerity::net::configuration
 
-#endif  // MCCPP_PACKETCONFIGURATIONINKEEPALIVE_H
+#endif

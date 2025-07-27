@@ -1,5 +1,5 @@
-#ifndef MCCPP_CONFIGMANAGER_H
-#define MCCPP_CONFIGMANAGER_H
+#ifndef CELERITY_CONFIGMANAGER_H
+#define CELERITY_CONFIGMANAGER_H
 
 #include <toml.hpp>
 
@@ -15,4 +15,4 @@ class ConfigManager {
 };
 }  // namespace celerity
 
-#endif  // MCCPP_CONFIGMANAGER_H
+#endif

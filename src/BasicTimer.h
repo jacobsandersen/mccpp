@@ -1,5 +1,5 @@
-#ifndef MCCPP_BASICTIMER_H
-#define MCCPP_BASICTIMER_H
+#ifndef CELERITY_BASICTIMER_H
+#define CELERITY_BASICTIMER_H
 
 #include <boost/asio/io_context.hpp>
 #include <boost/asio/steady_timer.hpp>
@@ -19,4 +19,4 @@ class BasicTimer {
 };
 }  // namespace celerity
 
-#endif  // MCCPP_BASICTIMER_H
+#endif

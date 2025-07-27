@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGEND_H
-#define TAGEND_H
+#ifndef CELERITY_NBT_TAG_TAGEND_H
+#define CELERITY_NBT_TAG_TAGEND_H
 
 #include "Tag.h"
 
@@ -17,4 +17,4 @@ class TagEnd final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGEND_H
+#endif

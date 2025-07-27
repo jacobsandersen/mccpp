@@ -2,8 +2,8 @@
 // Created by Jacob Andersen on 7/19/25.
 //
 
-#ifndef TAGLONGARRAY_H
-#define TAGLONGARRAY_H
+#ifndef CELERITY_NBT_TAG_TAGLONGARRAY_H
+#define CELERITY_NBT_TAG_TAGLONGARRAY_H
 
 #include "Tag.h"
 
@@ -21,4 +21,4 @@ class TagLongArray final : public Tag {
 };
 }  // namespace celerity::nbt::tag
 
-#endif  // TAGLONGARRAY_H
+#endif

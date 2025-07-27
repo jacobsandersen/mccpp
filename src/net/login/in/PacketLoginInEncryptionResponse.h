@@ -2,8 +2,8 @@
 // Created by simple on 11/17/23.
 //
 
-#ifndef MCCPP_PACKETLOGININENCRYPTIONRESPONSE_H
-#define MCCPP_PACKETLOGININENCRYPTIONRESPONSE_H
+#ifndef CELERITY_NET_LOGIN_PACKETLOGININENCRYPTIONRESPONSE_H
+#define CELERITY_NET_LOGIN_PACKETLOGININENCRYPTIONRESPONSE_H
 
 #include <memory>
 
@@ -19,4 +19,4 @@ class PacketLoginInEncryptionResponse : public InboundPacket {
 };
 }  // namespace celerity::net::login
 
-#endif  // MCCPP_PACKETLOGININENCRYPTIONRESPONSE_H
+#endif
