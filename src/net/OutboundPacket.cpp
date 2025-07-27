@@ -1,5 +1,7 @@
 #include <glog/logging.h>
 #include "OutboundPacket.h"
+
+#include "../BufferCompressor.h"
 #include "../VarInt.h"
 #include "../MinecraftServer.h"
 
@@ -37,7 +39,7 @@ void OutboundPacket::send(const std::shared_ptr<Connection>& conn)
             ByteBuffer tmp;
             tmp.write_varint(m_packet_id);
             tmp.write_bytes(in.read_bytes(data_length));
-            tmp.compress_buffer();
+            Celerity::BufferCompressor::compress(tmp, Celerity::ZLIB);
 
             packed.write_varint(static_cast<int32_t>(data_length_length + tmp.get_data_length()));
             packed.write_varint(static_cast<int32_t>(packet_id_length + data_length));
@@ -45,7 +47,10 @@ void OutboundPacket::send(const std::shared_ptr<Connection>& conn)
         }
     }
 
-    packed.set_data(conn->encrypt_bytes(packed.get_data()));
+    if (conn->get_encrypt_packets())
+    {
+        conn->get_buffer_crypter().encrypt(packed);
+    }
 
     std::deque<uint8_t> data = packed.get_data();
     const auto buffer = std::make_shared<std::vector<uint8_t>>(std::vector(data.begin(), data.end()));

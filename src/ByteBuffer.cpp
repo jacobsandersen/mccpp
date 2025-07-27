@@ -556,9 +556,20 @@ std::deque<uint8_t> ByteBuffer::get_data() const
     return m_data;
 }
 
+std::vector<uint8_t> ByteBuffer::get_bytes() const
+{
+    return {m_data.begin(), m_data.end()};
+}
+
 void ByteBuffer::set_data(std::deque<uint8_t> data)
 {
     m_data = std::move(data);
+}
+
+void ByteBuffer::set_bytes(std::vector<uint8_t> bytes)
+{
+    m_data.clear();
+    m_data.insert(m_data.end(), bytes.begin(), bytes.end());
 }
 
 uint32_t ByteBuffer::get_data_length() const
@@ -566,108 +577,12 @@ uint32_t ByteBuffer::get_data_length() const
     return m_data.size();
 }
 
-int ByteBuffer::compress_buffer()
-{
-    z_stream stream;
-    stream.zalloc = Z_NULL;
-    stream.zfree = Z_NULL;
-    stream.opaque = Z_NULL;
-
-    if (deflateInit(&stream, Z_DEFAULT_COMPRESSION) != Z_OK)
-    {
-        return -1;
-    }
-
-    std::vector<uint8_t> input_bytes = std::vector(m_data.begin(), m_data.end());
-
-    stream.next_in = input_bytes.data();
-    stream.avail_in = input_bytes.size();
-
-    std::vector<uint8_t> output_bytes(input_bytes.size());
-    do
-    {
-        stream.next_out = output_bytes.data() + stream.total_out;
-        stream.avail_out = output_bytes.size() - stream.total_out;
-
-        if (deflate(&stream, Z_FINISH) == Z_STREAM_ERROR)
-        {
-            deflateEnd(&stream);
-            return -1;
-        }
-
-        // shouldn't happen but just to be safe
-        if (stream.avail_out == 0)
-        {
-            output_bytes.resize(output_bytes.size() * 2);
-        }
-    }
-    while (stream.avail_in > 0);
-
-    deflateEnd(&stream);
-    output_bytes.resize(stream.total_out);
-
-    m_data.clear();
-
-    for (uint8_t byte : output_bytes)
-    {
-        m_data.push_back(byte);
-    }
-
-    return 0;
-}
-
-int ByteBuffer::decompress_buffer()
-{
-    z_stream stream;
-    stream.zalloc = Z_NULL;
-    stream.zfree = Z_NULL;
-    stream.opaque = Z_NULL;
-
-    if (inflateInit(&stream) != Z_OK)
-    {
-        LOG(WARNING) << "Inflate initialization failed";
-        return -1;
-    }
-
-    std::vector<uint8_t> input_bytes = std::vector(m_data.begin(), m_data.end());
-
-    stream.next_in = input_bytes.data();
-    stream.avail_in = input_bytes.size();
-
-    std::vector<uint8_t> output_bytes(input_bytes.size() * 2);
-    do
-    {
-        stream.next_out = output_bytes.data() + stream.total_out;
-        stream.avail_out = output_bytes.capacity() - stream.total_out;
-
-        if (inflate(&stream, Z_NO_FLUSH) == Z_STREAM_ERROR)
-        {
-            LOG(WARNING) << "Inflate failed. Stopping decompression.";
-            inflateEnd(&stream);
-            return -1;
-        }
-
-        if (stream.avail_out == 0)
-        {
-            output_bytes.resize(output_bytes.size() * 2);
-        }
-    }
-    while (stream.avail_in > 0);
-
-    inflateEnd(&stream);
-    output_bytes.resize(stream.total_out);
-
-    m_data.clear();
-
-    for (uint8_t byte : output_bytes)
-    {
-        m_data.push_back(byte);
-    }
-
-    return 0;
-}
-
 TagType ByteBuffer::read_nbt_tag_type()
 {
     return TagType::type_id_to_type(read_ubyte());
+}
+
+void ByteBuffer::reset()
+{
+    m_data.clear();
 }

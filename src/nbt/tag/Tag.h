@@ -23,7 +23,7 @@ public:
         return write(buffer, true);
     }
 
-    void write(ByteBuffer& buffer, bool include_name) const
+    void write(ByteBuffer& buffer, const bool include_name) const
     {
         buffer.write_ubyte(m_type.get_type_id());
         if (include_name) buffer.write_string_modified_utf8(m_name);

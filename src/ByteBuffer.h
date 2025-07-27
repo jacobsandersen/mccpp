@@ -164,13 +164,19 @@ public:
 
     [[nodiscard]] std::deque<uint8_t> get_data() const;
 
+    [[nodiscard]] std::vector<uint8_t> get_bytes() const;
+
     void set_data(std::deque<uint8_t> data);
+
+    void set_bytes(std::vector<uint8_t> bytes);
 
     [[nodiscard]] uint32_t get_data_length() const;
 
     int compress_buffer();
 
     int decompress_buffer();
+
+    void reset();
 
 private:
     std::deque<uint8_t> m_data;

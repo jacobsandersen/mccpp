@@ -1,5 +1,7 @@
 #include <glog/logging.h>
 #include "NetworkManager.h"
+
+#include "../BufferCompressor.h"
 #include "../VarInt.h"
 #include "../MinecraftServer.h"
 
@@ -80,7 +82,11 @@ void NetworkManager::start_read(const std::shared_ptr<Connection>& conn)
                     tmp.write_byte(raw);
                 }
 
-                tmp.set_data(conn->decrypt_bytes(tmp.get_data()));
+                if (conn->get_encrypt_packets())
+                {
+                    conn->get_buffer_crypter().decrypt(tmp);
+                }
+
                 conn->get_data_buffer().append(tmp);
 
                 process_buffer(conn);
@@ -178,7 +184,7 @@ void NetworkManager::process_buffer(const std::shared_ptr<Connection>& conn)
     case BufferReadState::DecompressData:
         {
             LOG(INFO) << "process :: decompress data";
-            ctx.partial_buffer->decompress_buffer();
+            Celerity::BufferCompressor::decompress(*ctx.partial_buffer);
             LOG(INFO) << "process :: decompress data -> read packet id";
             ctx.read_state = BufferReadState::ReadPacketId;
             process_buffer(conn);

@@ -12,7 +12,7 @@
 #include "../out/PacketLoginOutLoginSuccess.h"
 #include "../out/PacketLoginOutSetCompression.h"
 
-#define SESSION_URL "https://sessionserver.mojang.com/session/minecraft/hasJoined"
+constexpr std::string_view SESSION_URL = "https://sessionserver.mojang.com/session/minecraft/hasJoined";
 
 void performTwosCompliment(ByteBuffer& buffer)
 {
@@ -71,28 +71,42 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& 
     LOG(INFO) << "Encryption response received, beginning validation...";
 
     int32_t shared_secret_length = buffer->read_varint();
-    std::vector<uint8_t> shared_secret = buffer->read_ubytes(shared_secret_length);
+    std::vector<uint8_t> encrypted_shared_secret = buffer->read_ubytes(shared_secret_length);
 
     int32_t verify_token_length = buffer->read_varint();
-    std::vector<uint8_t> verify_token = buffer->read_ubytes(verify_token_length);
+    std::vector<uint8_t> encrypted_verify_token = buffer->read_ubytes(verify_token_length);
 
     RSAKeypair keypair = MinecraftServer::get_server()->get_rsa_keypair();
 
-    std::vector<uint8_t> decrypted_verify_token = keypair.decrypt(verify_token);
-    decrypted_verify_token.resize(VERIFY_TOKEN_SIZE);
+    std::vector<uint8_t> decrypted_verify_token = keypair.decrypt(encrypted_verify_token);
+    decrypted_verify_token.resize(Celerity::VERIFY_TOKEN_SIZE);
 
-    std::vector<uint8_t> decrypted_shared_secret = keypair.decrypt(shared_secret);
-    decrypted_shared_secret.resize(SHARED_SECRET_SIZE);
-    conn->set_shared_secret(decrypted_shared_secret);
-    conn->enable_encryption();
+    std::vector<uint8_t> decrypted_shared_secret = keypair.decrypt(encrypted_shared_secret);
+    decrypted_shared_secret.resize(Celerity::SHARED_SECRET_SIZE);
+    conn->enable_encryption(decrypted_shared_secret);
 
-    if (decrypted_verify_token != conn->get_verify_token())
+    const auto verify_token = conn->get_context_value("verify_token");
+    if (verify_token.empty())
     {
-        LOG(WARNING) << "Failed to validate connection's verify token, sending disconnection...";
+        LOG(ERROR) << "Verify token was not stored by the server. Cannot validate this client.";
+        auto pkt = PacketLoginOutDisconnect("Failed to find your verify token. Try again.");
+        pkt.send(conn);
+        return;
+    }
 
-        auto pkt = new PacketLoginOutDisconnect("Verify token incorrect. Your client is broken.");
-        pkt->send(conn);
-        delete pkt;
+    try
+    {
+        if (decrypted_verify_token != boost::any_cast<std::vector<uint8_t>>(verify_token))
+        {
+            throw std::runtime_error("Invalid verify token");
+        }
+    }
+    catch (const std::exception& e)
+    {
+        LOG(WARNING) << "Failed to validate connection's verify token: " << e.what();
+
+        auto pkt = PacketLoginOutDisconnect("Verify token validation failed: " + std::string(e.what()));
+        pkt.send(conn);
         return;
     }
 
@@ -100,11 +114,11 @@ void PacketLoginInEncryptionResponse::handle(const std::shared_ptr<Connection>& 
 
     std::string hash;
     CryptoPP::SHA1 sha1;
-    sha1.Update(decrypted_shared_secret.data(), SHARED_SECRET_SIZE);
+    sha1.Update(decrypted_shared_secret.data(), Celerity::SHARED_SECRET_SIZE);
     std::vector<uint8_t> public_key = keypair.get_der_encoded_public_key();
     sha1.Update(public_key.data(), public_key.size());
     hash.resize(sha1.DigestSize());
-    sha1.Final((CryptoPP::byte*)&hash[0]);
+    sha1.Final(reinterpret_cast<CryptoPP::byte*>(&hash[0]));
     std::string finalDigest = mcHexDigest(hash);
 
     LOG(INFO) << "OK. Creating Yggdrasil request payload...";

@@ -4,13 +4,12 @@
 #include <boost/asio.hpp>
 #include <uuid.h>
 #include <deque>
+#include <boost/any.hpp>
 #include <cryptopp/modes.h>
 #include "../ByteBuffer.h"
 #include "../BasicTimer.h"
+#include "../BufferCrypter.h"
 #include "../KnownPack.h"
-
-#define VERIFY_TOKEN_SIZE 4
-#define SHARED_SECRET_SIZE 16
 
 enum class ConnectionState
 {
@@ -42,7 +41,7 @@ struct BufferReadContext
 class Connection
 {
 public:
-    explicit Connection(boost::asio::io_context& context) : m_context(context), m_socket(context), m_read_context()
+    explicit Connection(boost::asio::io_context& context) : m_context(context), m_socket(context)
     {
     }
 
@@ -58,15 +57,13 @@ public:
 
     void set_state(ConnectionState state);
 
+    bool add_context_value(const std::string& key, boost::any value);
+
+    [[nodiscard]] boost::any get_context_value(const std::string& key) const;
+
     [[nodiscard]] const std::shared_ptr<uuids::uuid>& get_unique_id() const;
 
     void set_unique_id(const std::shared_ptr<uuids::uuid>& unique_id);
-
-    [[nodiscard]] const std::vector<uint8_t>& get_verify_token() const;
-
-    void set_verify_token(const std::vector<uint8_t>& verifyToken);
-
-    [[nodiscard]] const std::vector<uint8_t>& get_shared_secret() const;
 
     void start_new_timer(std::chrono::seconds timeout, const std::function<void()>& callback);
 
@@ -74,19 +71,15 @@ public:
 
     void set_last_keep_alive_payload(int64_t keep_alive_payload);
 
-    void set_shared_secret(const std::vector<uint8_t>& sharedSecret);
-
     [[nodiscard]] bool get_compress_packets() const;
 
     void enable_compression();
 
     [[nodiscard]] bool get_encrypt_packets() const;
 
-    void enable_encryption();
+    void enable_encryption(const std::vector<uint8_t>& shared_secret);
 
-    std::deque<uint8_t> encrypt_bytes(std::deque<uint8_t>);
-
-    std::deque<uint8_t> decrypt_bytes(std::deque<uint8_t>);
+    Celerity::BufferCrypter& get_buffer_crypter() const;
 
     void set_known_packs(std::vector<KnownPack> known_packs);
 
@@ -100,15 +93,13 @@ private:
     ByteBuffer m_data_buffer{};
     BufferReadContext m_read_context{};
     ConnectionState m_state = ConnectionState::Handshaking;
-    std::vector<uint8_t> m_verify_token{};
-    std::vector<uint8_t> m_shared_secret{};
+    std::map<std::string, boost::any> m_context_map;
     int64_t m_last_keep_alive_payload{};
     std::unique_ptr<BasicTimer> m_timer{};
     bool m_compress_packets{};
     bool m_encrypt_packets{};
+    std::unique_ptr<Celerity::BufferCrypter> m_buffer_crypter{};
     std::shared_ptr<uuids::uuid> m_unique_id{};
-    CryptoPP::CFB_Mode_ExternalCipher::Encryption m_cfb_stream_cipher_encryption{};
-    CryptoPP::CFB_Mode_ExternalCipher::Decryption m_cfb_stream_cipher_decryption{};
     std::vector<KnownPack> m_known_packs{};
 };
 

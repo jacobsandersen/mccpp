@@ -8,6 +8,8 @@
 #include "../../../MinecraftServer.h"
 #include "../out/PacketLoginOutDisconnect.h"
 
+#include "../../../SharedConstants.h"
+
 void
 PacketLoginInLoginStart::handle(const std::shared_ptr<Connection>& conn, const std::unique_ptr<ByteBuffer>& buffer)
 {
@@ -36,12 +38,17 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection>& conn, const s
     std::uniform_int_distribution<uint8_t> dist(0, std::numeric_limits<uint8_t>::max());
 
     std::vector<uint8_t> verify_token;
-    for (int i = 0; i < VERIFY_TOKEN_SIZE; i++)
+    for (int i = 0; i < Celerity::VERIFY_TOKEN_SIZE; i++)
     {
         verify_token.push_back(dist(gen));
     }
 
-    conn->set_verify_token(verify_token);
+    if (!conn->add_context_value("verify_token", verify_token))
+    {
+        LOG(ERROR) << "Failed to store verify token in connection";
+        PacketLoginOutDisconnect("Failed to store verify token in connection - try again later").send(conn);
+        return;
+    }
 
     LOG(INFO) << "Sending encryption request to user's client...";
 
@@ -49,7 +56,7 @@ PacketLoginInLoginStart::handle(const std::shared_ptr<Connection>& conn, const s
         "",
         static_cast<int32_t>(encoded_public_key.size()),
         encoded_public_key.data(),
-        VERIFY_TOKEN_SIZE,
+        Celerity::VERIFY_TOKEN_SIZE,
         verify_token.data(),
         true);
 
