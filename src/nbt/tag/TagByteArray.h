@@ -6,22 +6,18 @@
 #define CELERITY_NBT_TAG_TAGBYTEARRAY_H
 
 #include <utility>
+#include <vector>
 
 #include "Tag.h"
 
 namespace celerity::nbt::tag {
 class TagByteArray final : public Tag {
+  std::vector<int8_t> bytes_{};
+
  public:
-  explicit TagByteArray(std::vector<int8_t> data)
-      : TagByteArray("", std::move(data)) {}
-
-  TagByteArray(icu::UnicodeString name, std::vector<int8_t> data)
-      : Tag(TagType::ByteArray, std::move(name)), m_data(std::move(data)) {}
-
-  void write_payload(ByteBuffer& buffer) const override;
-
- private:
-  std::vector<int8_t> m_data;
+  explicit TagByteArray(std::vector<int8_t> bytes)
+      : Tag(TagType::ByteArray), bytes_(std::move(bytes)) {}
+  [[nodiscard]] std::vector<int8_t> get_bytes() const { return bytes_; }
 };
 }  // namespace celerity::nbt::tag
 

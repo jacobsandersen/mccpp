@@ -5,26 +5,26 @@
 #ifndef CELERITY_NBT_TAG_TAGCOMPOUND_H
 #define CELERITY_NBT_TAG_TAGCOMPOUND_H
 
-#include "../Concepts.h"
 #include "Tag.h"
 
 namespace celerity::nbt::tag {
 class TagCompound final : public Tag {
  public:
-  TagCompound() : TagCompound("") {}
-  explicit TagCompound(icu::UnicodeString name)
-      : Tag(TagType::Compound, std::move(name)) {}
+  TagCompound() : Tag(TagType::Compound) {}
 
-  template <typename T>
-    requires DerivedTag<T> && (!IsTagEnd<T>)
-  void add(T value) {
-    m_internal_list.push_back(std::make_unique<T>(std::forward<T>(value)));
+  void add(const icu::UnicodeString& name, std::unique_ptr<Tag> value) {
+    add({name, std::move(value)});
   }
 
-  void write_payload(ByteBuffer& buffer) const override;
+  void add(NamedTag&& named_tag) {
+    m_internal_list.push_back(std::move(named_tag));
+  }
 
+  [[nodiscard]] std::vector<NamedTag>& get_tags() {
+    return m_internal_list;
+  }
  private:
-  std::vector<std::unique_ptr<Tag>> m_internal_list;
+  std::vector<NamedTag> m_internal_list;
 };
 }  // namespace celerity::nbt::tag
 

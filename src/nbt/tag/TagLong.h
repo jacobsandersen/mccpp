@@ -10,11 +10,8 @@
 namespace celerity::nbt::tag {
 class TagLong final : public Tag {
  public:
-  explicit TagLong(const int64_t value) : TagLong("", value) {}
-  TagLong(icu::UnicodeString name, const int64_t value)
-      : Tag(TagType::Long, std::move(name)), m_value(value) {}
-  void write_payload(ByteBuffer& buffer) const override;
-
+  explicit TagLong(const int64_t value) : Tag(TagType::Long), m_value(value) {}
+  [[nodiscard]] int64_t get_long() const { return m_value; }
  private:
   int64_t m_value;
 };

@@ -10,11 +10,8 @@
 namespace celerity::nbt::tag {
 class TagShort final : public Tag {
  public:
-  explicit TagShort(const int16_t value) : TagShort("", value) {}
-  TagShort(icu::UnicodeString name, const int16_t value)
-      : Tag(TagType::Short, std::move(name)), m_value(value) {};
-  void write_payload(ByteBuffer& buffer) const override;
-
+  explicit TagShort(const int16_t value) : Tag(TagType::Short), m_value(value) {};
+  [[nodiscard]] int16_t get_short() const { return m_value; }
  private:
   int16_t m_value;
 };

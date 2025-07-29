@@ -183,11 +183,9 @@ class ByteBuffer {
 
   [[nodiscard]] uint32_t get_data_length() const;
 
-  int compress_buffer();
-
-  int decompress_buffer();
-
   void reset();
+
+  std::string to_hex_string() const;
 
  private:
   std::deque<uint8_t> m_data;

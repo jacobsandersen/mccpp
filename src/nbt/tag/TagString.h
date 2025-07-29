@@ -11,11 +11,8 @@ namespace celerity::nbt::tag {
 class TagString final : public Tag {
  public:
   explicit TagString(icu::UnicodeString value)
-      : TagString("", std::move(value)) {}
-  TagString(icu::UnicodeString name, icu::UnicodeString value)
-      : Tag(TagType::String, std::move(name)), m_value(std::move(value)) {}
-  void write_payload(ByteBuffer& buffer) const override;
-
+      : Tag(TagType::String), m_value(std::move(value)) {}
+  [[nodiscard]] icu::UnicodeString get_string() const { return m_value; }
  private:
   icu::UnicodeString m_value;
 };

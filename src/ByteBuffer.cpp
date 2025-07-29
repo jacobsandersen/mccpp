@@ -447,4 +447,13 @@ nbt::tag::TagType ByteBuffer::read_nbt_tag_type() {
 }
 
 void ByteBuffer::reset() { m_data.clear(); }
+
+std::string ByteBuffer::to_hex_string() const {
+  std::ostringstream oss;
+  oss << std::hex << std::uppercase << std::setfill('0');
+  for (const uint8_t& byte : get_bytes()) {
+    oss << std::setw(2) << static_cast<int>(byte) << ' ';
+  }
+  return oss.str();
+}
 }  // namespace celerity

@@ -5,47 +5,48 @@
 #ifndef CELERITY_NBT_TAG_TAGLIST_H
 #define CELERITY_NBT_TAG_TAGLIST_H
 
-#include "../Concepts.h"
+#include <utility>
+#include <vector>
+
 #include "Tag.h"
 #include "TagType.h"
 
 namespace celerity::nbt::tag {
-template <typename T>
-  requires DerivedTag<T> && (!IsTagEnd<T>)
 class TagList final : public Tag {
  public:
-  explicit TagList(TagType child_type) : TagList("", child_type) {}
-  TagList(const icu::UnicodeString& name, TagType child_type)
-      : Tag(TagType::List, std::move(name)),
-        m_child_type(std::move(child_type)) {}
+  explicit TagList(const TagType &child_type) : TagList(child_type, {}) {}
 
-  void add(T tag) {
-    static_assert(m_child_type == tag.get_type());
-    m_internal_list.push_back(tag);
+  TagList(TagType child_type, std::vector<std::unique_ptr<Tag>> items)
+      : Tag(TagType::List),
+        m_child_type(std::move(child_type)),
+        m_internal_list(std::move(items)) {
+    for (const auto &item : items) {
+      if (m_child_type != item->get_type()) {
+        throw std::domain_error(
+            "Cannot build a TagList with non-homogenous inner list of Tags (" +
+            m_child_type.get_type_name() +
+            " != " + item->get_type().get_type_name() + ")");
+      }
+    }
   }
 
-  void write_payload(ByteBuffer& buffer) const override {
-    auto type = m_child_type;
-    if (m_internal_list.empty()) {
-      type = TagType::End;
+  void add(std::unique_ptr<Tag> tag) {
+    if (m_child_type != tag->get_type()) {
+      throw std::domain_error("Cannot add " + tag->get_type().get_type_name() +
+                              " to TagList of inner type " +
+                              m_child_type.get_type_name());
     }
+    m_internal_list.push_back(std::move(tag));
+  }
+  [[nodiscard]] TagType get_child_type() const { return m_child_type; }
 
-    if (m_internal_list.size() > std::numeric_limits<int32_t>::max()) {
-      throw std::overflow_error(
-          "TagList::write_payload: list too large, unable to write signed "
-          "4-byte length prefix");
-    }
-
-    buffer.write_ubyte(type.get_type_id());
-    buffer.write_int(m_internal_list.size());
-    for (const auto& member : m_internal_list) {
-      member.write_payload(buffer);
-    }
+  [[nodiscard]] std::vector<std::unique_ptr<Tag>>& get_items() {
+    return m_internal_list;
   }
 
  private:
   TagType m_child_type;
-  std::vector<T> m_internal_list;
+  std::vector<std::unique_ptr<Tag>> m_internal_list;
 };
 }  // namespace celerity::nbt::tag
 
