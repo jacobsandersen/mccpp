@@ -24,7 +24,7 @@ void NetworkManager::start() {
 
   accept_connection();
   LOG(INFO) << "Celerity is listening for connections on "
-            << acceptor_.local_endpoint().address().to_string();
+            << acceptor_.local_endpoint();
 }
 
 void NetworkManager::shutdown() {
@@ -42,15 +42,15 @@ void NetworkManager::shutdown() {
 
 void NetworkManager::accept_connection() {
   acceptor_.async_accept([this](const boost::system::error_code& err,
-                                tcp::socket sock){
+                                tcp::socket sock) {
     if (err) {
       LOG(WARNING) << "Failed to accept a new connection: " << err.message();
     } else {
       LOG(INFO) << "Connection established from "
                 << sock.remote_endpoint().address().to_string();
 
-      const auto conn =
-          std::make_shared<Connection>(std::move(sock), [this](const Connection* c) {
+      const auto conn = std::make_shared<Connection>(
+          std::move(sock), [this](const Connection* c) {
             if (c == nullptr) return;
             MinecraftServer::get_server()->remove_player(c->get_unique_id());
           });

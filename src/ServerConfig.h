@@ -11,7 +11,7 @@ class ServerConfig {
 
  public:
   explicit ServerConfig(const std::filesystem::path& server_root)
-      : toml_(toml::value(server_root / "server.toml")) {}
+      : toml_(toml::parse(server_root / "config/server.toml")) {}
   uint16_t get_server_port() const;
   uint16_t get_compression_threshold() const;
   uint16_t get_max_players() const;
