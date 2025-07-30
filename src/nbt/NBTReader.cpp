@@ -17,8 +17,10 @@
 #include "tag/TagString.h"
 
 namespace celerity::nbt {
-template <typename T, typename TagT> requires std::is_integral_v<T> && DerivedTag<TagT>
-std::unique_ptr<TagT> read_tag_array(ByteBuffer& buffer, const std::function<T(ByteBuffer&)>& read_fn) {
+template <typename T, typename TagT>
+  requires std::is_integral_v<T> && DerivedTag<TagT>
+std::unique_ptr<TagT> read_tag_array(
+    ByteBuffer& buffer, const std::function<T(ByteBuffer&)>& read_fn) {
   const int32_t length = buffer.read_be_int();
   std::vector<T> items(length);
   for (int i = 0; i < length; i++) {
@@ -27,7 +29,7 @@ std::unique_ptr<TagT> read_tag_array(ByteBuffer& buffer, const std::function<T(B
   return std::make_unique<TagT>(items);
 }
 
-tag::NamedTag NBTReader::read_tag(const int depth) { // NOLINT(*-no-recursion)
+tag::NamedTag NBTReader::read_tag(const int depth) {  // NOLINT(*-no-recursion)
   const tag::TagType type = buffer_.read_nbt_tag_type();
 
   icu::UnicodeString name;
@@ -40,7 +42,7 @@ tag::NamedTag NBTReader::read_tag(const int depth) { // NOLINT(*-no-recursion)
   return {name, read_payload(type, depth)};
 }
 
-std::unique_ptr<tag::Tag> NBTReader::read_payload( // NOLINT(*-no-recursion)
+std::unique_ptr<tag::Tag> NBTReader::read_payload(  // NOLINT(*-no-recursion)
     const tag::TagType& type, const int depth) {
   switch (type.get_type_id()) {
     // End
@@ -78,11 +80,13 @@ std::unique_ptr<tag::Tag> NBTReader::read_payload( // NOLINT(*-no-recursion)
     }
     // ByteArray
     case 7: {
-      return read_tag_array<int8_t, tag::TagByteArray>(buffer_, [](ByteBuffer& b) { return b.read_byte(); });
+      return read_tag_array<int8_t, tag::TagByteArray>(
+          buffer_, [](ByteBuffer& b) { return b.read_byte(); });
     }
     // String
     case 8: {
-      return std::make_unique<tag::TagString>(buffer_.read_string_modified_utf8());
+      return std::make_unique<tag::TagString>(
+          buffer_.read_string_modified_utf8());
     }
     // List
     case 9: {
@@ -112,11 +116,13 @@ std::unique_ptr<tag::Tag> NBTReader::read_payload( // NOLINT(*-no-recursion)
     }
     // IntArray
     case 11: {
-      return read_tag_array<int32_t, tag::TagIntArray>(buffer_, [](ByteBuffer& b) { return b.read_be_int(); });
+      return read_tag_array<int32_t, tag::TagIntArray>(
+          buffer_, [](ByteBuffer& b) { return b.read_be_int(); });
     }
     // LongArray
     case 12: {
-      return read_tag_array<int64_t, tag::TagLongArray>(buffer_, [](ByteBuffer& b) { return b.read_be_long(); });
+      return read_tag_array<int64_t, tag::TagLongArray>(
+          buffer_, [](ByteBuffer& b) { return b.read_be_long(); });
     }
     default: {
       throw std::domain_error("Requested to read unknown NBT tag");

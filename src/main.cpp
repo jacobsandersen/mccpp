@@ -15,10 +15,9 @@ int main(int argc, char* argv[]) {
   celerity::ByteBuffer my_buffer;
   celerity::nbt::NBTWriter writer(my_buffer);
 
-  auto test =
-      celerity::nbt::TagCompoundBuilder::create("hello world")
-          ->add("name", celerity::nbt::tag::TagString("Bananrama"))
-          ->build();
+  auto test = celerity::nbt::TagCompoundBuilder::create("hello world")
+                  ->add("name", celerity::nbt::tag::TagString("Bananrama"))
+                  ->build();
 
   writer.write_tag(test);
 

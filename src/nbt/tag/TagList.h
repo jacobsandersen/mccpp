@@ -40,7 +40,7 @@ class TagList final : public Tag {
   }
   [[nodiscard]] TagType get_child_type() const { return m_child_type; }
 
-  [[nodiscard]] std::vector<std::unique_ptr<Tag>>& get_items() {
+  [[nodiscard]] std::vector<std::unique_ptr<Tag>> &get_items() {
     return m_internal_list;
   }
 

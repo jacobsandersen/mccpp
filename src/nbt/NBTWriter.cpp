@@ -21,7 +21,7 @@
 #include "tag/TagString.h"
 
 namespace celerity::nbt {
-void NBTWriter::write_tag(tag::NamedTag& tag) { // NOLINT(*-no-recursion)
+void NBTWriter::write_tag(tag::NamedTag& tag) {  // NOLINT(*-no-recursion)
   const auto type = tag.get_tag()->get_type();
   if (type == tag::TagType::End) {
     throw std::runtime_error("Cannot write a top-level Tag_END");
@@ -45,7 +45,8 @@ T* downcast(std::unique_ptr<tag::Tag>& base_tag) {
   return downcasted;
 }
 
-void NBTWriter::write_payload(std::unique_ptr<tag::Tag>& tag) { // NOLINT(*-no-recursion)
+void NBTWriter::write_payload(
+    std::unique_ptr<tag::Tag>& tag) {  // NOLINT(*-no-recursion)
   switch (tag->get_type().get_type_id()) {
     // End
     case 0: {

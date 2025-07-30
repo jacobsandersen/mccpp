@@ -56,7 +56,8 @@ std::optional<DecodedPacket> Connection::try_pop_packet() {
   }
 
   const auto [packet_length, packet_length_num_bytes] = *maybe_packet_length;
-  if (m_data_buffer.get_data_length() - packet_length_num_bytes < packet_length) {
+  if (m_data_buffer.get_data_length() - packet_length_num_bytes <
+      packet_length) {
     return std::nullopt;
   }
 
@@ -84,16 +85,14 @@ void Connection::process_buffer() {
   while (auto maybe_packet = try_pop_packet()) {
     DecodedPacket decoded = std::move(*maybe_packet);
     boost::asio::post(
-      incoming_packet_strand_,
-      [decoded = std::move(decoded), self = shared_from_this()] mutable {
-        self->process_packet(std::move(decoded));
-    });
+        incoming_packet_strand_,
+        [decoded = std::move(decoded), self = shared_from_this()] mutable {
+          self->process_packet(std::move(decoded));
+        });
   }
 }
 
-void Connection::process_packet(DecodedPacket&& packet) {
-
-}
+void Connection::process_packet(DecodedPacket&& packet) {}
 
 boost::asio::ip::tcp::socket* Connection::get_socket() { return &m_socket; }
 
@@ -105,7 +104,8 @@ bool Connection::set_context_value(const std::string& key, boost::any value) {
   return m_context_map.insert_or_assign(key, value).second;
 }
 
-std::optional<boost::any> Connection::get_context_value(const std::string& key) const {
+std::optional<boost::any> Connection::get_context_value(
+    const std::string& key) const {
   const auto search = m_context_map.find(key);
   return search == m_context_map.end() ? std::nullopt : search->second;
 }

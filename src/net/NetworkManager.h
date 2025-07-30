@@ -29,11 +29,13 @@ class NetworkManager {
                 unique_ptr<unordered_map<int32_t, unique_ptr<InboundPacket>>>>
       packet_handlers_;
   std::vector<std::thread> network_threads_;
+
  public:
   explicit NetworkManager(const ServerConfig& config)
       : acceptor_(boost::asio::ip::tcp::acceptor(
             context_,
-            boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), config.get_server_port()))) {
+            boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(),
+                                           config.get_server_port()))) {
     // handshaking packets
     auto handshaking_handlers =
         make_unique<unordered_map<int32_t, unique_ptr<InboundPacket>>>();
@@ -90,6 +92,7 @@ class NetworkManager {
 
   void start();
   void shutdown();
+
  private:
   void accept_connection();
   void process_buffer(const std::shared_ptr<Connection>&);

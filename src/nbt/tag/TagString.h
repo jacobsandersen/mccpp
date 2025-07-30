@@ -13,6 +13,7 @@ class TagString final : public Tag {
   explicit TagString(icu::UnicodeString value)
       : Tag(TagType::String), m_value(std::move(value)) {}
   [[nodiscard]] icu::UnicodeString get_string() const { return m_value; }
+
  private:
   icu::UnicodeString m_value;
 };

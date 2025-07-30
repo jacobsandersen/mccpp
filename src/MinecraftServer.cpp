@@ -15,9 +15,7 @@ MinecraftServer* MinecraftServer::get_server() {
   return instance;
 }
 
-void MinecraftServer::start() {
-  network_manager_.start();
-}
+void MinecraftServer::start() { network_manager_.start(); }
 
 std::vector<std::shared_ptr<player::Player>> MinecraftServer::get_players() {
   return players_;

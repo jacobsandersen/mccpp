@@ -20,7 +20,8 @@ uint16_t ServerConfig::get_max_players() const {
 }
 
 std::string ServerConfig::get_motd() const {
-  return toml::find_or_default<std::string>(toml_, "motd", "A C++ Minecraft Server");
+  return toml::find_or_default<std::string>(toml_, "motd",
+                                            "A C++ Minecraft Server");
 }
 
 std::string ServerConfig::get_favicon() const {

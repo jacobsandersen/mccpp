@@ -400,9 +400,7 @@ void ByteBuffer::write_varint(int32_t value) {
   }
 }
 
-int32_t ByteBuffer::read_varint() {
-  return read_varint(nullptr);
-}
+int32_t ByteBuffer::read_varint() { return read_varint(nullptr); }
 
 int32_t ByteBuffer::read_varint(uint8_t* bytes_read) {
   return VarInt::decode_varint(this, bytes_read);
@@ -419,7 +417,8 @@ std::optional<std::pair<int32_t, uint8_t>> ByteBuffer::peek_varint() {
   }
 }
 
-std::optional<std::vector<std::pair<int32_t, uint8_t>>> ByteBuffer::peek_varints(const size_t num_varints) {
+std::optional<std::vector<std::pair<int32_t, uint8_t>>>
+ByteBuffer::peek_varints(const size_t num_varints) {
   try {
     std::vector<std::pair<int32_t, uint8_t>> varints(num_varints);
     ByteBuffer tmp(peek_ubytes(5 * num_varints));

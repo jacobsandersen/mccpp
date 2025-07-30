@@ -187,7 +187,8 @@ void PacketLoginInEncryptionResponse::handle(
   LOG(INFO)
       << "OK. Checking if we need to enable compression for the connection...";
 
-  const auto compression_threshold = MinecraftServer::get_server()->get_config_manager()
+  const auto compression_threshold = MinecraftServer::get_server()
+                                         ->get_config_manager()
                                          .get_server_config()
                                          .get_compression_threshold();
   if (compression_threshold > 0) {

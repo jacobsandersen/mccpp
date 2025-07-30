@@ -19,7 +19,8 @@ class ByteBuffer {
  public:
   ByteBuffer() : m_data(std::deque<uint8_t>()) {}
 
-  explicit ByteBuffer(std::vector<uint8_t> bytes) : m_data({bytes.begin(), bytes.end()}) {}
+  explicit ByteBuffer(std::vector<uint8_t> bytes)
+      : m_data({bytes.begin(), bytes.end()}) {}
 
   template <typename T>
   typename std::enable_if<std::is_integral<T>::value ||
@@ -166,11 +167,12 @@ class ByteBuffer {
 
   int32_t read_varint();
 
-  int32_t read_varint(uint8_t* bytes_read);
+  int32_t read_varint(uint8_t *bytes_read);
 
   std::optional<std::pair<int32_t, uint8_t>> peek_varint();
 
-  std::optional<std::vector<std::pair<int32_t, uint8_t>>> peek_varints(size_t num_varints);
+  std::optional<std::vector<std::pair<int32_t, uint8_t>>> peek_varints(
+      size_t num_varints);
 
   void write_varlong(int64_t);
 

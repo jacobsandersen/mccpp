@@ -6,6 +6,7 @@
 #define CELERITY_NBT_TAG_TAGLONGARRAY_H
 
 #include <vector>
+
 #include "Tag.h"
 
 namespace celerity::nbt::tag {
