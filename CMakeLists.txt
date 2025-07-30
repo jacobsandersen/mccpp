@@ -19,13 +19,12 @@ find_package(PkgConfig REQUIRED)
 
 pkg_check_modules(ICU REQUIRED IMPORTED_TARGET icu-i18n icu-io icu-uc)
 
-add_executable(celerity src/main.cpp
-        src/ServerConfig.cpp
-        src/ServerConfig.h)
+add_executable(celerity src/main.cpp)
 
 target_sources(celerity PRIVATE
         src/MinecraftServer.cpp
         src/ConfigManager.cpp
+        src/ServerConfig.cpp
         src/VarInt.cpp
         src/RSAKeypair.cpp
         src/ByteBuffer.cpp
