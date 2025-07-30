@@ -47,7 +47,7 @@ void PacketLoginInLoginStart::handle(
     verify_token.push_back(dist(gen));
   }
 
-  if (!conn->add_context_value("verify_token", verify_token)) {
+  if (!conn->set_context_value("verify_token", verify_token)) {
     LOG(ERROR) << "Failed to store verify token in connection";
     PacketLoginOutDisconnect(
         "Failed to store verify token in connection - try again later")

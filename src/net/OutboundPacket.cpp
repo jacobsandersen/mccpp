@@ -17,15 +17,15 @@ void OutboundPacket::send(const std::shared_ptr<Connection>& conn) {
 
   ByteBuffer packed;
 
-  if (!conn->get_compress_packets()) {
+  if (!conn->is_compression_enabled()) {
     packed.write_varint(static_cast<int32_t>(packet_id_length + data_length));
     packed.write_varint(m_packet_id);
     packed.write_bytes(in.read_bytes(data_length));
   } else {
-    toml::value server_config =
-        MinecraftServer::get_server()->get_config_manager().get_server_config();
-    auto compression_threshold =
-        toml::find<uint32_t>(server_config, "compression_threshold");
+    const auto compression_threshold = MinecraftServer::get_server()
+                                           ->get_config_manager()
+                                           .get_server_config()
+                                           .get_compression_threshold();
 
     if (data_length < compression_threshold) {
       packed.write_varint(static_cast<int32_t>(VarInt::encoding_length(0) +
@@ -46,7 +46,7 @@ void OutboundPacket::send(const std::shared_ptr<Connection>& conn) {
     }
   }
 
-  if (conn->get_encrypt_packets()) {
+  if (conn->is_encryption_enabled()) {
     conn->get_buffer_crypter().encrypt(packed);
   }
 

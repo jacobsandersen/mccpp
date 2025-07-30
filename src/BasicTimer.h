@@ -7,7 +7,7 @@
 namespace celerity {
 class BasicTimer {
  public:
-  explicit BasicTimer(boost::asio::io_context& context) : m_timer(context) {}
+  explicit BasicTimer(const boost::asio::any_io_executor& executor) : m_timer(executor) {}
 
   void start(const std::chrono::seconds& duration,
              std::function<void()> callback);

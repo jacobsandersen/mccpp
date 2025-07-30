@@ -10,7 +10,7 @@ void PacketConfigurationOutKeepAlive::write_data(
   int64_t payload = std::time(nullptr);
   buffer.write_be_long(payload);
 
-  conn->set_last_keep_alive_payload(payload);
+  conn->set_context_value("keep_alive", payload);
 
   conn->start_new_timer(std::chrono::seconds(30), [weak_conn =
                                                        std::weak_ptr(conn)]() {

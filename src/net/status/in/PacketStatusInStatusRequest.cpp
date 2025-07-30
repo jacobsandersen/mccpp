@@ -13,11 +13,11 @@ void PacketStatusInStatusRequest::handle(
   LOG(INFO) << "Received status request, collecting information...";
 
   MinecraftServer* server = MinecraftServer::get_server();
-  toml::value server_config = server->get_config_manager().get_server_config();
+  const auto server_config = server->get_config_manager().get_server_config();
 
-  uint16_t max_players = toml::find<uint16_t>(server_config, "max_players");
-  std::string motd = toml::find<std::string>(server_config, "motd");
-  std::string favicon = toml::find<std::string>(server_config, "favicon");
+  const auto max_players = server_config.get_max_players();
+  const auto motd = server_config.get_motd();
+  const auto favicon = server_config.get_favicon();
 
   LOG(INFO) << "Information collected, sending status...";
 

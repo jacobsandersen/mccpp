@@ -11,9 +11,8 @@ void PacketConfigurationInKeepAlive::handle(
     const std::unique_ptr<ByteBuffer>& buffer) {
   LOG(INFO) << "Received configuration keep alive. Checking payload...";
 
-  int64_t payload = buffer->read_be_long();
-
-  if (conn->get_last_keep_alive_payload() != payload) {
+  if (const int64_t payload = buffer->read_be_long();
+      conn->get_keep_alive_payload() != payload) {
     LOG(WARNING) << "Client failed to respond with correct keep alive payload. "
                     "Sending disconnection...";
 

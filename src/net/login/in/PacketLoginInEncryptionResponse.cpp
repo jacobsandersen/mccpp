@@ -84,7 +84,7 @@ void PacketLoginInEncryptionResponse::handle(
   conn->enable_encryption(decrypted_shared_secret);
 
   const auto verify_token = conn->get_context_value("verify_token");
-  if (verify_token.empty()) {
+  if (!verify_token || verify_token->empty()) {
     LOG(ERROR) << "Verify token was not stored by the server. Cannot validate "
                   "this client.";
     auto pkt = PacketLoginOutDisconnect(
@@ -95,7 +95,7 @@ void PacketLoginInEncryptionResponse::handle(
 
   try {
     if (decrypted_verify_token !=
-        boost::any_cast<std::vector<uint8_t>>(verify_token)) {
+        boost::any_cast<std::vector<uint8_t>>(*verify_token)) {
       throw std::runtime_error("Invalid verify token");
     }
   } catch (const std::exception& e) {
@@ -187,11 +187,10 @@ void PacketLoginInEncryptionResponse::handle(
   LOG(INFO)
       << "OK. Checking if we need to enable compression for the connection...";
 
-  toml::value server_config =
-      MinecraftServer::get_server()->get_config_manager().get_server_config();
-  int16_t compression_threshold =
-      toml::find<int16_t>(server_config, "compression_threshold");
-  if (compression_threshold >= 0) {
+  const auto compression_threshold = MinecraftServer::get_server()->get_config_manager()
+                                         .get_server_config()
+                                         .get_compression_threshold();
+  if (compression_threshold > 0) {
     LOG(INFO) << "Enabling connection compression with threshold "
               << compression_threshold;
 

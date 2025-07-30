@@ -123,6 +123,14 @@ std::vector<int8_t> ByteBuffer::read_bytes(size_t num_bytes) {
   return vec;
 }
 
+std::vector<int8_t> ByteBuffer::peek_bytes(const size_t num_bytes) {
+  std::vector<int8_t> vec;
+  for (size_t i = 0; i < num_bytes; i++) {
+    vec.push_back(peek_byte(i));
+  }
+  return vec;
+}
+
 void ByteBuffer::write_ubyte(uint8_t value) { write_buffer(m_data, value); }
 
 void ByteBuffer::write_ubyte(uint8_t value, uint32_t offset) {
@@ -154,6 +162,16 @@ std::vector<uint8_t> ByteBuffer::read_ubytes(size_t num_ubytes) {
 
   for (int i = 0; i < num_ubytes; i++) {
     vec.push_back(read_ubyte());
+  }
+
+  return vec;
+}
+
+std::vector<uint8_t> ByteBuffer::peek_ubytes(const size_t num_ubytes) {
+  std::vector<uint8_t> vec;
+
+  for (size_t i = 0; i < num_ubytes; i++) {
+    vec.push_back(peek_ubyte(i));
   }
 
   return vec;
@@ -383,7 +401,36 @@ void ByteBuffer::write_varint(int32_t value) {
 }
 
 int32_t ByteBuffer::read_varint() {
-  return VarInt::decode_varint(this, nullptr);
+  return read_varint(nullptr);
+}
+
+int32_t ByteBuffer::read_varint(uint8_t* bytes_read) {
+  return VarInt::decode_varint(this, bytes_read);
+}
+
+std::optional<std::pair<int32_t, uint8_t>> ByteBuffer::peek_varint() {
+  try {
+    ByteBuffer tmp(peek_ubytes(5));  // max size of var int is 5 bytes
+    uint8_t num_bytes = 0;
+    const int32_t varint = tmp.read_varint(&num_bytes);
+    return std::pair(varint, num_bytes);
+  } catch (std::exception&) {
+    return std::nullopt;
+  }
+}
+
+std::optional<std::vector<std::pair<int32_t, uint8_t>>> ByteBuffer::peek_varints(const size_t num_varints) {
+  try {
+    std::vector<std::pair<int32_t, uint8_t>> varints(num_varints);
+    ByteBuffer tmp(peek_ubytes(5 * num_varints));
+    for (size_t i = 0; i < num_varints; i++) {
+      uint8_t bytes_read = 0;
+      varints[i] = std::pair(tmp.read_varint(&bytes_read), bytes_read);
+    }
+    return varints;
+  } catch (std::exception&) {
+    return std::nullopt;
+  }
 }
 
 void ByteBuffer::write_varlong(int64_t value) {
@@ -420,9 +467,7 @@ void ByteBuffer::write_uuid(uuids::uuid unique_id) {
 }
 
 void ByteBuffer::append(const ByteBuffer& buffer) {
-  for (auto byte : buffer.get_data()) {
-    m_data.insert(m_data.end(), byte);
-  }
+  m_data.append_range(buffer.get_bytes());
 }
 
 std::deque<uint8_t> ByteBuffer::get_data() const { return m_data; }
@@ -455,5 +500,8 @@ std::string ByteBuffer::to_hex_string() const {
     oss << std::setw(2) << static_cast<int>(byte) << ' ';
   }
   return oss.str();
+}
+void ByteBuffer::truncate_front(const size_t num_bytes) {
+  m_data.erase(m_data.begin(), m_data.begin() + num_bytes);
 }
 }  // namespace celerity

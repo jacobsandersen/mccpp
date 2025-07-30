@@ -16,13 +16,11 @@ MinecraftServer* MinecraftServer::get_server() {
 }
 
 void MinecraftServer::start() {
-  LOG(INFO) << "Starting Celerity...";
-  m_network_manager.start();
-  LOG(INFO) << "Celerity stopping...";
+  network_manager_.start();
 }
 
 std::vector<std::shared_ptr<player::Player>> MinecraftServer::get_players() {
-  return m_players;
+  return players_;
 }
 
 std::shared_ptr<player::Player> MinecraftServer::get_player(
@@ -50,40 +48,43 @@ std::shared_ptr<player::Player> MinecraftServer::get_player(
 void MinecraftServer::remove_player(
     const std::shared_ptr<uuids::uuid>& unique_id) {
   if (unique_id == nullptr) return;
-  m_players.erase(
-      std::remove_if(m_players.begin(), m_players.end(),
+  players_.erase(
+      std::remove_if(players_.begin(), players_.end(),
                      [unique_id](std::shared_ptr<player::Player> player) {
                        return player->get_unique_id() == unique_id;
                      }),
-      m_players.end());
+      players_.end());
 }
 
 const net::NetworkManager& MinecraftServer::get_network_manager() const {
-  return m_network_manager;
+  return network_manager_;
 }
 
 const RSAKeypair& MinecraftServer::get_rsa_keypair() const {
-  return m_rsa_keypair;
+  return rsa_keypair_;
 }
 
 void MinecraftServer::add_player(
     const std::shared_ptr<player::Player>& player) {
-  m_players.push_back(player);
+  players_.push_back(player);
+}
+std::filesystem::path MinecraftServer::get_server_root() const {
+  return server_root_;
 }
 
 const ConfigManager& MinecraftServer::get_config_manager() const {
-  return m_config_manager;
+  return config_manager_;
 }
 
 uint32_t MinecraftServer::get_protocol_version() const {
-  return m_protocol_version;
+  return protocol_version_;
 }
 
 const std::string& MinecraftServer::get_version_name() const {
-  return m_version_name;
+  return version_name_;
 }
 
 const std::vector<KnownPack>& MinecraftServer::get_known_packs() const {
-  return m_known_packs;
+  return known_packs_;
 }
 }  // namespace celerity

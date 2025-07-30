@@ -25,9 +25,5 @@ int main(int argc, char* argv[]) {
   std::cout << "Test NBT write:" << std::endl;
   std::cout << my_buffer.to_hex_string() << std::endl;
 
-  try {
-    celerity::MinecraftServer::get_server()->start();
-  } catch (const std::exception& err) {
-    LOG(FATAL) << err.what() << std::endl;
-  }
+  celerity::MinecraftServer::get_server()->start();
 }
